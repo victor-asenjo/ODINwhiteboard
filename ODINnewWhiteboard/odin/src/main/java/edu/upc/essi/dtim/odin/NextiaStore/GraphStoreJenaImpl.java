@@ -238,7 +238,7 @@ public class GraphStoreJenaImpl implements GraphStoreInterface{
     @Override
     public QueryResult query(Query query, Graph graph) {
         try(
-                QueryExecution qExec = QueryExecutionFactory.create(query.toString(), convertToJenaModel(graph))
+                QueryExecution qExec = QueryExecutionFactory.create(query.getQueryText(), convertToJenaModel(graph))
         ) {
             qExec.getContext().set(TDB.symUnionDefaultGraph, true);
             return (QueryResult) ResultSetFactory.copyResults(qExec.execSelect());

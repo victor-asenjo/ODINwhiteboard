@@ -19,6 +19,10 @@ repositories {
 	mavenCentral()
 	maven { url 'https://repo.spring.io/milestone' }
 	maven { url 'https://repo.spring.io/snapshot' }
+
+	flatDir {
+		dirs 'C:\\Users\\victo\\Documents\\GitHub\\NextiaCore\\build\\libs'
+	}
 }
 
 dependencies {
@@ -29,8 +33,10 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
-	//implementation name: 'nextiacore-0.0.1-SNAPSHOT-uber', ext: 'jar'
-	implementation fileTree(dir: 'lib', include: ['*.jar'])
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	implementation name: 'nextiacore-0.0.1-SNAPSHOT-uber', ext: 'jar'
+	//implementation fileTree(dir: 'lib', include: ['*.jar'])
 }
 
 tasks.named('test') {
