@@ -1,8 +1,8 @@
 package edu.upc.essi.dtim.odin.NextiaStore;
 
-import edu.upc.essi.dtim.CoreGraph.Graph;
-import edu.upc.essi.dtim.CoreGraph.Triple;
-import edu.upc.essi.dtim.CoreGraph.URI;
+import edu.upc.essi.dtim.Graph.Graph;
+import edu.upc.essi.dtim.Graph.Triple;
+import edu.upc.essi.dtim.Graph.URI;
 import edu.upc.essi.dtim.Queries.Query;
 import edu.upc.essi.dtim.Queries.QueryResult;
 

@@ -1,21 +1,26 @@
 package edu.upc.essi.dtim.odin.NextiaStore;
 
-import edu.upc.essi.dtim.CoreGraph.Graph;
-import edu.upc.essi.dtim.CoreGraph.LocalGraph;
-import edu.upc.essi.dtim.CoreGraph.Triple;
-import edu.upc.essi.dtim.CoreGraph.URI;
+import edu.upc.essi.dtim.Graph.Graph;
+import edu.upc.essi.dtim.Graph.LocalGraph;
+import edu.upc.essi.dtim.Graph.Triple;
+import edu.upc.essi.dtim.Graph.URI;
 import edu.upc.essi.dtim.Queries.Query;
 import edu.upc.essi.dtim.Queries.QueryResult;
-import org.apache.jena.query.*;
+import org.apache.jena.datatypes.TypeMapper;
+import org.apache.jena.query.QueryExecution;
+import org.apache.jena.query.QueryExecutionFactory;
+import org.apache.jena.query.ResultSetFactory;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.tdb.TDB;
 import org.apache.jena.util.iterator.ExtendedIterator;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 @Component
-public class GraphStoreJenaImpl implements GraphStoreInterface{
+public class GraphStoreJenaImpl implements GraphStoreInterface {
     // Function to convert Jena Model to Graph object
     public static Graph convertJenaModelToGraph(Model jenaModel) {
         Graph graph = null;
@@ -44,11 +49,17 @@ public class GraphStoreJenaImpl implements GraphStoreInterface{
         return graph;
     }
 
+    public static Model convertToJenaModel(Graph graph) {
+        Model model = ModelFactory.createDefaultModel();
+
+        return model;
+    }
+
     /**
      * Retrieves all triples with the given subject.
      *
      * @param subject the URI of the subject to retrieve triples for
-     * @param graph the graph to retrieve triples from
+     * @param graph   the graph to retrieve triples from
      * @return a set of triples that have the given subject
      */
     @Override
@@ -83,7 +94,7 @@ public class GraphStoreJenaImpl implements GraphStoreInterface{
      * Retrieves all triples with the given predicate.
      *
      * @param predicate the URI of the predicate to retrieve triples for
-     * @param graph the graph to retrieve triples from
+     * @param graph     the graph to retrieve triples from
      * @return a set of triples that have the given predicate
      */
     @Override
@@ -113,7 +124,7 @@ public class GraphStoreJenaImpl implements GraphStoreInterface{
      * Retrieves all triples with the given object.
      *
      * @param object the URI of the object to retrieve triples for
-     * @param graph the graph to retrieve triples from
+     * @param graph  the graph to retrieve triples from
      * @return a set of triples that have the given object
      */
     @Override
@@ -206,7 +217,7 @@ public class GraphStoreJenaImpl implements GraphStoreInterface{
             triples.add(triple);
         }
         // Return a new Graph object containing the retrieved triples
-        return new LocalGraph(name, triples);
+        return new Graph(name, triples);
     }
 
     /**
@@ -216,6 +227,48 @@ public class GraphStoreJenaImpl implements GraphStoreInterface{
      */
     @Override
     public void saveGraph(Graph graph) {
+        // Create a new Jena Model object
+        Model model = ModelFactory.createDefaultModel();
+
+        // Add each triple from the Graph object to the Model object
+        for (Triple triple : graph.getTriples()) {
+            // create a Jena Resource object for the subject of the triple
+            Resource subject = ResourceFactory.createResource(triple.getSubject().getURI());
+            // create a Jena Property object for the predicate of the triple
+            Property predicate = ResourceFactory.createProperty(triple.getPredicate().getURI());
+            // create a Jena RDFNode object for the object of the triple
+            RDFNode object;
+            // check if the object of the triple is a literal or a resource
+            if (triple.hasLiteralObject()) {
+                // create a typed literal for the object of the triple if it is a literal
+                object = ResourceFactory.createTypedLiteral(triple.getLiteralObjectValue(),
+                        TypeMapper.getInstance().getSafeTypeByName(triple.getLiteralObjectDatatypeURI()));
+            } else {
+                // create a Jena Resource object for the object of the triple if it is a resource
+                object = ResourceFactory.createResource(triple.getObject().toString());
+            }
+            // create a Jena statement from the subject, predicate, and object of the triple
+            Statement statement = ResourceFactory.createStatement(subject, predicate, object);
+            // add the statement to the Jena model object
+            model.add(statement);
+        }
+        /*
+        // Get a new Jena TDB Dataset object
+        Dataset dataset = TDBFactory.createDataset("path/to/tdb");
+
+        // Begin a new transaction
+        dataset.begin(ReadWrite.WRITE);
+
+        // Get a new Jena Model object from the Dataset object
+        Model tdbModel = dataset.getDefaultModel();
+
+        // Add the Model object to the TDB model
+        tdbModel.add(model);
+
+        // Commit the transaction and end it
+        dataset.commit();
+        dataset.end();
+        */
 
     }
 
@@ -237,22 +290,14 @@ public class GraphStoreJenaImpl implements GraphStoreInterface{
      */
     @Override
     public QueryResult query(Query query, Graph graph) {
-        try(
+        try (
                 QueryExecution qExec = QueryExecutionFactory.create(query.getQueryText(), convertToJenaModel(graph))
         ) {
             qExec.getContext().set(TDB.symUnionDefaultGraph, true);
             return (QueryResult) ResultSetFactory.copyResults(qExec.execSelect());
-        } catch ( Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
-    }
-
-
-
-    public static Model convertToJenaModel(Graph graph) {
-        Model model = ModelFactory.createDefaultModel();
-
-        return model;
     }
 }

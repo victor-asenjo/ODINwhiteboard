@@ -1,14 +1,14 @@
 package edu.upc.essi.dtim.odin.NextiaStore;
 
+import edu.upc.essi.dtim.Graph.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import edu.upc.essi.dtim.CoreGraph.*;
-
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class GraphStoreInterfaceTest {
     private GraphStoreInterface graphStore;
