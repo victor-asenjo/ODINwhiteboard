@@ -33,7 +33,10 @@ public class GraphStoreFactory {
                         throw new Exception("Error with DB type");
                 }
             }
-            else instance = new GraphStoreJenaImpl();
+            else {
+                System.out.println("THE APPCONFIG IS NULL SO instance of GraphStoreFactory IS NOT WORKING");
+                instance = new GraphStoreJenaImpl();
+            }
         }
         System.out.println("Returning instance of GraphStoreFactory: "+ instance);
         return instance;
