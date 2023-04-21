@@ -8,11 +8,12 @@ import org.springframework.stereotype.Component;
 public class GraphStoreFactory {
     private static GraphStoreInterface instance = null;
 
-    @Autowired
+
     private static AppConfig appConfig;
 
     // Private constructor prevents instantiation from outside the class
-    private GraphStoreFactory() {
+    private GraphStoreFactory( @Autowired AppConfig appConfig) {
+        this.appConfig = appConfig;
         // Being private prevents the factory from being instantiated from outside the class
     }
 
