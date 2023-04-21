@@ -217,7 +217,7 @@ public class GraphStoreJenaImpl implements GraphStoreInterface {
             triples.add(triple);
         }
         // Return a new Graph object containing the retrieved triples
-        return new Graph(name, triples);
+        return new LocalGraph(name, triples);
     }
 
     /**
