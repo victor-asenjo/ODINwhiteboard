@@ -31,12 +31,16 @@ public class BootstrappingController {
         Dataset datasource = extractData(request.getDatasourceFile());
 
         // Transform data to custom graph
+        //crear LocalGraph y sus asociaciones
         Graph graph = transformDataToGraph(datasource);
 
         // Save graph into database
         saveGraphToDatabase(graph);
 
+        //callMyServiceToLocalGraphIdToProjectListGraph
+
         // Return success message
+        //que retorne el id del localGraph
         return "Bootstrap successful";
     }
 
@@ -115,6 +119,8 @@ public class BootstrappingController {
             // Add the new triple to the graph
             graph.addTriple(triple);
         }
+
+        //añadir relación datasetId
 
         // Return the resulting RDF graph
         return graph;
