@@ -8,40 +8,71 @@ import edu.upc.essi.dtim.Graph.LocalGraph;
 import edu.upc.essi.dtim.Graph.URI;
 import edu.upc.essi.dtim.odin.NextiaStore.GraphStoreFactory;
 import edu.upc.essi.dtim.odin.NextiaStore.GraphStoreInterface;
+import edu.upc.essi.dtim.odin.config.AppConfig;
 import edu.upc.essi.dtim.odin.project.ProjectService;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.UUID;
 
 @Service
 public class SourceService {
+
+    private AppConfig appConfig;
+
+    public SourceService(@Autowired AppConfig appConfig) {
+        this.appConfig = appConfig;
+    }
+
     /**
-     * Recibe un MultipartFile y retorna la ruta donde se ha guardado el archivo.
-     * @param multipartFile El archivo multipart a reconstruir
-     * @return La ruta donde se ha guardado el archivo
-     * @throws IOException Si ocurre un error durante la escritura del archivo
+     * Stores a multipart file in the specified disk path and returns the absolute path of the file.
+     *
+     * @param multipartFile The multipart file to store.
+     * @return The absolute path of the stored file.
+     * @throws IOException If there is an error while storing the file.
      */
     public String reconstructFile(MultipartFile multipartFile) throws IOException {
-        // Generate a unique file name using a UUID
-        String fileName = UUID.randomUUID().toString() + "." + multipartFile.getOriginalFilename();
-        System.out.println(fileName);
-        // Create a File object with the generated file name in the upload directory
-        File file = new File( "/" + fileName);
+        try {
+            if (multipartFile.isEmpty()) {
+                throw new RuntimeException("Failed to store empty file.");
+            }
+            String filename = RandomStringUtils.randomAlphanumeric(16) +"_"+ multipartFile.getOriginalFilename();
 
-        // Write the contents of the MultipartFile to the File
-        multipartFile.transferTo(file);
+            // Get the disk path from the app configuration
+            Path diskPath = Path.of(appConfig.getDiskPath());
 
-        // Return the absolute path of the uploaded file
-        return file.getAbsolutePath();
+            // Resolve the destination file path using the disk path and the generated filename
+            Path destinationFile = diskPath.resolve(Paths.get(filename)).normalize().toAbsolutePath();
+
+            // Perform a security check to ensure that the destination file is within the disk path
+            if (!destinationFile.getParent().equals(diskPath.toAbsolutePath())) {
+                throw new RuntimeException("Cannot store file outside current directory.");
+            }
+
+            // Copy the input stream of the multipart file to the destination file
+            try (InputStream inputStream = multipartFile.getInputStream()) {
+                Files.copy(inputStream, destinationFile,StandardCopyOption.REPLACE_EXISTING);
+            }
+
+            // Return the absolute path of the destination file as a string
+            return destinationFile.toString();
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to store file.", e);
+        }
     }
+
 
 
     /**
@@ -52,13 +83,13 @@ public class SourceService {
     public Dataset extractData(String filePath) {
         // Extract the extension of the file from the file path
         String extension = filePath.substring(filePath.lastIndexOf(".") + 1);
-        System.out.println(extension);
+        System.out.println(filePath);
 
         Dataset dataset = null;
 
         try {
             // Read the metadata from the file
-            BufferedReader reader = new BufferedReader(new FileReader("C:\\Users\\victo\\Downloads\\addresses.csv"));
+            BufferedReader reader = new BufferedReader(new FileReader(filePath));
             String line;
             Map<String, String> metadata = new HashMap<>();
             while ((line = reader.readLine()) != null) {
@@ -85,7 +116,6 @@ public class SourceService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return dataset;
     }
 
@@ -103,17 +133,6 @@ public class SourceService {
 
         // Return the resulting RDF graph
         return graph;
-    }
-
-    /**
-     * Recibe un objeto Dataset y retorna un objeto Graph que representa los datos del Dataset transformados a RDF.
-     * @param dataset Un objeto Dataset con los datos a transformar
-     * @return Un objeto Graph con los datos transformados a RDF
-     */
-    public Graph readMetadata(Dataset dataset) {
-        // TODO: Implementar la lógica para leer los metadatos del objeto Dataset y construir
-        // un objeto Graph que los represente.
-        return null;
     }
 
     public boolean saveGraphToDatabase(Graph graph) {
