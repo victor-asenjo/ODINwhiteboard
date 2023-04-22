@@ -28,7 +28,8 @@ public class SourceController {
      */
     @PostMapping("/api/addSource")
     public String bootstrap(@RequestParam("projectId") String projectId,
-                            @RequestParam("datasetDescription") String projectDescription,
+                            @RequestParam("datasetName") String datasetName,
+                            @RequestParam("datasetDescription") String datasetDescription,
                             @RequestParam("file") MultipartFile file) throws IOException {
 
         // Validate and authenticate access here
@@ -36,13 +37,11 @@ public class SourceController {
             return "Access denied";
         }
 
-        System.out.println(file.getBytes());
-
         // Reconstruct file from Multipart file
         String filePath = sourceService.reconstructFile(file);
 
         // Extract data from datasource file
-        Dataset datasource = sourceService.extractData(filePath);
+        Dataset datasource = sourceService.extractData(filePath, datasetName, datasetDescription);
 
         // Transform datasource into graph
         Graph graph = sourceService.transformToGraph(datasource);

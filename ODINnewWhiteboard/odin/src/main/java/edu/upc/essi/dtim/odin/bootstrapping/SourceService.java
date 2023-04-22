@@ -15,17 +15,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 
 @Service
 public class SourceService {
@@ -77,45 +73,36 @@ public class SourceService {
 
     /**
      * Recibe una ruta de archivo, lee los metadatos y retorna un objeto Dataset con los datos extraídos del archivo.
-     * @param filePath La ruta del archivo del que se extraerán los datos
+     *
+     * @param filePath    La ruta del archivo del que se extraerán los datos
+     * @param datasetName
+     * @param datasetDescription
      * @return Un objeto Dataset con los datos extraídos del archivo
      */
-    public Dataset extractData(String filePath) {
+    public Dataset extractData(String filePath, String datasetName, String datasetDescription) {
         // Extract the extension of the file from the file path
         String extension = filePath.substring(filePath.lastIndexOf(".") + 1);
+        System.out.println(extension);
         System.out.println(filePath);
 
         Dataset dataset = null;
 
-        try {
-            // Read the metadata from the file
-            BufferedReader reader = new BufferedReader(new FileReader(filePath));
-            String line;
-            Map<String, String> metadata = new HashMap<>();
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split("=");
-                if (parts.length == 2) {
-                    metadata.put(parts[0].trim(), parts[1].trim());
-                }
-            }
-            reader.close();
+        String id = filePath;
+        String name = datasetName;
+        String description = datasetName;
 
-            // Create a new dataset object with the extracted data
-            if (extension.equals("csv")) {
-                String id = metadata.get("id");
-                String name = metadata.get("name");
-                String delimiter = metadata.get("delimiter");
-                dataset = new CsvDataset(id, name, filePath, delimiter);
-            } else if (extension.equals("json")) {
-                String id = metadata.get("id");
-                String name = metadata.get("name");
-                dataset = new JsonDataset(id, name, filePath);
-            } else {
+        // Create a new dataset object with the extracted data
+        switch (extension.toLowerCase()){
+            case "csv":
+                dataset = new CsvDataset(id, name, description, filePath);
+                break;
+            case "json":
+                dataset = new JsonDataset(id, name, description, filePath);
+                break;
+            default:
                 throw new IllegalArgumentException("Unsupported file format: " + extension);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
+
         return dataset;
     }
 
@@ -129,9 +116,11 @@ public class SourceService {
         if (datasetName == null) datasetName = "DatasetNameIsEmpty";
         // Create a new Graph object to store the resulting RDF graph
         Graph graph = new LocalGraph(new URI(datasetName), new HashSet<>());
-        //graph = dataset.convertToGraph(dataset.getDatasetId(),datasetName, dataset.getPath() );
+        if(dataset != null){
+            graph = dataset.convertToGraph(dataset.getDatasetId(),datasetName, dataset.getPath() );
+        }
 
-        // Return the resulting RDF graph
+        // Return the resulting LocalGraph
         return graph;
     }
 
