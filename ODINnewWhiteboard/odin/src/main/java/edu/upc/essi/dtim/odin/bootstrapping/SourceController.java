@@ -22,13 +22,13 @@ public class SourceController {
     /**
      * Bootstrap a new datasource into the project.
      * @param projectId The ID of the project.
-     * @param metadata Additional metadata about the datasource.
+     * @param projectDescription Additional metadata about the datasource.
      * @param file The Multipart file containing the datasource.
      * @return A success message if the bootstrap was successful, or an error message if it failed.
      */
     @PostMapping("/api/addSource")
     public String bootstrap(@RequestParam("projectId") String projectId,
-                            @RequestParam("metadata") String metadata,
+                            @RequestParam("datasetDescription") String projectDescription,
                             @RequestParam("file") MultipartFile file) throws IOException {
 
         // Validate and authenticate access here
@@ -36,7 +36,7 @@ public class SourceController {
             return "Access denied";
         }
 
-        System.out.println(file);
+        System.out.println(file.getBytes());
 
         // Reconstruct file from Multipart file
         String filePath = sourceService.reconstructFile(file);
@@ -50,13 +50,15 @@ public class SourceController {
         // Save graph into database
         boolean isSaved = sourceService.saveGraphToDatabase(graph);
 
+        String graphId = graph.getName().getURI();
+
         // Add the local graph to the project's list of local graph IDs if it was saved
         if (isSaved) {
-            sourceService.addLocalGraphToProject(projectId, graph.getName().getURI());
+            sourceService.addLocalGraphToProject(projectId, graphId);
         }
 
         // Return success message
-        return graph.getName().getURI();
+        return graphId;
     }
 
     /**
@@ -82,7 +84,8 @@ public class SourceController {
         if (!isAdmin) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User " + username + " does not have access to perform the bootstrapping process.");
         }
-         */
+        */
+
 
         return true;
 

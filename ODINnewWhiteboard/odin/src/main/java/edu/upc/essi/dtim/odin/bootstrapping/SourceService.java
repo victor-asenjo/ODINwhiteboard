@@ -58,7 +58,7 @@ public class SourceService {
 
         try {
             // Read the metadata from the file
-            BufferedReader reader = new BufferedReader(new FileReader(filePath));
+            BufferedReader reader = new BufferedReader(new FileReader("C:\\Users\\victo\\Downloads\\addresses.csv"));
             String line;
             Map<String, String> metadata = new HashMap<>();
             while ((line = reader.readLine()) != null) {
@@ -95,9 +95,11 @@ public class SourceService {
      * @return Un objeto Graph con los datos transformados a RDF
      */
     public Graph transformToGraph(Dataset dataset) throws IOException {
+        String datasetName = dataset.getName();
+        if (datasetName == null) datasetName = "DatasetNameIsEmpty";
         // Create a new Graph object to store the resulting RDF graph
-        Graph graph = new LocalGraph(new URI(dataset.getName()), new HashSet<>());
-        //graph = dataset.convertToGraph(dataset.getDatasetId(),dataset.getName(), dataset.getPath() );
+        Graph graph = new LocalGraph(new URI(datasetName), new HashSet<>());
+        //graph = dataset.convertToGraph(dataset.getDatasetId(),datasetName, dataset.getPath() );
 
         // Return the resulting RDF graph
         return graph;

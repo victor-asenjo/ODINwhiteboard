@@ -9,7 +9,7 @@ public class OdinApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(OdinApplication.class, args);
 		
-		System.out.println("Hello World!");
+		System.out.println("READY PARA RECOGER API REQUESTS");
 	}
 
 }
