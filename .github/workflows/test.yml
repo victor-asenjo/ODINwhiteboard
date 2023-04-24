@@ -31,7 +31,7 @@ jobs:
         run: |
           cd ODINwhiteboard
           cd odin
-          ./gradlew build
+          ./gradlew build --warning-mode all
 
       - name: Run tests with Gradle
         run: |
