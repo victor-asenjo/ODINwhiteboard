@@ -89,7 +89,7 @@ public class SourceService {
 
         String id = filePath;
         String name = datasetName;
-        String description = datasetName;
+        String description = datasetDescription;
 
         // Create a new dataset object with the extracted data
         switch (extension.toLowerCase()){

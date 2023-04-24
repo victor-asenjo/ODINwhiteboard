@@ -78,7 +78,7 @@ class SourceServiceTest {
         // Verify that the dataset object was created correctly
         Assertions.assertNotNull(dataset);
         Assertions.assertTrue(dataset instanceof CsvDataset);
-        //Assertions.assertEquals(filePath, dataset.getPath());
+        Assertions.assertEquals(filePath, dataset.getPath());
         Assertions.assertEquals(datasetName, dataset.getName());
         Assertions.assertEquals(datasetDescription, dataset.getDescription());
     }
@@ -96,8 +96,10 @@ class SourceServiceTest {
         // Verify that the dataset object was created correctly
         Assertions.assertNotNull(dataset);
         Assertions.assertTrue(dataset instanceof JsonDataset);
-        //Assertions.assertEquals(filePath, dataset.getPath());
+        Assertions.assertEquals(filePath, dataset.getPath());
         Assertions.assertEquals(datasetName, dataset.getName());
+        System.out.println(datasetDescription);
+        System.out.println(dataset.getDescription());
         Assertions.assertEquals(datasetDescription, dataset.getDescription());
     }
 
