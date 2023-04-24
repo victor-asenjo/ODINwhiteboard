@@ -7,13 +7,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+
       - name: Set up JDK
         uses: actions/setup-java@v2
         with:
           java-version: '11'
           distribution: 'adopt'
-      - name: Changing to work directory
-        run: cd ODINwhiteboard
+
       - name: Cache Gradle dependencies
         uses: actions/cache@v2
         with:
@@ -21,10 +21,14 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
 
       - name: Build with Gradle
-        run: ./gradlew build
+        run: |
+          cd ODINwhiteboard
+          ./gradlew build
 
       - name: Run tests with Gradle
-        run: ./gradlew test
+        run: |
+          cd ODINwhiteboard
+          ./gradlew test
 
   analyze:
     runs-on: ubuntu-latest
