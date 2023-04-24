@@ -28,9 +28,9 @@ class SourceServiceTest {
     @Mock
     private GraphStoreInterface graphStore;
 
-    private String csvTestPath = "C:\\Users\\victo\\Documents\\GitHub\\ODINwhiteboard\\ODINnewWhiteboard\\odin\\src\\test\\resources\\csvTestFile.csv";
-    private String jsonTestPath = "C:\\Users\\victo\\Documents\\GitHub\\ODINwhiteboard\\ODINnewWhiteboard\\odin\\src\\test\\resources\\csvTestFile.json";
-    private String txtTestPath = "C:\\Users\\victo\\Documents\\GitHub\\ODINwhiteboard\\ODINnewWhiteboard\\odin\\src\\test\\resources\\test.txt";
+    private String csvTestPath = "C:\\Users\\victo\\Documents\\GitHub\\ODINwhiteboard\\ODINwhiteboard\\odin\\src\\test\\resources\\csvTestFile.csv";
+    private String jsonTestPath = "C:\\Users\\victo\\Documents\\GitHub\\ODINwhiteboard\\ODINwhiteboard\\odin\\src\\test\\resources\\csvTestFile.json";
+    private String txtTestPath = "C:\\Users\\victo\\Documents\\GitHub\\ODINwhiteboard\\ODINwhiteboard\\odin\\src\\test\\resources\\test.txt";
 
 
     @InjectMocks
@@ -76,7 +76,7 @@ class SourceServiceTest {
     @Test
     void testExtractData_csv() {
         // Prepare the input data
-        String filePath = "ODINnewWhiteboard/odin/src/test/resources/csvTestFile.csv";
+        String filePath = csvTestPath;
         String datasetName = "test csv dataset";
         String datasetDescription = "test csv description";
 
@@ -94,7 +94,7 @@ class SourceServiceTest {
     @Test
     void testExtractData_json() {
         // Prepare the input data
-        String filePath = "ODINnewWhiteboard/odin/src/test/resources/jsonTestFile.json";
+        String filePath = jsonTestPath;
         String datasetName = "test json dataset";
         String datasetDescription = "test json description";
 
