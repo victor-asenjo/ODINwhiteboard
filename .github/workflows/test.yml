@@ -44,11 +44,34 @@ jobs:
   analyze:
     runs-on: ubuntu-latest
     needs: test
+    ############################################
+    # Grant status permission for MULTI_STATUS #
+    ############################################
+    permissions:
+      contents: read
+      packages: read
+      statuses: write
+
+    ##################
+    # Load all steps #
+    ##################
     steps:
-      - name: Super-Linter Installation
-        uses: github/super-linter@v5.0.0
+      ##########################
+      # Checkout the code base #
+      ##########################
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        with:
+          # Full git history is needed to get a proper
+          # list of changed files within `super-linter`
+          fetch-depth: 0
+
+      ################################
+      # Run Linter against code base #
+      ################################
+      - name: Lint Code Base
+        uses: github/super-linter@v5
         env:
-            VALIDATE_ALL_CODEBASE: false
-            DEFAULT_BRANCH: master
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            working-directory: ../ODINwhiteboard/odin
+          VALIDATE_ALL_CODEBASE: false
+          DEFAULT_BRANCH: master
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
