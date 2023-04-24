@@ -12,6 +12,8 @@ jobs:
         with:
           java-version: '11'
           distribution: 'adopt'
+      - name: Changing to work directory
+        run: cd ODINwhiteboard
       - name: Cache Gradle dependencies
         uses: actions/cache@v2
         with:
