@@ -5,7 +5,6 @@ import edu.upc.essi.dtim.DataSources.dataset.Dataset;
 import edu.upc.essi.dtim.DataSources.dataset.JsonDataset;
 import edu.upc.essi.dtim.Graph.Graph;
 import edu.upc.essi.dtim.Graph.LocalGraph;
-import edu.upc.essi.dtim.odin.NextiaStore.GraphStoreInterface;
 import edu.upc.essi.dtim.odin.config.AppConfig;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -25,19 +24,11 @@ class SourceServiceTest {
     @Mock
     private AppConfig appConfig;
 
-    @Mock
-    private GraphStoreInterface graphStore;
-
-    private String csvTestPath = "..\\ODINwhiteboard\\odin\\src\\test\\resources\\csvTestFile.csv";
-    private String jsonTestPath = "..\\ODINwhiteboard\\odin\\src\\test\\resources\\csvTestFile.json";
-    private String txtTestPath = "..\\ODINwhiteboard\\odin\\src\\test\\resources\\test.txt";
+    private final String jsonTestPath = "..\\ODINwhiteboard\\odin\\src\\test\\resources\\csvTestFile.json";
 
 
     @InjectMocks
     private SourceService sourceService;
-
-    @Captor
-    private ArgumentCaptor<Graph> graphCaptor;
 
     @BeforeEach
     void setUp() {
@@ -78,7 +69,7 @@ class SourceServiceTest {
     @Test
     void testExtractData_csv() {
         // Prepare the input data
-        String filePath = csvTestPath;
+        String filePath = "..\\ODINwhiteboard\\odin\\src\\test\\resources\\csvTestFile.csv";
         String datasetName = "test csv dataset";
         String datasetDescription = "test csv description";
 
@@ -114,8 +105,8 @@ class SourceServiceTest {
     }
 
     @Test
-    public void testTransformToGraphCsv() throws IOException {
-        Dataset csvDataset = new CsvDataset("id", "name", "description", csvTestPath);
+    public void testTransformToGraphCsv() {
+        //Dataset csvDataset = new CsvDataset("id", "name", "description", csvTestPath);
 
         //TODO: check core implementation
         /*
@@ -138,9 +129,10 @@ class SourceServiceTest {
     }
 
     @Test
-    void testTransformToGraph() throws IOException {
+    void testTransformToGraph() {
         // Arrange
-        Dataset dataset = new CsvDataset("id", "name", "description", txtTestPath);
+        //String txtTestPath = "..\\ODINwhiteboard\\odin\\src\\test\\resources\\test.txt";
+        //Dataset dataset = new CsvDataset("id", "name", "description", txtTestPath);
 
         // Act
         /*Exception exception = Assertions.assertThrows(IllegalArgumentException.class, () -> {
@@ -148,7 +140,7 @@ class SourceServiceTest {
         });*/
 
         // Assert
-        String expectedMessage = "Unsupported file format: txt";
+        //String expectedMessage = "Unsupported file format: txt";
         //String actualMessage = exception.getMessage();
         //TODO: pass the test
 //        Assertions.assertTrue(actualMessage.contains(expectedMessage));

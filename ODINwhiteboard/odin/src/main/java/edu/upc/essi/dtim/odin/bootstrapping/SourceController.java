@@ -67,7 +67,7 @@ public class SourceController {
      * @throws ResponseStatusException if the user does not have permission to perform the bootstrapping process
      */
     public boolean validateAccess(String authentication) {
-
+        System.out.println(authentication);
         /*
         // Extract the JWT token from the authentication object
         JwtAuthenticationToken token = (JwtAuthenticationToken) authentication;
