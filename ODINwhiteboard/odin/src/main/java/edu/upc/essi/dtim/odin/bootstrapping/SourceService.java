@@ -27,7 +27,7 @@ import java.util.HashSet;
 @Service
 public class SourceService {
 
-    private AppConfig appConfig;
+    private final AppConfig appConfig;
 
     public SourceService(@Autowired AppConfig appConfig) {
         this.appConfig = appConfig;
@@ -38,9 +38,8 @@ public class SourceService {
      *
      * @param multipartFile The multipart file to store.
      * @return The absolute path of the stored file.
-     * @throws IOException If there is an error while storing the file.
      */
-    public String reconstructFile(MultipartFile multipartFile) throws IOException {
+    public String reconstructFile(MultipartFile multipartFile) {
         try {
             if (multipartFile.isEmpty()) {
                 throw new RuntimeException("Failed to store empty file.");
@@ -64,7 +63,11 @@ public class SourceService {
             }
 
             // Return the absolute path of the destination file as a string
-            return destinationFile.toString();
+            //return destinationFile.toString();
+
+            // Construct a relative path from the disk path and the generated filename
+            Path relativePath = diskPath.relativize(destinationFile);
+            return relativePath.toString();
         } catch (IOException e) {
             throw new RuntimeException("Failed to store file.", e);
         }
@@ -76,8 +79,8 @@ public class SourceService {
      * Recibe una ruta de archivo, lee los metadatos y retorna un objeto Dataset con los datos extraídos del archivo.
      *
      * @param filePath    La ruta del archivo del que se extraerán los datos
-     * @param datasetName
-     * @param datasetDescription
+     * @param datasetName The name of the dataset
+     * @param datasetDescription The description of the dataset
      * @return Un objeto Dataset con los datos extraídos del archivo
      */
     public Dataset extractData(String filePath, String datasetName, String datasetDescription) {
@@ -86,19 +89,15 @@ public class SourceService {
         System.out.println(extension);
         System.out.println(filePath);
 
-        Dataset dataset = null;
-
-        String id = filePath;
-        String name = datasetName;
-        String description = datasetDescription;
+        Dataset dataset;
 
         // Create a new dataset object with the extracted data
         switch (extension.toLowerCase()){
             case "csv":
-                dataset = new CsvDataset(id, name, description, filePath);
+                dataset = new CsvDataset(filePath, datasetName, datasetDescription, filePath);
                 break;
             case "json":
-                dataset = new JsonDataset(id, name, description, filePath);
+                dataset = new JsonDataset(filePath, datasetName, datasetDescription, filePath);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported file format: " + extension);
