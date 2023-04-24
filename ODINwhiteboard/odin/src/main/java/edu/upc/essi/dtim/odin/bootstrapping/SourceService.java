@@ -66,8 +66,8 @@ public class SourceService {
             //return destinationFile.toString();
 
             // Construct a relative path from the disk path and the generated filename
-            Path relativePath = diskPath.relativize(destinationFile);
-            return relativePath.toString();
+            //Path relativePath = diskPath.relativize(destinationFile);
+            return destinationFile.toString();
         } catch (IOException e) {
             throw new RuntimeException("Failed to store file.", e);
         }
