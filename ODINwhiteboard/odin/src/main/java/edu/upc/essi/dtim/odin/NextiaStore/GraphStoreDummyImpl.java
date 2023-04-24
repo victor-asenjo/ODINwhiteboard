@@ -7,6 +7,7 @@ import edu.upc.essi.dtim.Graph.URI;
 import edu.upc.essi.dtim.Queries.Query;
 import edu.upc.essi.dtim.Queries.QueryResult;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class GraphStoreDummyImpl implements GraphStoreInterface{
@@ -50,7 +51,7 @@ public class GraphStoreDummyImpl implements GraphStoreInterface{
      */
     @Override
     public Set<Triple> getAllTriples(Graph graph) {
-        return null;
+        return graph.getTriples();
     }
 
     /**
@@ -60,7 +61,12 @@ public class GraphStoreDummyImpl implements GraphStoreInterface{
      */
     @Override
     public Set<URI> getSubjects(Graph graph) {
-        return null;
+        Set<URI> uris = new HashSet<>();
+        Set<Triple> triples = graph.getTriples();
+        for (Triple triple : triples) {
+            uris.add((URI) triple.getObject());
+        }
+        return uris;
     }
 
     /**
@@ -70,7 +76,12 @@ public class GraphStoreDummyImpl implements GraphStoreInterface{
      */
     @Override
     public Set<URI> getPredicates(Graph graph) {
-        return null;
+        Set<URI> uris = new HashSet<>();
+        Set<Triple> triples = graph.getTriples();
+        for (Triple triple : triples) {
+            uris.add((URI) triple.getObject());
+        }
+        return uris;
     }
 
     /**
@@ -80,7 +91,12 @@ public class GraphStoreDummyImpl implements GraphStoreInterface{
      */
     @Override
     public Set<URI> getObjects(Graph graph) {
-        return null;
+        Set<URI> uris = new HashSet<>();
+        Set<Triple> triples = graph.getTriples();
+        for (Triple triple : triples) {
+            uris.add((URI) triple.getObject());
+        }
+        return uris;
     }
 
     /**
@@ -109,9 +125,7 @@ public class GraphStoreDummyImpl implements GraphStoreInterface{
      * @param name the URI of the graph to delete
      */
     @Override
-    public void deleteGraph(URI name) {
-
-    }
+    public void deleteGraph(URI name) {}
 
     /**
      * Executes the given SPARQL query on the given graph and returns the results.
