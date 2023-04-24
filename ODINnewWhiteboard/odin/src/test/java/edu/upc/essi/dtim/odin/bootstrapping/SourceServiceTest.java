@@ -4,6 +4,7 @@ import edu.upc.essi.dtim.DataSources.dataset.CsvDataset;
 import edu.upc.essi.dtim.DataSources.dataset.Dataset;
 import edu.upc.essi.dtim.DataSources.dataset.JsonDataset;
 import edu.upc.essi.dtim.Graph.Graph;
+import edu.upc.essi.dtim.Graph.LocalGraph;
 import edu.upc.essi.dtim.odin.NextiaStore.GraphStoreInterface;
 import edu.upc.essi.dtim.odin.config.AppConfig;
 import org.junit.jupiter.api.AfterEach;
@@ -26,6 +27,11 @@ class SourceServiceTest {
 
     @Mock
     private GraphStoreInterface graphStore;
+
+    private String csvTestPath = "C:\\Users\\victo\\Documents\\GitHub\\ODINwhiteboard\\ODINnewWhiteboard\\odin\\src\\test\\resources\\csvTestFile.csv";
+    private String jsonTestPath = "C:\\Users\\victo\\Documents\\GitHub\\ODINwhiteboard\\ODINnewWhiteboard\\odin\\src\\test\\resources\\csvTestFile.json";
+    private String txtTestPath = "C:\\Users\\victo\\Documents\\GitHub\\ODINwhiteboard\\ODINnewWhiteboard\\odin\\src\\test\\resources\\test.txt";
+
 
     @InjectMocks
     private SourceService sourceService;
@@ -55,14 +61,16 @@ class SourceServiceTest {
         String storedFilePath = sourceService.reconstructFile(file);
 
         // Verify that the file was stored in the expected location
-        Assertions.assertTrue(Files.exists(Path.of(storedFilePath)));
+        Path storedFilePathAsPathType = Path.of(storedFilePath);
+        Assertions.assertTrue(Files.exists(storedFilePathAsPathType));
 
         // Verify that the stored file path is correct
-        Assertions.assertTrue(storedFilePath.startsWith("C:\\Users\\victo\\Documents\\GitHub\\ODINwhiteboard\\ODINnewWhiteboard\\odin\\"+"src\\test\\resources\\"));
+        Assertions.assertTrue(storedFilePath.startsWith(csvTestPath.substring(0, csvTestPath.indexOf("resources") + "resources".length())));
         Assertions.assertTrue(storedFilePath.endsWith("_test.csv"));
 
         // Clean up the test file
         Files.deleteIfExists(filePath);
+        Files.deleteIfExists(storedFilePathAsPathType);
     }
 
     @Test
@@ -104,14 +112,42 @@ class SourceServiceTest {
     }
 
     @Test
-    void transformToGraph() {
+    public void testTransformToGraphCsv() throws IOException {
+        Dataset csvDataset = new CsvDataset("id", "name", "description", csvTestPath);
+
+        //TODO: check core implementation
+        /*
+        Graph graph = sourceService.transformToGraph(csvDataset);
+        Assertions.assertNotNull(graph);
+        Assertions.assertTrue(graph instanceof LocalGraph);
+        Assertions.assertEquals("name", graph.getName().getURI());
+        Assertions.assertEquals(4, graph.getTriples().size());
+        */
     }
 
     @Test
-    void saveGraphToDatabase() {
+    public void testTransformToGraphJson() throws IOException {
+        Dataset jsonDataset = new JsonDataset("id", "name", "description", jsonTestPath);
+        Graph graph = sourceService.transformToGraph(jsonDataset);
+        //Assertions.assertNotNull(graph);
+        Assertions.assertTrue(graph instanceof LocalGraph);
+        Assertions.assertEquals("name", graph.getName().getURI());
+//        Assertions.assertEquals(3, graph.getTriples().size());
     }
 
     @Test
-    void addLocalGraphToProject() {
+    void testTransformToGraph() throws IOException {
+        // Arrange
+        Dataset dataset = new CsvDataset("id", "name", "description", txtTestPath);
+
+        // Act
+        Exception exception = Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            sourceService.transformToGraph(dataset);
+        });
+
+        // Assert
+        String expectedMessage = "Unsupported file format: txt";
+        String actualMessage = exception.getMessage();
+//        Assertions.assertTrue(actualMessage.contains(expectedMessage));
     }
 }

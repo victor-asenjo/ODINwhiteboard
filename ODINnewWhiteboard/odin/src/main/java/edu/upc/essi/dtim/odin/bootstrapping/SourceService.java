@@ -5,6 +5,7 @@ import edu.upc.essi.dtim.DataSources.dataset.Dataset;
 import edu.upc.essi.dtim.DataSources.dataset.JsonDataset;
 import edu.upc.essi.dtim.Graph.Graph;
 import edu.upc.essi.dtim.Graph.LocalGraph;
+import edu.upc.essi.dtim.Graph.Triple;
 import edu.upc.essi.dtim.Graph.URI;
 import edu.upc.essi.dtim.odin.NextiaStore.GraphStoreFactory;
 import edu.upc.essi.dtim.odin.NextiaStore.GraphStoreInterface;
@@ -114,14 +115,19 @@ public class SourceService {
     public Graph transformToGraph(Dataset dataset) throws IOException {
         String datasetName = dataset.getName();
         if (datasetName == null) datasetName = "DatasetNameIsEmpty";
-        // Create a new Graph object to store the resulting RDF graph
-        Graph graph = new LocalGraph(new URI(datasetName), new HashSet<>());
-        if(dataset != null){
-            graph = dataset.convertToGraph(dataset.getDatasetId(),datasetName, dataset.getPath() );
+        try {
+            // Try to convert the dataset to a graph
+            return dataset.convertToGraph(dataset.getDatasetId(), datasetName, dataset.getPath());
+        } catch (UnsupportedOperationException e) {
+            // If the dataset format is not supported, return an error graph
+            Graph errorGraph = new LocalGraph(new URI(datasetName), new HashSet<>());
+            errorGraph.addTriple(new Triple(
+                    new URI(dataset.getDatasetId()),
+                    new URI("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
+                    new URI("http://example.org/error#UnsupportedDatasetFormat")
+            ));
+            return errorGraph;
         }
-
-        // Return the resulting LocalGraph
-        return graph;
     }
 
     public boolean saveGraphToDatabase(Graph graph) {
