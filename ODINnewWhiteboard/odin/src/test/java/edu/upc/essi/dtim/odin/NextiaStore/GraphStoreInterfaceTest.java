@@ -5,6 +5,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -99,7 +100,8 @@ class GraphStoreInterfaceTest {
     }
 
     private Graph createTestGraph() {
-        Graph testGraph = Graph.createDefaultGraph();
+        Set<Triple> triples = new HashSet<>();
+        Graph testGraph = new LocalGraph(new URI("testGraph"), triples);
 
         Triple testTriple1 = new Triple(new URI("http://example.com/subject1"),
                 new URI("http://example.com/predicate1"),

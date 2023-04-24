@@ -22,7 +22,7 @@ public class SourceController {
     /**
      * Bootstrap a new datasource into the project.
      * @param projectId The ID of the project.
-     * @param projectDescription Additional metadata about the datasource.
+     * @param datasetDescription Additional metadata about the datasource.
      * @param file The Multipart file containing the datasource.
      * @return A success message if the bootstrap was successful, or an error message if it failed.
      */
