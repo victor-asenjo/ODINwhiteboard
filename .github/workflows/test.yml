@@ -20,6 +20,13 @@ jobs:
           path: ~/ODINwhiteboard/odin/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
 
+      - name: Grant execute permission to gradlew
+        run: |
+          cd ODINwhiteboard
+          cd odin
+          chmod +x ./gradlew
+
+
       - name: Build with Gradle
         run: |
           cd ODINwhiteboard
