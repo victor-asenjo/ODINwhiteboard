@@ -50,10 +50,12 @@ public class SourceService {
             Path diskPath = Path.of(appConfig.getDiskPath());
 
             // Resolve the destination file path using the disk path and the generated filename
-            Path destinationFile = diskPath.resolve(Paths.get(filename)).normalize().toAbsolutePath();
-
+            Path destinationFile = diskPath.resolve(Paths.get(filename));
+            System.out.println(destinationFile);
+            System.out.println(destinationFile.getParent());
+            System.out.println(destinationFile.getParent().equals(diskPath.toAbsolutePath()));
             // Perform a security check to ensure that the destination file is within the disk path
-            if (!destinationFile.getParent().equals(diskPath.toAbsolutePath())) {
+            if (!destinationFile.getParent().equals(diskPath)) {
                 throw new RuntimeException("Cannot store file outside current directory.");
             }
 
