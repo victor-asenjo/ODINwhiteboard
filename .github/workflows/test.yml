@@ -2,7 +2,7 @@ name: Test and Analyze
 
 on: 
   push:
-    branches: [ CI-tests ]
+    branches: [ main ]
 
 jobs:
   analyze:
