@@ -66,7 +66,8 @@ class SourceServiceTest {
         Assertions.assertTrue(Files.exists(storedFilePathAsPathType));
 
         // Verify that the stored file path is correct
-        Assertions.assertTrue(storedFilePath.startsWith("src\\test\\resources"));
+
+        Assertions.assertTrue(storedFilePath.replace("\\", "/").startsWith("src/test/resources"));
         Assertions.assertTrue(storedFilePath.endsWith("_test.csv"));
 
         // Clean up the test file
