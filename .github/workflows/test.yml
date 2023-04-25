@@ -1,4 +1,4 @@
-name: Test and Analyze
+name: Test, Analyze and Generate documentation
 
 on: 
   push:
@@ -42,7 +42,20 @@ jobs:
     #       VALIDATE_GOOGLE_JAVA_FORMAT: true
     #       VALIDATE_JAVA: true
 
-
+  documentation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Generate Javadoc
+        run: |
+          ./gradlew build
+          ./generate_docs.sh
+      - name: Publish documentation
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs
+  
   test:
     runs-on: ubuntu-latest
     steps:
