@@ -16,7 +16,7 @@ jobs:
           chmod +x ./gradlew
           ./gradlew build
           ./gradlew generateDocs
-      - name: Deploy Javadoc site
+      - name: Publish documentation
         run: |
           git add .
           git commit -m "[ci-bot] Auto-generated Javadoc Documentation"
