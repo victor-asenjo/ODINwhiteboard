@@ -13,6 +13,7 @@ jobs:
         run: |
           cd ODINwhiteboard
           cd odin 
+          chmod +x ./gradlew
           ./gradlew build
           ./gradlew generateDocs
       - name: Publish documentation
