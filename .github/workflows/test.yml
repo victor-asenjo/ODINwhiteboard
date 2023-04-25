@@ -24,6 +24,7 @@ jobs:
           java-version: 11
           target-folder: javadoc # url will be https://<username>.github.io/<repo>/javadoc, This can be left as nothing to generate javadocs in the root folder.
           project: gradle # or maven
+          custom-command: cd ODINwhiteboard/odin || javadoc -d javadoc -sourcepath src/main/java -subpackages .
   
   test:
     runs-on: ubuntu-latest
