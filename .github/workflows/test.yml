@@ -17,10 +17,13 @@ jobs:
           ./gradlew build
           ./gradlew generateDocs
       - name: Publish documentation
-        uses: peaceiris/actions-gh-pages@v3.9.3
+        uses: MathieuSoysal/Javadoc-publisher.yml@v2.4.0
         with:
-          github_token: ${{ secrets.PERSONAL_TOKEN }}
-          publish_dir: ./public
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          javadoc-branch: javadoc
+          java-version: 11
+          target-folder: javadoc # url will be https://<username>.github.io/<repo>/javadoc, This can be left as nothing to generate javadocs in the root folder.
+          project: gradle # or maven
   
   test:
     runs-on: ubuntu-latest
