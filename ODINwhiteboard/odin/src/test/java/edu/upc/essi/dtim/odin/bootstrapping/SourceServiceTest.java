@@ -10,7 +10,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.*;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.mock.web.MockMultipartFile;
 
 import java.io.IOException;
@@ -126,23 +128,5 @@ class SourceServiceTest {
         Assertions.assertTrue(graph instanceof LocalGraph);
         Assertions.assertEquals("name", graph.getName().getURI());
 //        Assertions.assertEquals(3, graph.getTriples().size());
-    }
-
-    @Test
-    void testTransformToGraph() {
-        // Arrange
-        //String txtTestPath = "..\\ODINwhiteboard\\odin\\src\\test\\resources\\test.txt";
-        //Dataset dataset = new CsvDataset("id", "name", "description", txtTestPath);
-
-        // Act
-        /*Exception exception = Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            sourceService.transformToGraph(dataset);
-        });*/
-
-        // Assert
-        //String expectedMessage = "Unsupported file format: txt";
-        //String actualMessage = exception.getMessage();
-        //TODO: pass the test
-//        Assertions.assertTrue(actualMessage.contains(expectedMessage));
     }
 }
