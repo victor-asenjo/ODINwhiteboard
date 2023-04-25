@@ -12,4 +12,7 @@ public class AppConfig {
 
     @Value("${dataStorage.diskPath}")
     public String diskPath;
+
+    @Value("${dataStorage.JenaPath}")
+    private String JenaPath;
 }
