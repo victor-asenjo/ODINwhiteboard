@@ -16,17 +16,11 @@ jobs:
           chmod +x ./gradlew
           ./gradlew build
           ./gradlew generateDocs
-      - name: Publish documentation
-        uses: MathieuSoysal/Javadoc-publisher.yml@v2.4.0
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          javadoc-branch: javadoc
-          java-version: 11
-          target-folder: javadoc # url will be https://<username>.github.io/<repo>/javadoc, This can be left as nothing to generate javadocs in the root folder.
-          project: gradle # or maven
-          custom-command: |
-            cd ODINwhiteboard/odin/
-            javadoc -d ../../build/docs/javadoc -sourcepath src/main/java -subpackages .
+      - name: Deploy Javadoc site
+        run: |
+          git add .
+          git commit -m "[ci-bot] Auto-generated Javadoc Documentation"
+          git push
   
   test:
     runs-on: ubuntu-latest
