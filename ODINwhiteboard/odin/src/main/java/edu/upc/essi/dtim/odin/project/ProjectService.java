@@ -15,7 +15,6 @@ public class ProjectService {
 
         // Retrieve the project with the given ID
         Project project = getProjectById(projectId);
-        project = new Project();
 
         // If the project is not found, throw an exception
         if (project == null) {
@@ -26,6 +25,9 @@ public class ProjectService {
         project.getLocalGraphIDs().add(name);
     }
 
+    //todo: delete this when is implemented the getProjectById
+    private final Project hardcodedProject = new Project();
+
     /**
      * Helper method to retrieve a project by ID.
      *
@@ -35,6 +37,6 @@ public class ProjectService {
     private Project getProjectById(String projectId) {
         // TODO: Implement logic to retrieve the project from the database or some other source
 
-        return null;
+        return hardcodedProject;
     }
 }

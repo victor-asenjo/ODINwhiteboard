@@ -114,6 +114,7 @@ public class SourceService {
      * @return Un objeto Graph con los datos transformados a RDF
      */
     public Graph transformToGraph(Dataset dataset) throws IOException {
+        //todo: call NextiaBS
         String datasetName = dataset.getName();
         if (datasetName == null) datasetName = "DatasetNameIsEmpty";
         try {
