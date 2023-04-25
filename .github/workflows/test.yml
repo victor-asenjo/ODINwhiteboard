@@ -8,16 +8,14 @@ jobs:
   documentation:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Generate Javadoc
+      - uses: actions/checkout@v2         
+      - name: Generate and Publish documentation
         run: |
           cd ODINwhiteboard
           cd odin 
           chmod +x ./gradlew
           ./gradlew build
           ./gradlew generateDocs
-      - name: Publish documentation
-        run: |
           git add .
           git commit -m "[ci-bot] Auto-generated Javadoc Documentation"
           git push
