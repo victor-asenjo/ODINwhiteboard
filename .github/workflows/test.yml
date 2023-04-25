@@ -4,22 +4,7 @@ on:
   push:
     branches: [ main ]
 
-jobs:
-  documentation:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2         
-      - name: Generate and Publish documentation
-        run: |
-          cd ODINwhiteboard
-          cd odin 
-          chmod +x ./gradlew
-          ./gradlew build
-          ./gradlew generateDocs
-          git add .
-          git commit -m "[ci-bot] Auto-generated Javadoc Documentation"
-          git push
-  
+jobs:  
   test:
     runs-on: ubuntu-latest
     steps:
@@ -92,3 +77,20 @@ jobs:
     #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     #       VALIDATE_GOOGLE_JAVA_FORMAT: true
     #       VALIDATE_JAVA: true
+
+    # documentation:
+    #   runs-on: ubuntu-latest
+    #   steps:
+    #     - uses: actions/checkout@v2         
+    #     - name: Generate and Publish documentation
+    #       run: |
+    #         cd ODINwhiteboard
+    #         cd odin 
+    #         chmod +x ./gradlew
+    #         ./gradlew build
+    #         ./gradlew generateDocs
+    #         git config --global user.email "you@example.com"
+    #         git config --global user.name "Your Name"
+    #         git add .
+    #         git commit -m "[ci-bot] Auto-generated Javadoc Documentation"
+    #         git push
