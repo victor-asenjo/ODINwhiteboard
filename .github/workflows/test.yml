@@ -48,8 +48,10 @@ jobs:
       - uses: actions/checkout@v2
       - name: Generate Javadoc
         run: |
+          cd ODINwhiteboard
+          cd odin 
           ./gradlew build
-          ./generate_docs.sh
+          ./gradlew generateDocs
       - name: Publish documentation
         uses: peaceiris/actions-gh-pages@v3
         with:

@@ -42,3 +42,10 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+task generateDocs(type: Javadoc) {
+	source = sourceSets.main.allJava
+	destinationDir = file("${buildDir}/docs")
+	options.links("https://docs.oracle.com/javase/8/docs/api/")
+	failOnError false
+}
