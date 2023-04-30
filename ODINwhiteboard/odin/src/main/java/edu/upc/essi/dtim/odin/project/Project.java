@@ -29,9 +29,8 @@ public class Project {
     private List<String> localGraphIDs;
 
     // Constructor for the Project class
-    public Project(String projectId, String projectName, String projectDescription, String projectPrivacy,
+    public Project(String projectName, String projectDescription, String projectPrivacy,
                    String projectColor, String createdBy, List<String> localGraphIDs) {
-        this.projectId = projectId;
         this.projectName = projectName;
         this.projectDescription = projectDescription;
         this.projectPrivacy = projectPrivacy;
@@ -39,4 +38,6 @@ public class Project {
         this.createdBy = createdBy;
         this.localGraphIDs = localGraphIDs;
     }
+
+    public Project(){}
 }

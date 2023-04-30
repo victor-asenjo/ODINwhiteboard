@@ -27,10 +27,15 @@ import java.util.HashSet;
 @Service
 public class SourceService {
 
+    private ProjectService projectService;
+
     private final AppConfig appConfig;
 
-    public SourceService(@Autowired AppConfig appConfig) {
+    public SourceService(@Autowired AppConfig appConfig,
+                         @Autowired ProjectService projectService
+    ) {
         this.appConfig = appConfig;
+        this.projectService = projectService;
     }
 
     /**
@@ -144,7 +149,6 @@ public class SourceService {
     }
 
     public void addLocalGraphToProject(String projectId, String name) {
-        ProjectService projectService = new ProjectService();
         projectService.addLocalGraphToProject(projectId, name);
     }
 }
