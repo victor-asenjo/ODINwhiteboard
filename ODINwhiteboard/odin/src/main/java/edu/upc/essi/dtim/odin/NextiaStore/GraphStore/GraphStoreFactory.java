@@ -1,4 +1,4 @@
-package edu.upc.essi.dtim.odin.NextiaStore;
+package edu.upc.essi.dtim.odin.NextiaStore.GraphStore;
 
 import edu.upc.essi.dtim.odin.config.AppConfig;
 import org.springframework.beans.factory.annotation.Autowired;

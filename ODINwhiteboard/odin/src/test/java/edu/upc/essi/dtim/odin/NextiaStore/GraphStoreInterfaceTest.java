@@ -4,6 +4,8 @@ import edu.upc.essi.dtim.Graph.Graph;
 import edu.upc.essi.dtim.Graph.LocalGraph;
 import edu.upc.essi.dtim.Graph.Triple;
 import edu.upc.essi.dtim.Graph.URI;
+import edu.upc.essi.dtim.odin.NextiaStore.GraphStore.GraphStoreFactory;
+import edu.upc.essi.dtim.odin.NextiaStore.GraphStore.GraphStoreInterface;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -27,13 +27,17 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
-	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.data:spring-data-jpa:2.2.4.RELEASE'
+	implementation 'org.hibernate:hibernate-entitymanager:5.4.32.Final'
+	implementation 'mysql:mysql-connector-java:8.0.26'
 
 	//implementation name: 'nextiacore-0.0.1-SNAPSHOT-uber', ext: 'jar'
 	implementation fileTree(dir: 'lib', include: ['*.jar'])
