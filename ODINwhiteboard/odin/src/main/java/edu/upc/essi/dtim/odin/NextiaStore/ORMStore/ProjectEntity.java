@@ -1,23 +1,49 @@
 package edu.upc.essi.dtim.odin.NextiaStore.ORMStore;
 
 import edu.upc.essi.dtim.odin.project.Project;
+import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.List;
 
 @Entity
-@Table(name = "Project")
+@Table(name = "projects")
 public class ProjectEntity extends Project {
-
+    // Unique identifier for the project
     @Id
-    private Long project_id;
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
+    @Column(name = "project_id", unique = true, nullable = false)
+    private String projectId;
 
-    public void setProject_id(Long projectId) {
-        this.project_id = projectId;
-    }
+    // Name of the project
+    @Column(name = "project_name")
+    private String projectName;
 
-    public Long getProject_id() {
-        return project_id;
+    // Description of the project
+    @Column(name = "project_description")
+    private String projectDescription;
+
+    // Privacy level of the project (e.g. private, public)
+    @Column(name = "project_privacy")
+    private String projectPrivacy;
+
+    // Color associated with the project (not sure what this is used for)
+    @Column(name = "project_color")
+    private String projectColor;
+
+    // Username of the user who created the project
+    @Column(name = "created_by")
+    private String createdBy;
+
+    // List of local graph IDs associated with the project (not sure what this is used for)
+    @ElementCollection
+    @CollectionTable(name = "local_graph_ids", joinColumns = @JoinColumn(name = "project_id"))
+    @Column(name = "local_graph_id")
+    private List<String> localGraphIDs;
+
+    public ProjectEntity(String projectId, String projectName, String projectDescription, String projectPrivacy, String projectColor, String createdBy, List<String> localGraphIDs) {
+        super(projectId, projectName, projectDescription, projectPrivacy, projectColor, createdBy, localGraphIDs);
     }
 }
+

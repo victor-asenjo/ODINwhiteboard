@@ -1,11 +1,22 @@
 package edu.upc.essi.dtim.odin.project;
 
+import edu.upc.essi.dtim.odin.NextiaStore.ORMStore.ProjectEntity;
+import edu.upc.essi.dtim.odin.NextiaStore.ORMStore.ProjectEntityAdapter;
+import edu.upc.essi.dtim.odin.NextiaStore.ORMStore.ProjectEntityRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ProjectService {
+    private ProjectEntityRepository projectRepository;
+
+    public ProjectService(@Autowired ProjectEntityRepository projectRepository) {
+        this.projectRepository = projectRepository;
+    }
+
     /**
      * Adds a local graph to the specified project.
      *
@@ -27,8 +38,6 @@ public class ProjectService {
         project.getLocalGraphIDs().add(name);
     }
 
-    //todo: delete this when is implemented the getProjectById
-    private final Project hardcodedProject = new Project();
 
     /**
      * Helper method to retrieve a project by ID.
@@ -37,22 +46,31 @@ public class ProjectService {
      * @return the project with the given ID, or null if not found
      */
     private Project getProjectById(String projectId) {
-        // TODO: Implement logic to retrieve the project from the database or some other source
-
-        return hardcodedProject;
+        return null;
     }
 
     public Project createProject(Project project) {
-        return projectRepository.save(project);
+        ProjectEntityAdapter adapter = new ProjectEntityAdapter();
+        ProjectEntity projectEntity = adapter.adapt(project);
+        Project entity = projectRepository.save(projectEntity); // get the ProjectEntity object from somewhere
+
+        return entity;
     }
 
 
     public void saveProject(Project project) {
-        projectRepository.save(project);
+        ProjectEntityAdapter adapter = new ProjectEntityAdapter();
+        ProjectEntity projectEntity = adapter.adapt(project);
+        Project entity = projectRepository.save(projectEntity); // get the ProjectEntity object from somewhere
     }
 
 
     public List<Project> getAllProjects() {
-        return projectRepository.findAll();
+        List<ProjectEntity> projectEntities = projectRepository.findAll();
+        ProjectEntityAdapter adapter = new ProjectEntityAdapter();
+        return projectEntities.stream()
+                .map(adapter::adapt)
+                .collect(Collectors.toList());
     }
 }
+

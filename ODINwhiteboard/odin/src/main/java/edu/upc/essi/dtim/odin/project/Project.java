@@ -2,9 +2,7 @@ package edu.upc.essi.dtim.odin.project;
 
 import lombok.Data;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Data
 public class Project {
@@ -31,17 +29,14 @@ public class Project {
     private List<String> localGraphIDs;
 
     // Constructor for the Project class
-    public Project(){
-        // Generate a unique ID for the project using UUID
-        this.projectId = UUID.randomUUID().toString().replace("-", "");
-
-        // Set the default privacy level to "private"
-        this.projectPrivacy = "private";
-
-        // Set the default project description to an empty string
-        this.projectDescription = "";
-
-        // Initialize the list of localGraphs empty by default
-        this.localGraphIDs = new ArrayList<String>();
+    public Project(String projectId, String projectName, String projectDescription, String projectPrivacy,
+                   String projectColor, String createdBy, List<String> localGraphIDs) {
+        this.projectId = projectId;
+        this.projectName = projectName;
+        this.projectDescription = projectDescription;
+        this.projectPrivacy = projectPrivacy;
+        this.projectColor = projectColor;
+        this.createdBy = createdBy;
+        this.localGraphIDs = localGraphIDs;
     }
 }
