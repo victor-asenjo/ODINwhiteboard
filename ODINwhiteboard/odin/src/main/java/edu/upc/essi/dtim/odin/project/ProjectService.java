@@ -2,6 +2,8 @@ package edu.upc.essi.dtim.odin.project;
 
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ProjectService {
     /**
@@ -38,5 +40,19 @@ public class ProjectService {
         // TODO: Implement logic to retrieve the project from the database or some other source
 
         return hardcodedProject;
+    }
+
+    public Project createProject(Project project) {
+        return projectRepository.save(project);
+    }
+
+
+    public void saveProject(Project project) {
+        projectRepository.save(project);
+    }
+
+
+    public List<Project> getAllProjects() {
+        return projectRepository.findAll();
     }
 }
