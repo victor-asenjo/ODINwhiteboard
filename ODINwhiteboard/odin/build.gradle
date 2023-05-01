@@ -44,6 +44,11 @@ dependencies {
 	// https://mvnrepository.com/artifact/mysql/mysql-connector-java
 	implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.33'
 
+	// https://mvnrepository.com/artifact/com.zaxxer/HikariCP
+	implementation group: 'com.zaxxer', name: 'HikariCP', version: '5.0.1'
+
+
+
 
 	//implementation name: 'nextiacore-0.0.1-SNAPSHOT-uber', ext: 'jar'
 	implementation fileTree(dir: 'lib', include: ['*.jar'])

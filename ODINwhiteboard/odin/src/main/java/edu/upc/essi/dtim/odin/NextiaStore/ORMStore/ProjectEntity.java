@@ -46,7 +46,7 @@ public class ProjectEntity extends Project {
         super();
     }
 
-    public ProjectEntity(String projectName, String projectDescription, String projectPrivacy, String projectColor, String createdBy, List<String> localGraphIDs) {
+    public ProjectEntity(String projectId, String projectName, String projectDescription, String projectPrivacy, String projectColor, String createdBy, List<String> localGraphIDs) {
         super(projectName, projectDescription, projectPrivacy, projectColor, createdBy, localGraphIDs);
         this.projectName = projectName;
         this.projectDescription = projectDescription;

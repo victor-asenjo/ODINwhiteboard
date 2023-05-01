@@ -16,6 +16,7 @@ public class ProjectEntityAdapter {
 
     public ProjectEntity adapt(Project project) {
         ProjectEntity entity = new ProjectEntity(
+                project.getProjectId(),
                 project.getProjectName(),
                 project.getProjectDescription(),
                 project.getProjectPrivacy(),
