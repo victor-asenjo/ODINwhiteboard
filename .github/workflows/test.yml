@@ -5,6 +5,25 @@ on:
     branches: [ main , SQLactions]
 
 jobs:
+  environmentSetup:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up environment
+        run: |
+          
+
+      - name: Create credential.properties file
+        env:
+          USERNAME: ${{ secrets.USERNAME }}
+          PASSWORD: ${{ secrets.PASSWORD }}
+        run: |
+          pwd 
+          ls
+          
   sql:
     runs-on: ubuntu-latest
     steps:
