@@ -28,7 +28,20 @@ public class Project {
     // List of local graph IDs associated with the project (not sure what this is used for)
     private List<String> localGraphIDs;
 
-    // Constructor for the Project class
+
+    // Constructor for the Project class with id
+    public Project(String projectId, String projectName, String projectDescription, String projectPrivacy,
+                   String projectColor, String createdBy, List<String> localGraphIDs) {
+        this.projectId=projectId;
+        this.projectName = projectName;
+        this.projectDescription = projectDescription;
+        this.projectPrivacy = projectPrivacy;
+        this.projectColor = projectColor;
+        this.createdBy = createdBy;
+        this.localGraphIDs = localGraphIDs;
+    }
+
+    // Constructor for the Project class without id
     public Project(String projectName, String projectDescription, String projectPrivacy,
                    String projectColor, String createdBy, List<String> localGraphIDs) {
         this.projectName = projectName;
