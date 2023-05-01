@@ -33,4 +33,15 @@ public class ProjectController {
     {
         return projectService.deleteAllProjects();
     }
+
+    @GetMapping("/projects/{projectId}")
+    public ResponseEntity<Project> getProjectById(@PathVariable String projectId) {
+        Project project = projectService.findById(projectId);
+        if (project != null) {
+            return ResponseEntity.ok(project);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 }

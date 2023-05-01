@@ -10,7 +10,9 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProjectService {
@@ -76,9 +78,16 @@ public class ProjectService {
 
     public List<Project> getAllProjects() {
         List<ProjectEntity> projectEntities = projectRepository.findAll();
-        ProjectEntityAdapter adapter = new ProjectEntityAdapter();
         System.out.println(projectEntities);
-        return null;
+
+        ProjectEntityAdapter adapter = new ProjectEntityAdapter();
+        List<Project> projects = new ArrayList<>();
+        for (ProjectEntity projectEntity : projectEntities) {
+            Project project = adapter.adapt(projectEntity);
+            projects.add(project);
+        }
+
+        return projects;
     }
 
     public boolean deleteAllProjects() {
@@ -88,6 +97,25 @@ public class ProjectService {
         int rowsDeleted = query.executeUpdate();
         entityManager.getTransaction().commit();
         return rowsDeleted == 0;
+    }
+
+    public Project findById(String projectId) {
+        Optional<ProjectEntity> projectEntityOptional = projectRepository.findById(projectId);
+        if (projectEntityOptional.isPresent()) {
+            ProjectEntity projectEntity = projectEntityOptional.get();
+            return new Project(
+                    projectEntity.getProjectId(),
+                    projectEntity.getProjectName(),
+                    projectEntity.getProjectDescription(),
+                    projectEntity.getProjectPrivacy(),
+                    projectEntity.getProjectColor(),
+                    projectEntity.getCreatedBy(),
+                    projectEntity.getLocalGraphIDs()
+            );
+        } else {
+            // Handle case where project with given id does not exist
+            return null;
+        }
     }
 }
 
