@@ -2,10 +2,7 @@ package edu.upc.essi.dtim.odin.project;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
@@ -20,6 +17,7 @@ public class ProjectController {
 
     @PostMapping("/projects")
     public ResponseEntity<Project> createProject(@RequestBody Project project) {
+        System.out.println("--------------------POST " + project);
         Project createdProject = projectService.createProject(project);
         return ResponseEntity.created(URI.create("/projects/" + createdProject.getProjectId()))
                 .body(createdProject);
@@ -30,5 +28,9 @@ public class ProjectController {
         return projectService.getAllProjects();
     }
 
-
+    @DeleteMapping("/projects/delete")
+    public boolean deleteAllProjects()
+    {
+        return projectService.deleteAllProjects();
+    }
 }

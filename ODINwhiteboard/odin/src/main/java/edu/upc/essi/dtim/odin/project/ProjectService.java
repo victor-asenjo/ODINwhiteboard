@@ -4,17 +4,22 @@ import edu.upc.essi.dtim.odin.NextiaStore.ORMStore.ProjectEntity;
 import edu.upc.essi.dtim.odin.NextiaStore.ORMStore.ProjectEntityAdapter;
 import edu.upc.essi.dtim.odin.NextiaStore.ORMStore.ProjectEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class ProjectService {
+    private final LocalContainerEntityManagerFactoryBean entityManagerFactory;
     private ProjectEntityRepository projectRepository;
 
-    public ProjectService(@Autowired ProjectEntityRepository projectRepository) {
+    public ProjectService(@Autowired ProjectEntityRepository projectRepository, @Qualifier("entityManagerFactory") LocalContainerEntityManagerFactoryBean entityManagerFactory) {
         this.projectRepository = projectRepository;
+        this.entityManagerFactory = entityManagerFactory;
     }
 
     /**
@@ -50,11 +55,13 @@ public class ProjectService {
     }
 
     public Project createProject(Project project) {
+        System.out.println("--------------------CREATING " + project);
         ProjectEntityAdapter adapter = new ProjectEntityAdapter();
         ProjectEntity projectEntity = adapter.adapt(project);
+        System.out.println("--------------------adapted " + projectEntity);
         Project entity = projectRepository.save(projectEntity); // get the ProjectEntity object from somewhere
-
-
+        entity.setProjectId(entity.getProjectId()); // set the ID in the project object
+        System.out.println("--------------------SAVED " + entity);
 
         return entity;
     }
@@ -70,9 +77,17 @@ public class ProjectService {
     public List<Project> getAllProjects() {
         List<ProjectEntity> projectEntities = projectRepository.findAll();
         ProjectEntityAdapter adapter = new ProjectEntityAdapter();
-        return projectEntities.stream()
-                .map(adapter::adapt)
-                .collect(Collectors.toList());
+        System.out.println(projectEntities);
+        return null;
+    }
+
+    public boolean deleteAllProjects() {
+        EntityManager entityManager = entityManagerFactory.getObject().createEntityManager();
+        entityManager.getTransaction().begin();
+        Query query = entityManager.createNativeQuery("DELETE FROM projects");
+        int rowsDeleted = query.executeUpdate();
+        entityManager.getTransaction().commit();
+        return rowsDeleted == 0;
     }
 }
 
