@@ -1,9 +1,28 @@
 package edu.upc.essi.dtim.odin.project;
 
+import edu.upc.essi.dtim.odin.NextiaStore.ORMStore.ProjectEntity;
+import edu.upc.essi.dtim.odin.NextiaStore.ORMStore.ProjectEntityAdapter;
+import edu.upc.essi.dtim.odin.NextiaStore.ORMStore.ProjectEntityRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProjectService {
+    private final LocalContainerEntityManagerFactoryBean entityManagerFactory;
+    private ProjectEntityRepository projectRepository;
+
+    public ProjectService(@Autowired ProjectEntityRepository projectRepository, @Qualifier("entityManagerFactory") LocalContainerEntityManagerFactoryBean entityManagerFactory) {
+        this.projectRepository = projectRepository;
+        this.entityManagerFactory = entityManagerFactory;
+    }
+
     /**
      * Adds a local graph to the specified project.
      *
@@ -14,7 +33,7 @@ public class ProjectService {
     public void addLocalGraphToProject(String projectId, String name) {
 
         // Retrieve the project with the given ID
-        Project project = getProjectById(projectId);
+        Project project = findById(projectId);
 
         // If the project is not found, throw an exception
         if (project == null) {
@@ -23,10 +42,51 @@ public class ProjectService {
 
         // Add the URI of the local graph to the project's list of local graph IDs
         project.getLocalGraphIDs().add(name);
+
+        //saving the updated project
+        saveProject(project);
     }
 
-    //todo: delete this when is implemented the getProjectById
-    private final Project hardcodedProject = new Project();
+    @Transactional
+    public Project createProject(Project project) {
+        System.out.println("--------------------CREATING " + project);
+        ProjectEntityAdapter adapter = new ProjectEntityAdapter();
+        ProjectEntity projectEntity = adapter.adapt(project);
+        System.out.println("--------------------adapted " + projectEntity);
+        Project tmp = projectRepository.saveAndFlush(projectEntity); // get the ProjectEntity object from somewhere
+        return tmp;
+    }
+    @Transactional
+    public void saveProject(Project project) {
+        ProjectEntityAdapter adapter = new ProjectEntityAdapter();
+        ProjectEntity projectEntity = adapter.adapt(project);
+        if(projectRepository.existsById(projectEntity.getProjectId())) projectRepository.deleteById(projectEntity.getProjectId());
+        Project entity = projectRepository.saveAndFlush(projectEntity); // get the ProjectEntity object from somewhere
+    }
+
+    @Transactional(readOnly = true)
+    public List<Project> getAllProjects() {
+        projectRepository.flush();
+        List<ProjectEntity> projectEntities = projectRepository.findAll();
+        System.out.println(projectEntities);
+
+        ProjectEntityAdapter adapter = new ProjectEntityAdapter();
+        List<Project> projects = new ArrayList<>();
+        for (ProjectEntity projectEntity : projectEntities) {
+            Project project = adapter.adapt(projectEntity);
+            projects.add(project);
+        }
+
+        return projects;
+    }
+
+    @Transactional
+    public boolean deleteAllProjects() {
+        projectRepository.deleteAll();
+        projectRepository.flush();
+
+        return projectRepository.findAll().isEmpty();
+    }
 
     /**
      * Helper method to retrieve a project by ID.
@@ -34,9 +94,25 @@ public class ProjectService {
      * @param projectId the ID of the project to retrieve
      * @return the project with the given ID, or null if not found
      */
-    private Project getProjectById(String projectId) {
-        // TODO: Implement logic to retrieve the project from the database or some other source
-
-        return hardcodedProject;
+    @Transactional
+    public Project findById(String projectId) {
+        Optional<ProjectEntity> projectEntityOptional = projectRepository.findById(projectId);
+        if (projectEntityOptional.isPresent()) {
+            ProjectEntity projectEntity = projectEntityOptional.get();
+            Project project = new Project(
+                    projectEntity.getProjectId(),
+                    projectEntity.getProjectName(),
+                    projectEntity.getProjectDescription(),
+                    projectEntity.getProjectPrivacy(),
+                    projectEntity.getProjectColor(),
+                    projectEntity.getCreatedBy(),
+                    projectEntity.getLocalGraphIDs()
+            );
+            return project;
+        } else {
+            // Handle case where project with given id does not exist
+            return null;
+        }
     }
 }
+

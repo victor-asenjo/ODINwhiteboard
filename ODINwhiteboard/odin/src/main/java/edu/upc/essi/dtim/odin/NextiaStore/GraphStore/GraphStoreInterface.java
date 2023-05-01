@@ -1,5 +1,4 @@
-package edu.upc.essi.dtim.odin.NextiaStore;
-
+package edu.upc.essi.dtim.odin.NextiaStore.GraphStore;
 
 import edu.upc.essi.dtim.Graph.Graph;
 import edu.upc.essi.dtim.Graph.Triple;
@@ -7,20 +6,16 @@ import edu.upc.essi.dtim.Graph.URI;
 import edu.upc.essi.dtim.Queries.Query;
 import edu.upc.essi.dtim.Queries.QueryResult;
 
-import java.util.HashSet;
 import java.util.Set;
 
-public class GraphStoreDummyImpl implements GraphStoreInterface{
+public interface GraphStoreInterface {
     /**
      * Retrieves all triples with the given subject.
      *
      * @param subject the URI of the subject to retrieve triples for
      * @param graph the graph to retrieve triples from
      */
-    @Override
-    public Set<Triple> getTriplesWithSubject(URI subject, Graph graph) {
-        return null;
-    }
+    Set<Triple> getTriplesWithSubject(URI subject, Graph graph);
 
     /**
      * Retrieves all triples with the given predicate.
@@ -28,10 +23,7 @@ public class GraphStoreDummyImpl implements GraphStoreInterface{
      * @param predicate the URI of the predicate to retrieve triples for
      * @param graph the graph to retrieve triples from
      */
-    @Override
-    public Set<Triple> getTriplesWithPredicate(URI predicate, Graph graph) {
-        return null;
-    }
+    Set<Triple> getTriplesWithPredicate(URI predicate, Graph graph);
 
     /**
      * Retrieves all triples with the given object.
@@ -39,93 +31,56 @@ public class GraphStoreDummyImpl implements GraphStoreInterface{
      * @param object the URI of the object to retrieve triples for
      * @param graph the graph to retrieve triples from
      */
-    @Override
-    public Set<Triple> getTriplesWithObject(URI object, Graph graph) {
-        return null;
-    }
+    Set<Triple> getTriplesWithObject(URI object, Graph graph);
 
     /**
      * Retrieves all triples in the given graph.
      *
      * @param graph the graph to retrieve triples from
      */
-    @Override
-    public Set<Triple> getAllTriples(Graph graph) {
-        return graph.getTriples();
-    }
+    Set<Triple> getAllTriples(Graph graph);
 
     /**
      * Retrieves all subjects in the given graph.
      *
      * @param graph the graph to retrieve subjects from
      */
-    @Override
-    public Set<URI> getSubjects(Graph graph) {
-        Set<URI> uris = new HashSet<>();
-        Set<Triple> triples = graph.getTriples();
-        for (Triple triple : triples) {
-            uris.add((URI) triple.getObject());
-        }
-        return uris;
-    }
+    Set<URI> getSubjects(Graph graph);
 
     /**
      * Retrieves all predicates in the given graph.
      *
      * @param graph the graph to retrieve predicates from
      */
-    @Override
-    public Set<URI> getPredicates(Graph graph) {
-        Set<URI> uris = new HashSet<>();
-        Set<Triple> triples = graph.getTriples();
-        for (Triple triple : triples) {
-            uris.add((URI) triple.getObject());
-        }
-        return uris;
-    }
+    Set<URI> getPredicates(Graph graph);
 
     /**
      * Retrieves all objects in the given graph.
      *
      * @param graph the graph to retrieve objects from
      */
-    @Override
-    public Set<URI> getObjects(Graph graph) {
-        Set<URI> uris = new HashSet<>();
-        Set<Triple> triples = graph.getTriples();
-        for (Triple triple : triples) {
-            uris.add((URI) triple.getObject());
-        }
-        return uris;
-    }
+    Set<URI> getObjects(Graph graph);
 
     /**
      * Retrieves the graph with the given name.
      *
      * @param name the URI of the graph to retrieve
      */
-    @Override
-    public Graph getGraph(URI name) {
-        return null;
-    }
+    Graph getGraph(URI name);
 
     /**
      * Saves the given graph.
      *
      * @param graph the graph to save
      */
-    @Override
-    public void saveGraph(Graph graph) {
-
-    }
+    void saveGraph(Graph graph);
 
     /**
      * Deletes the graph with the given name.
      *
      * @param name the URI of the graph to delete
      */
-    @Override
-    public void deleteGraph(URI name) {}
+    void deleteGraph(URI name);
 
     /**
      * Executes the given SPARQL query on the given graph and returns the results.
@@ -133,8 +88,5 @@ public class GraphStoreDummyImpl implements GraphStoreInterface{
      * @param query the SPARQL query to execute
      * @param graph the graph to execute the query on
      */
-    @Override
-    public QueryResult query(Query query, Graph graph) {
-        return null;
-    }
+    QueryResult query(Query query, Graph graph);
 }

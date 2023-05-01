@@ -7,8 +7,8 @@ import edu.upc.essi.dtim.Graph.Graph;
 import edu.upc.essi.dtim.Graph.LocalGraph;
 import edu.upc.essi.dtim.Graph.Triple;
 import edu.upc.essi.dtim.Graph.URI;
-import edu.upc.essi.dtim.odin.NextiaStore.GraphStoreFactory;
-import edu.upc.essi.dtim.odin.NextiaStore.GraphStoreInterface;
+import edu.upc.essi.dtim.odin.NextiaStore.GraphStore.GraphStoreFactory;
+import edu.upc.essi.dtim.odin.NextiaStore.GraphStore.GraphStoreInterface;
 import edu.upc.essi.dtim.odin.config.AppConfig;
 import edu.upc.essi.dtim.odin.project.ProjectService;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -23,14 +23,20 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.HashSet;
+import java.util.Set;
 
 @Service
 public class SourceService {
 
+    private ProjectService projectService;
+
     private final AppConfig appConfig;
 
-    public SourceService(@Autowired AppConfig appConfig) {
+    public SourceService(@Autowired AppConfig appConfig,
+                         @Autowired ProjectService projectService
+    ) {
         this.appConfig = appConfig;
+        this.projectService = projectService;
     }
 
     /**
@@ -119,7 +125,16 @@ public class SourceService {
         if (datasetName == null) datasetName = "DatasetNameIsEmpty";
         try {
             // Try to convert the dataset to a graph
-            return dataset.convertToGraph(dataset.getDatasetId(), datasetName, dataset.getPath());
+            //return dataset.convertToGraph(dataset.getDatasetId(), datasetName, dataset.getPath());
+            //todo: here goes the transformation call to our localGraph
+            Set<Triple> triples = new HashSet<>();
+
+            triples.add(new Triple(new URI("cat"), new URI("has"), new URI("tail")));
+            triples.add(new Triple(new URI("dog"), new URI("has"), new URI("paws")));
+            triples.add(new Triple(new URI("bird"), new URI("can"), new URI("fly")));
+            triples.add(new Triple(new URI("fish"), new URI("lives"), new URI("in water")));
+            Graph graph = new LocalGraph(new URI(datasetName), triples);
+            return graph;
         } catch (UnsupportedOperationException e) {
             // If the dataset format is not supported, return an error graph
             Graph errorGraph = new LocalGraph(new URI(datasetName), new HashSet<>());
@@ -144,7 +159,6 @@ public class SourceService {
     }
 
     public void addLocalGraphToProject(String projectId, String name) {
-        ProjectService projectService = new ProjectService();
         projectService.addLocalGraphToProject(projectId, name);
     }
 }
