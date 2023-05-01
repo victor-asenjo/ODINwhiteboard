@@ -4,26 +4,7 @@ on:
   push:
     branches: [ main , SQLactions]
 
-jobs:
-  environmentSetup:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2      
-
-      - name: Create credential.properties file
-        env:
-          USERNAME: ${{ secrets.USERNAME }}
-          PASSWORD: ${{ secrets.PASSWORD }}
-        run: |
-          pwd 
-          ls
-          echo "username=${USERNAME}" > credential.properties
-          echo "password=${PASSWORD}" >> credential.properties
-          mkdir -p ./ODINwhiteboard/odin/src/main/resources/
-          cp credential.properties ./ODINwhiteboard/odin/src/main/resources/
-          
+jobs:          
   sql:
     runs-on: ubuntu-latest
     steps:
@@ -36,6 +17,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Create credential.properties file
+        env:
+          USERNAME: ${{ secrets.USERNAME }}
+          PASSWORD: ${{ secrets.PASSWORD }}
+        run: |
+          pwd 
+          ls
+          echo "username=${USERNAME}" > credential.properties
+          echo "password=${PASSWORD}" >> credential.properties
+          mkdir -p ./ODINwhiteboard/odin/src/main/resources/
+          cp credential.properties ./ODINwhiteboard/odin/src/main/resources/
 
       - name: Set up JDK
         uses: actions/setup-java@v2
