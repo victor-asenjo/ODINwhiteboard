@@ -2,9 +2,17 @@ name: Test, Analyze and Generate documentation
 
 on: 
   push:
-    branches: [ main ]
+    branches: [ main , SQLactions]
 
-jobs:  
+jobs:
+  sql:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install SQL Server
+        uses: Particular/install-sql-server-action@v1.0.0
+        with:
+          connection-string-env-var: SQL_SERVER_CONNECTION_STRING
+          catalog: nservicebus
   test:
     runs-on: ubuntu-latest
     steps:
