@@ -56,16 +56,5 @@ public class ProjectEntity extends Project {
         this.createdBy = createdBy;
         this.localGraphIDs = new ArrayList<>();
     }
-
-    public ProjectEntity(String projectId, String projectName, String projectDescription, String projectPrivacy, String projectColor, String createdBy, List<String> localGraphIDs) {
-        super(projectId, projectName, projectDescription, projectPrivacy, projectColor, createdBy, localGraphIDs);
-        if(projectId!=null) this.projectId = projectId;
-        this.projectName = projectName;
-        this.projectDescription = projectDescription;
-        this.projectPrivacy = projectPrivacy;
-        this.projectColor = projectColor;
-        this.createdBy = createdBy;
-        this.localGraphIDs = new ArrayList<>();
-    }
 }
 

@@ -35,9 +35,15 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
-	implementation 'org.springframework.data:spring-data-jpa:2.2.4.RELEASE'
-	implementation 'org.hibernate:hibernate-entitymanager:5.4.32.Final'
-	implementation 'mysql:mysql-connector-java:8.0.26'
+	// https://mvnrepository.com/artifact/org.springframework.data/spring-data-jpa
+	implementation group: 'org.springframework.data', name: 'spring-data-jpa', version: '2.5.1'
+
+	// https://mvnrepository.com/artifact/org.hibernate/hibernate-entitymanager
+	implementation group: 'org.hibernate', name: 'hibernate-entitymanager', version: '5.6.15.Final'
+
+	// https://mvnrepository.com/artifact/mysql/mysql-connector-java
+	implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.33'
+
 
 	//implementation name: 'nextiacore-0.0.1-SNAPSHOT-uber', ext: 'jar'
 	implementation fileTree(dir: 'lib', include: ['*.jar'])
