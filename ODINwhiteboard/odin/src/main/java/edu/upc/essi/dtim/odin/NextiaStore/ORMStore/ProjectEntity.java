@@ -1,11 +1,15 @@
 package edu.upc.essi.dtim.odin.NextiaStore.ORMStore;
 
 import edu.upc.essi.dtim.odin.project.Project;
+import lombok.Data;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.List;
 
+@Data
 @Entity
 @Table(name = "projects")
 public class ProjectEntity extends Project {
@@ -15,6 +19,7 @@ public class ProjectEntity extends Project {
     @GenericGenerator(name = "uuid", strategy = "uuid2")
     @Column(name = "project_id", unique = true, nullable = false)
     private String projectId;
+
 
     // Name of the project
     @Column(name = "project_name")
@@ -38,6 +43,7 @@ public class ProjectEntity extends Project {
 
     // List of local graph IDs associated with the project (not sure what this is used for)
     @ElementCollection
+    @Fetch(FetchMode.JOIN)
     @CollectionTable(name = "local_graph_ids", joinColumns = @JoinColumn(name = "project_id"))
     @Column(name = "local_graph_id")
     private List<String> localGraphIDs;
@@ -47,7 +53,8 @@ public class ProjectEntity extends Project {
     }
 
     public ProjectEntity(String projectId, String projectName, String projectDescription, String projectPrivacy, String projectColor, String createdBy, List<String> localGraphIDs) {
-        super(projectName, projectDescription, projectPrivacy, projectColor, createdBy, localGraphIDs);
+        super(projectId, projectName, projectDescription, projectPrivacy, projectColor, createdBy, localGraphIDs);
+        if(projectId != null) this.projectId = projectId;
         this.projectName = projectName;
         this.projectDescription = projectDescription;
         this.projectPrivacy = projectPrivacy;

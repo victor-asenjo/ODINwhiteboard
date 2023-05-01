@@ -3,6 +3,7 @@ package edu.upc.essi.dtim.odin.project;
 import lombok.Data;
 
 import java.util.List;
+import java.util.UUID;
 
 @Data
 public class Project {
@@ -30,8 +31,10 @@ public class Project {
 
 
     // Constructor for the Project class with id
-    public Project(String projectName, String projectDescription, String projectPrivacy,
+    public Project(String projectId, String projectName, String projectDescription, String projectPrivacy,
                    String projectColor, String createdBy, List<String> localGraphIDs) {
+        if(projectId == null) this.projectId = UUID.randomUUID().toString();
+        else this.projectId = projectId;
         this.projectName = projectName;
         this.projectDescription = projectDescription;
         this.projectPrivacy = projectPrivacy;

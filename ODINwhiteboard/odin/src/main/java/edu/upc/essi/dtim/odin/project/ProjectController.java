@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 public class ProjectController {
@@ -18,6 +19,7 @@ public class ProjectController {
     @PostMapping("/projects")
     public ResponseEntity<Project> createProject(@RequestBody Project project) {
         System.out.println("--------------------POST " + project);
+        project.setProjectId(UUID.randomUUID().toString());
         Project createdProject = projectService.createProject(project);
         return ResponseEntity.created(URI.create("/projects/" + createdProject.getProjectId()))
                 .body(createdProject);

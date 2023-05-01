@@ -6,11 +6,11 @@ public class ProjectEntityAdapter {
 
     public Project adapt(ProjectEntity entity) {
         Project projectAdapted = new Project(
+                entity.getProjectId(),
                 entity.getProjectName(),
                 entity.getProjectDescription(), entity.getProjectPrivacy(),
                 entity.getProjectColor(), entity.getCreatedBy(),
                 entity.getLocalGraphIDs());
-        projectAdapted.setProjectId(entity.getProjectId());
         return projectAdapted;
     }
 

@@ -23,6 +23,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.HashSet;
+import java.util.Set;
 
 @Service
 public class SourceService {
@@ -124,7 +125,16 @@ public class SourceService {
         if (datasetName == null) datasetName = "DatasetNameIsEmpty";
         try {
             // Try to convert the dataset to a graph
-            return dataset.convertToGraph(dataset.getDatasetId(), datasetName, dataset.getPath());
+            //return dataset.convertToGraph(dataset.getDatasetId(), datasetName, dataset.getPath());
+            //todo: here goes the transformation call to our localGraph
+            Set<Triple> triples = new HashSet<>();
+
+            triples.add(new Triple(new URI("cat"), new URI("has"), new URI("tail")));
+            triples.add(new Triple(new URI("dog"), new URI("has"), new URI("paws")));
+            triples.add(new Triple(new URI("bird"), new URI("can"), new URI("fly")));
+            triples.add(new Triple(new URI("fish"), new URI("lives"), new URI("in water")));
+            Graph graph = new LocalGraph(new URI(datasetName), triples);
+            return graph;
         } catch (UnsupportedOperationException e) {
             // If the dataset format is not supported, return an error graph
             Graph errorGraph = new LocalGraph(new URI(datasetName), new HashSet<>());
