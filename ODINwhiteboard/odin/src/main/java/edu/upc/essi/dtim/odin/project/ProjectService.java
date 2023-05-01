@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -56,6 +57,7 @@ public class ProjectService {
         return null;
     }
 
+    @Transactional
     public Project createProject(Project project) {
         System.out.println("--------------------CREATING " + project);
         ProjectEntityAdapter adapter = new ProjectEntityAdapter();
@@ -75,7 +77,7 @@ public class ProjectService {
         Project entity = projectRepository.save(projectEntity); // get the ProjectEntity object from somewhere
     }
 
-
+    @Transactional
     public List<Project> getAllProjects() {
         List<ProjectEntity> projectEntities = projectRepository.findAll();
         System.out.println(projectEntities);
@@ -90,6 +92,7 @@ public class ProjectService {
         return projects;
     }
 
+    @Transactional
     public boolean deleteAllProjects() {
         EntityManager entityManager = entityManagerFactory.getObject().createEntityManager();
         entityManager.getTransaction().begin();
@@ -99,12 +102,12 @@ public class ProjectService {
         return rowsDeleted == 0;
     }
 
+    @Transactional
     public Project findById(String projectId) {
         Optional<ProjectEntity> projectEntityOptional = projectRepository.findById(projectId);
         if (projectEntityOptional.isPresent()) {
             ProjectEntity projectEntity = projectEntityOptional.get();
-            return new Project(
-                    projectEntity.getProjectId(),
+            Project project = new Project(
                     projectEntity.getProjectName(),
                     projectEntity.getProjectDescription(),
                     projectEntity.getProjectPrivacy(),
@@ -112,6 +115,8 @@ public class ProjectService {
                     projectEntity.getCreatedBy(),
                     projectEntity.getLocalGraphIDs()
             );
+            project.setProjectId(projectEntity.getProjectId());
+            return project;
         } else {
             // Handle case where project with given id does not exist
             return null;

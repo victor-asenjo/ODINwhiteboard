@@ -4,7 +4,6 @@ import edu.upc.essi.dtim.odin.project.Project;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -48,13 +47,13 @@ public class ProjectEntity extends Project {
     }
 
     public ProjectEntity(String projectName, String projectDescription, String projectPrivacy, String projectColor, String createdBy, List<String> localGraphIDs) {
-        super(null, projectName, projectDescription, projectPrivacy, projectColor, createdBy, localGraphIDs);
+        super(projectName, projectDescription, projectPrivacy, projectColor, createdBy, localGraphIDs);
         this.projectName = projectName;
         this.projectDescription = projectDescription;
         this.projectPrivacy = projectPrivacy;
         this.projectColor = projectColor;
         this.createdBy = createdBy;
-        this.localGraphIDs = new ArrayList<>();
+        this.localGraphIDs = localGraphIDs;
     }
 }
 

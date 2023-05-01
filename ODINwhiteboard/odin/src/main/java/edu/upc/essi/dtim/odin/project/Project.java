@@ -30,7 +30,7 @@ public class Project {
 
 
     // Constructor for the Project class with id
-    public Project(String projectId, String projectName, String projectDescription, String projectPrivacy,
+    public Project(String projectName, String projectDescription, String projectPrivacy,
                    String projectColor, String createdBy, List<String> localGraphIDs) {
         this.projectName = projectName;
         this.projectDescription = projectDescription;
