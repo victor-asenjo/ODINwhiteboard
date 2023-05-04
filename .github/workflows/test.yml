@@ -28,6 +28,12 @@ jobs:
           cd odin
           chmod +x ./gradlew
 
+      - name: Create test file
+        run: |
+          cd ODINwhiteboard
+          cd odin
+          mkdir -p src/test/resources
+          touch src/test/resources/credentials.properties
 
       - name: Build with Gradle
         run: |
