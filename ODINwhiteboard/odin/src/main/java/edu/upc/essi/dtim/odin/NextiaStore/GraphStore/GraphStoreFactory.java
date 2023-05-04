@@ -25,7 +25,7 @@ public class GraphStoreFactory {
                 System.out.println("Creating new instance of GraphStoreFactory");
                 switch (appConfig.getDBTypeProperty()) {
                     case "Jena":
-                        instance = new GraphStoreJenaImpl();
+                        instance = new GraphStoreJenaImpl(appConfig);
                         break;
                     case "Dummy":
                         instance = new GraphStoreDummyImpl();
@@ -36,7 +36,7 @@ public class GraphStoreFactory {
             }
             else {
                 System.out.println("THE APPCONFIG IS NULL SO instance of GraphStoreFactory IS NOT WORKING");
-                instance = new GraphStoreJenaImpl();
+                instance = new GraphStoreJenaImpl(appConfig);
             }
         }
         System.out.println("Returning instance of GraphStoreFactory: "+ instance);

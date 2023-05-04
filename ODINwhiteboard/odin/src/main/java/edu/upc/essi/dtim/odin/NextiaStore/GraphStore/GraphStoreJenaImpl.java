@@ -3,13 +3,23 @@ package edu.upc.essi.dtim.odin.NextiaStore.GraphStore;
 
 import edu.upc.essi.dtim.Graph.Graph;
 import edu.upc.essi.dtim.Graph.URI;
+import edu.upc.essi.dtim.odin.config.AppConfig;
 import org.apache.jena.query.Dataset;
 import org.apache.jena.query.ReadWrite;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.tdb2.TDB2Factory;
+import org.springframework.stereotype.Component;
 
-
+@Component
 public class GraphStoreJenaImpl implements GraphStoreInterface {
+    private final Dataset dataset;
+
+
+    public GraphStoreJenaImpl(AppConfig appConfig) {
+        GraphJenaAdapter adapter = new GraphJenaAdapter();
+        String directory = appConfig.getJenaPath();
+        dataset = TDB2Factory.connectDataset(directory);
+    }
 
     /**
      * Saves the given graph.
@@ -18,33 +28,22 @@ public class GraphStoreJenaImpl implements GraphStoreInterface {
      */
     @Override
     public void saveGraph(Graph graph) {
-        GraphJenaAdapter adapter = new GraphJenaAdapter();
-        Model modelToSave = adapter.adapt(graph);
-
-        // Crear una base de datos TDB en la carpeta "tdb"
-        String directory = ".\\odin\\dbFiles\\jenaFiles\\jenaDB";
-        Dataset dataset = TDB2Factory.connectDataset(directory);
+        Model modelToSave = new GraphJenaAdapter().adapt(graph);
         dataset.begin(ReadWrite.WRITE);
         try {
-            // Perform database operation here
-            // Obtener el modelo del conjunto de modelos
             String modelName = graph.getName().getURI();
             Model model = dataset.getNamedModel(modelName);
-
-            // Agregar el modelo a la base de datos
             if (model.isEmpty()) {
                 model.add(modelToSave);
                 dataset.addNamedModel(modelName, model);
             } else {
                 model.add(modelToSave);
             }
-
             dataset.commit();
         } catch (final Exception ex) {
             dataset.abort();
             throw ex;
         }
-
     }
 
 
@@ -55,17 +54,19 @@ public class GraphStoreJenaImpl implements GraphStoreInterface {
      */
     @Override
     public void deleteGraph(URI name) {
-        // Obtener el modelo asociado al grafo
-        String modelName = name.getURI();
-        //Model model = dataset.getNamedModel(modelName);
-
-        // Verificar si el modelo existe y eliminarlo
-        //if (model != null) {
-          //  dataset.removeNamedModel(modelName);
-        //}
-
-        // Guardar los cambios
-        //dataset.commit();
-        //dataset.end();
+        dataset.begin(ReadWrite.WRITE);
+        try {
+            String modelName = name.toString();
+            if (dataset.containsNamedModel(modelName)) {
+                dataset.removeNamedModel(modelName);
+            } else {
+                throw new IllegalArgumentException("Graph " + name + " not found");
+            }
+            dataset.commit();
+        } catch (final Exception ex) {
+            dataset.abort();
+            throw ex;
+        }
     }
 }
+
