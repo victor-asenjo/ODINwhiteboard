@@ -34,7 +34,9 @@ dependencies {
 	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	
 
+	/////////////////////////////////////// ORM DEPENDENCIES ///////////////////////////////////////
 	// https://mvnrepository.com/artifact/org.springframework.data/spring-data-jpa
 	implementation group: 'org.springframework.data', name: 'spring-data-jpa', version: '2.5.1'
 
@@ -46,10 +48,13 @@ dependencies {
 
 	// https://mvnrepository.com/artifact/com.h2database/h2
 	runtimeOnly group: 'com.h2database', name: 'h2', version: '2.1.214'
+	////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+	////////////////////////////////////////// NextiaCore //////////////////////////////////////////
 	//implementation name: 'nextiacore-0.0.1-SNAPSHOT-uber', ext: 'jar'
 	implementation fileTree(dir: 'lib', include: ['*.jar'])
+	////////////////////////////////////////////////////////////////////////////////////////////////
 }
 
 tasks.named('test') {
