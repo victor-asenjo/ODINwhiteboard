@@ -60,8 +60,17 @@ public class ProjectService {
     public void saveProject(Project project) {
         ProjectEntityAdapter adapter = new ProjectEntityAdapter();
         ProjectEntity projectEntity = adapter.adapt(project);
-        if(projectRepository.existsById(projectEntity.getProjectId())) projectRepository.deleteById(projectEntity.getProjectId());
-        Project entity = projectRepository.saveAndFlush(projectEntity); // get the ProjectEntity object from somewhere
+        if (projectRepository.existsById(projectEntity.getProjectId())) {
+            Optional<ProjectEntity> existingProjectEntity = projectRepository.findById(projectEntity.getProjectId());
+            // update the fields of the existing project entity
+            if(existingProjectEntity.isPresent()){
+                existingProjectEntity.get().setLocalGraphIDs(projectEntity.getLocalGraphIDs());
+                // update any other fields as needed
+                projectRepository.saveAndFlush(existingProjectEntity.get());
+            }
+        } else {
+            projectRepository.saveAndFlush(projectEntity);
+        }
     }
 
     @Transactional(readOnly = true)

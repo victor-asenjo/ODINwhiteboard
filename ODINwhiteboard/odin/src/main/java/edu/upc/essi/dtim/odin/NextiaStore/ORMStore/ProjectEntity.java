@@ -43,6 +43,14 @@ public class ProjectEntity extends Project {
     @Column(name = "created_by")
     private String createdBy;
 
+    public List<String> getLocalGraphIDs() {
+        return localGraphIDs;
+    }
+
+    public void setLocalGraphIDs(List<String> localGraphIDs) {
+        this.localGraphIDs = localGraphIDs;
+    }
+
     // List of local graph IDs associated with the project (not sure what this is used for)
     @ElementCollection
     @Fetch(FetchMode.JOIN)
