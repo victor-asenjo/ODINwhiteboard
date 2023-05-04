@@ -4,45 +4,44 @@ import edu.upc.essi.dtim.Graph.Graph;
 import edu.upc.essi.dtim.Graph.LocalGraph;
 import edu.upc.essi.dtim.Graph.Triple;
 import edu.upc.essi.dtim.Graph.URI;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import edu.upc.essi.dtim.odin.config.AppConfig;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
 import java.util.Set;
 
 class GraphStoreInterfaceTest {
-    private GraphStoreInterface graphStore;
-    private Graph graph;
+    private static GraphStoreJenaImpl graphStore;
+    private static Graph testGraph;
 
-    @BeforeEach
-    void setUp() throws Exception {
-        // Get the instance of GraphStoreInterface from GraphStoreFactory singleton
-        graphStore = GraphStoreFactory.getInstance();
-        graph = createTestGraph();
-    }
+    @BeforeAll
+    static void setUp() {
+        AppConfig appConfig = new AppConfig();
+        graphStore = new GraphStoreJenaImpl(appConfig);
 
-    @AfterEach
-    void tearDown() {
-        // Clean up any resources after each test if needed
+        // create a test graph to save
+        testGraph = createTestGraph();
     }
 
     @Test
-    void getGraph() {
-        URI graphURI = new URI("http://example.com/graph1");
-        //Graph retrievedGraph = graphStore.getGraph(graphURI);
-        //assertNotNull(retrievedGraph);
+    void testSaveGraph() {
+        // save the test graph
+        graphStore.saveGraph(testGraph);
+
+        // retrieve the graph from the database and verify that it matches the original graph
+        //Graph retrievedGraph = graphStore.getGraph(new URI(testGraph.getName().getURI());
+        //Assertions.assertEquals(testGraph, retrievedGraph);
     }
 
-    @Test
-    void saveGraph() {
+    @AfterAll
+    static void tearDown() {
+        // delete the test graph from the database
+        //graphStore.deleteGraph(new URI("http://example.com/test"));
     }
 
-    @Test
-    void deleteGraph() {
-    }
-    
-    private Graph createTestGraph() {
+    private static Graph createTestGraph() {
         Set<Triple> triples = new HashSet<>();
         Graph testGraph = new LocalGraph(new URI("testGraph"), triples);
 

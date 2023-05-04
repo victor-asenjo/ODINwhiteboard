@@ -11,6 +11,9 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableJpaRepositories("edu.upc.essi.dtim.odin.NextiaStore.ORMStore")
 @EnableTransactionManagement
 public class AppConfig {
+    public AppConfig() {
+    }
+
     @Value("${dataStorage.DataBaseType}")
     public String DBTypeProperty;
 

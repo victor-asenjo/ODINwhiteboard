@@ -13,10 +13,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class GraphStoreJenaImpl implements GraphStoreInterface {
     private final Dataset dataset;
+    private final GraphJenaAdapter adapter;
 
 
     public GraphStoreJenaImpl(AppConfig appConfig) {
-        GraphJenaAdapter adapter = new GraphJenaAdapter();
+        this.adapter = new GraphJenaAdapter();
         String directory = appConfig.getJenaPath();
         dataset = TDB2Factory.connectDataset(directory);
     }
@@ -28,7 +29,7 @@ public class GraphStoreJenaImpl implements GraphStoreInterface {
      */
     @Override
     public void saveGraph(Graph graph) {
-        Model modelToSave = new GraphJenaAdapter().adapt(graph);
+        Model modelToSave = adapter.adapt(graph);
         dataset.begin(ReadWrite.WRITE);
         try {
             String modelName = graph.getName().getURI();
@@ -79,12 +80,12 @@ public class GraphStoreJenaImpl implements GraphStoreInterface {
     public Graph getGraph(URI name) {
         dataset.begin(ReadWrite.READ);
         try {
-            String modelName = name.toString();
+            String modelName = name.getURI();
             Model model = dataset.getNamedModel(modelName);
             if (model.isEmpty()) {
                 throw new IllegalArgumentException("Graph " + name + " is empty");
             } else {
-                return new GraphJenaAdapter().adapt(model);
+                return adapter.adapt(model);
             }
         } finally {
             dataset.end();
