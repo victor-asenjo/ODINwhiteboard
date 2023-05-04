@@ -1,3 +1,11 @@
 
 *.csv
 ODINwhiteboard/odin/src/main/resources/credentials.properties
+*.bpt
+*.dat
+*.idn
+*.jrnl
+*.obj
+*.bdf
+*.lock
+*.db
