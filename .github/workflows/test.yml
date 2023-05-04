@@ -34,6 +34,9 @@ jobs:
           cd odin
           mkdir -p src/test/resources
           touch src/test/resources/credentials.properties
+          echo "db.username=${{ secrets.DATABASE_USERNAME }}" >> src/test/resources/credentials.properties
+          echo "db.password=${{ secrets.DATABASE_PASSWORD }}" >> src/test/resources/credentials.properties
+          echo "db.url=${{ secrets.DATABASE_URL }}" >> src/test/resources/credentials.properties
 
       - name: Build with Gradle
         run: |

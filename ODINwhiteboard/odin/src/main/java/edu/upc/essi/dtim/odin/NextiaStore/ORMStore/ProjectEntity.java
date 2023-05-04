@@ -2,6 +2,7 @@ package edu.upc.essi.dtim.odin.NextiaStore.ORMStore;
 
 import edu.upc.essi.dtim.odin.project.Project;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.GenericGenerator;
@@ -10,6 +11,7 @@ import javax.persistence.*;
 import java.util.List;
 
 @Data
+@EqualsAndHashCode(callSuper=false)
 @Entity
 @Table(name = "projects")
 public class ProjectEntity extends Project {
