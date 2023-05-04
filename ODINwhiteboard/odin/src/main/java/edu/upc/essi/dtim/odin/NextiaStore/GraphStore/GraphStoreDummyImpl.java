@@ -24,4 +24,9 @@ public class GraphStoreDummyImpl implements GraphStoreInterface{
     @Override
     public void deleteGraph(URI name) {}
 
+    @Override
+    public Graph getGraph(URI name) {
+        return null;
+    }
+
 }

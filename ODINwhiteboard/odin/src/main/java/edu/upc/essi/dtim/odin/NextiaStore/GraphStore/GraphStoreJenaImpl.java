@@ -68,5 +68,30 @@ public class GraphStoreJenaImpl implements GraphStoreInterface {
             throw ex;
         }
     }
+
+    /**
+     * Retrieves the graph with the given name.
+     *
+     * @param name the URI of the graph to retrieve
+     * @return the retrieved graph
+     */
+    @Override
+    public Graph getGraph(URI name) {
+        dataset.begin(ReadWrite.READ);
+        try {
+            String modelName = name.toString();
+            Model model = dataset.getNamedModel(modelName);
+            if (model.isEmpty()) {
+                throw new IllegalArgumentException("Graph " + name + " is empty");
+            } else {
+                return new GraphJenaAdapter().adapt(model);
+            }
+        } finally {
+            dataset.end();
+        }
+    }
+
+
+
 }
 

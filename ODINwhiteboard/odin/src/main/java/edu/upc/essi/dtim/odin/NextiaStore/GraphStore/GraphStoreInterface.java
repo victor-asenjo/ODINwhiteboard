@@ -17,4 +17,6 @@ public interface GraphStoreInterface {
      * @param name the URI of the graph to delete
      */
     void deleteGraph(URI name);
+
+    Graph getGraph(URI name);
 }
