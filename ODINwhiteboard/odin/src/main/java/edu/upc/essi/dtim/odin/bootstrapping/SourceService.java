@@ -127,13 +127,7 @@ public class SourceService {
             // Try to convert the dataset to a graph
             //return dataset.convertToGraph(dataset.getDatasetId(), datasetName, dataset.getPath());
             //todo: here goes the transformation call to our localGraph
-            Set<Triple> triples = new HashSet<>();
-
-            triples.add(new Triple(new URI("cat"), new URI("has"), new URI("tail")));
-            triples.add(new Triple(new URI("dog"), new URI("has"), new URI("paws")));
-            triples.add(new Triple(new URI("bird"), new URI("can"), new URI("fly")));
-            triples.add(new Triple(new URI("fish"), new URI("lives"), new URI("in water")));
-            Graph graph = new LocalGraph(new URI(datasetName), triples);
+            Graph graph = hardcodedGraph(datasetName);
             return graph;
         } catch (UnsupportedOperationException e) {
             // If the dataset format is not supported, return an error graph
@@ -145,6 +139,39 @@ public class SourceService {
             ));
             return errorGraph;
         }
+    }
+
+    private Graph hardcodedGraph(String graphName) {
+        Set<Triple> triples = new HashSet<>();
+
+        triples.add(new Triple(
+                new URI("http://somewhere/cat"),
+                new URI("http://www.w3.org/2001/vcard-rdf/3.0#TYPE"),
+                new URI("http://www.w3.org/2001/vcard-rdf/3.0#Animal")
+        ));
+        triples.add(new Triple(
+                new URI("http://somewhere/cat"),
+                new URI("http://www.w3.org/2001/vcard-rdf/3.0#FN"),
+                new URI("tail")
+        ));
+        triples.add(new Triple(
+                new URI("http://somewhere/dog"),
+                new URI("http://somewhere/has"),
+                new URI("paws")
+        ));
+        triples.add(new Triple(
+                new URI("http://somewhere/bird"),
+                new URI("http://somewhere/can"),
+                new URI("fly")
+        ));
+        triples.add(new Triple(
+                new URI("http://somewhere/fish"),
+                new URI("http://somewhere/lives"),
+                new URI("in water")
+        ));
+
+        Graph graph = new LocalGraph(new URI(graphName), triples);
+        return graph;
     }
 
     public boolean saveGraphToDatabase(Graph graph) {
