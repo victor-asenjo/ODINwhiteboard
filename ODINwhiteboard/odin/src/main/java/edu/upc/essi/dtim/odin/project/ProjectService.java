@@ -9,7 +9,6 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -61,7 +60,7 @@ public class ProjectService {
         ProjectEntityAdapter adapter = new ProjectEntityAdapter();
         ProjectEntity projectEntity = adapter.adapt(project);
         if (projectRepository.existsById(projectEntity.getProjectId())) {
-            Optional<ProjectEntity> existingProjectEntity = projectRepository.findById(projectEntity.getProjectId());
+            Optional<Project> existingProjectEntity = projectRepository.findById(projectEntity.getProjectId());
             // update the fields of the existing project entity
             if(existingProjectEntity.isPresent()){
                 existingProjectEntity.get().setLocalGraphIDs(projectEntity.getLocalGraphIDs());
@@ -76,15 +75,9 @@ public class ProjectService {
     @Transactional(readOnly = true)
     public List<Project> getAllProjects() {
         projectRepository.flush();
-        List<ProjectEntity> projectEntities = projectRepository.findAll();
-        System.out.println(projectEntities);
+        List<Project> projects = projectRepository.findAll();
+        System.out.println(projects);
 
-        ProjectEntityAdapter adapter = new ProjectEntityAdapter();
-        List<Project> projects = new ArrayList<>();
-        for (ProjectEntity projectEntity : projectEntities) {
-            Project project = adapter.adapt(projectEntity);
-            projects.add(project);
-        }
 
         return projects;
     }
@@ -105,9 +98,9 @@ public class ProjectService {
      */
     @Transactional
     public Project findById(String projectId) {
-        Optional<ProjectEntity> projectEntityOptional = projectRepository.findById(projectId);
+        Optional<Project> projectEntityOptional = projectRepository.findById(projectId);
         if (projectEntityOptional.isPresent()) {
-            ProjectEntity projectEntity = projectEntityOptional.get();
+            Project projectEntity = projectEntityOptional.get();
             Project project = new Project(
                     projectEntity.getProjectId(),
                     projectEntity.getProjectName(),

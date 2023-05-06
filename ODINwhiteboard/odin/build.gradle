@@ -43,6 +43,10 @@ dependencies {
 	// https://mvnrepository.com/artifact/org.hibernate/hibernate-entitymanager
 	implementation group: 'org.hibernate', name: 'hibernate-entitymanager', version: '5.6.15.Final'
 
+	// https://mvnrepository.com/artifact/org.hibernate/hibernate-core
+	implementation group: 'org.hibernate', name: 'hibernate-core', version: '6.2.2.Final', ext: 'pom'
+
+
 	// https://mvnrepository.com/artifact/com.zaxxer/HikariCP
 	implementation group: 'com.zaxxer', name: 'HikariCP', version: '5.0.1'
 
