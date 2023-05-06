@@ -9,7 +9,7 @@
         <property name="dialect">org.hibernate.dialect.H2Dialect</property>
         <property name="hibernate.show_sql">true</property>
 
-        <mapping resource="edu/upc/essi/dtim/odin/NextiaStore/ORMStore/Project.hbm.xml"/>
+        <mapping resource="META-INF/Project.orm.xml"/>
 
     </session-factory>
 </hibernate-configuration>

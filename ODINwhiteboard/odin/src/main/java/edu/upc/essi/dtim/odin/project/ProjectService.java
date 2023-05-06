@@ -1,25 +1,20 @@
 package edu.upc.essi.dtim.odin.project;
 
-import edu.upc.essi.dtim.odin.NextiaStore.ORMStore.ProjectEntity;
-import edu.upc.essi.dtim.odin.NextiaStore.ORMStore.ProjectEntityAdapter;
-import edu.upc.essi.dtim.odin.NextiaStore.ORMStore.ProjectEntityRepository;
+import edu.upc.essi.dtim.odin.NextiaStore.ORMStore.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManagerFactory;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class ProjectService {
-    private final LocalContainerEntityManagerFactoryBean entityManagerFactory;
-    private ProjectEntityRepository projectRepository;
+    private ProjectRepository projectRepository;
 
-    public ProjectService(@Autowired ProjectEntityRepository projectRepository, @Qualifier("entityManagerFactory") LocalContainerEntityManagerFactoryBean entityManagerFactory) {
+    public ProjectService(@Autowired ProjectRepository projectRepository, @Autowired EntityManagerFactory entityManagerFactory) {
         this.projectRepository = projectRepository;
-        this.entityManagerFactory = entityManagerFactory;
     }
 
     /**
@@ -49,32 +44,27 @@ public class ProjectService {
     @Transactional
     public Project createProject(Project project) {
         System.out.println("--------------------CREATING " + project);
-        ProjectEntityAdapter adapter = new ProjectEntityAdapter();
-        ProjectEntity projectEntity = adapter.adapt(project);
-        System.out.println("--------------------adapted " + projectEntity);
-        Project tmp = projectRepository.saveAndFlush(projectEntity); // get the ProjectEntity object from somewhere
+
+        Project tmp = projectRepository.save(project); // get the ProjectEntity object from somewhere
         return tmp;
     }
     @Transactional
     public void saveProject(Project project) {
-        ProjectEntityAdapter adapter = new ProjectEntityAdapter();
-        ProjectEntity projectEntity = adapter.adapt(project);
-        if (projectRepository.existsById(projectEntity.getProjectId())) {
-            Optional<Project> existingProjectEntity = projectRepository.findById(projectEntity.getProjectId());
+        if (projectRepository.existsById(project.getProjectId())) {
+            Optional<Project> existingProjectEntity = projectRepository.findById(project.getProjectId());
             // update the fields of the existing project entity
-            if(existingProjectEntity.isPresent()){
-                existingProjectEntity.get().setLocalGraphIDs(projectEntity.getLocalGraphIDs());
-                // update any other fields as needed
-                projectRepository.saveAndFlush(existingProjectEntity.get());
-            }
+
+            existingProjectEntity.get().setLocalGraphIDs(project.getLocalGraphIDs());
+            // update any other fields as needed
+            projectRepository.save(existingProjectEntity.get());
+
         } else {
-            projectRepository.saveAndFlush(projectEntity);
+            projectRepository.save(project);
         }
     }
 
     @Transactional(readOnly = true)
     public List<Project> getAllProjects() {
-        projectRepository.flush();
         List<Project> projects = projectRepository.findAll();
         System.out.println(projects);
 
@@ -84,8 +74,8 @@ public class ProjectService {
 
     @Transactional
     public boolean deleteAllProjects() {
-        projectRepository.deleteAll();
-        projectRepository.flush();
+        //projectRepository.deleteAll();
+        //projectRepository.flush();
 
         return projectRepository.findAll().isEmpty();
     }
@@ -99,17 +89,9 @@ public class ProjectService {
     @Transactional
     public Project findById(String projectId) {
         Optional<Project> projectEntityOptional = projectRepository.findById(projectId);
-        if (projectEntityOptional.isPresent()) {
-            Project projectEntity = projectEntityOptional.get();
-            Project project = new Project(
-                    projectEntity.getProjectId(),
-                    projectEntity.getProjectName(),
-                    projectEntity.getProjectDescription(),
-                    projectEntity.getProjectPrivacy(),
-                    projectEntity.getProjectColor(),
-                    projectEntity.getCreatedBy(),
-                    projectEntity.getLocalGraphIDs()
-            );
+        if (true) {
+            Project project = projectEntityOptional.get();
+
             return project;
         } else {
             // Handle case where project with given id does not exist
