@@ -2,7 +2,11 @@ package edu.upc.essi.dtim.odin.bootstrapping;
 
 import edu.upc.essi.dtim.DataSources.dataset.Dataset;
 import edu.upc.essi.dtim.Graph.Graph;
+import edu.upc.essi.dtim.Graph.URI;
+import edu.upc.essi.dtim.odin.NextiaStore.GraphStore.GraphStoreFactory;
+import edu.upc.essi.dtim.odin.NextiaStore.GraphStore.GraphStoreInterface;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -59,6 +63,23 @@ public class SourceController {
         // Return success message
         return graphId;
     }
+
+
+    @GetMapping("/getGraph")
+    public Graph getGraph(@RequestParam("graphId") String graphId) throws IOException {
+        GraphStoreInterface graphStore = null;
+        try {
+            graphStore = GraphStoreFactory.getInstance();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        Graph graph = graphStore.getGraph(new URI(graphId));
+        System.out.println(graph.toString());
+        return graph;
+    }
+
+
+
 
     /**
      * Validates access for the bootstrapping process.
