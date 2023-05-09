@@ -1,11 +1,7 @@
 package edu.upc.essi.dtim.odin.project;
 
-import lombok.Data;
-
 import java.util.List;
-import java.util.UUID;
 
-@Data
 public class Project {
 
     // Unique identifier for the project
@@ -29,19 +25,59 @@ public class Project {
     // List of local graph IDs associated with the project (not sure what this is used for)
     private List<String> localGraphIDs;
 
-
-    // Constructor for the Project class with id
-    public Project(String projectId, String projectName, String projectDescription, String projectPrivacy,
-                   String projectColor, String createdBy, List<String> localGraphIDs) {
-        if(projectId == null) this.projectId = UUID.randomUUID().toString();
-        else this.projectId = projectId;
-        this.projectName = projectName;
-        this.projectDescription = projectDescription;
-        this.projectPrivacy = projectPrivacy;
-        this.projectColor = projectColor;
-        this.createdBy = createdBy;
-        this.localGraphIDs = localGraphIDs;
+    public String getProjectId() {
+        return projectId;
     }
 
-    public Project(){}
+    public void setProjectId(String projectId) {
+        this.projectId = projectId;
+    }
+
+    public String getProjectName() {
+        return projectName;
+    }
+
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
+    }
+
+    public String getProjectDescription() {
+        return projectDescription;
+    }
+
+    public void setProjectDescription(String projectDescription) {
+        this.projectDescription = projectDescription;
+    }
+
+    public String getProjectPrivacy() {
+        return projectPrivacy;
+    }
+
+    public void setProjectPrivacy(String projectPrivacy) {
+        this.projectPrivacy = projectPrivacy;
+    }
+
+    public String getProjectColor() {
+        return projectColor;
+    }
+
+    public void setProjectColor(String projectColor) {
+        this.projectColor = projectColor;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public List<String> getLocalGraphIDs() {
+        return localGraphIDs;
+    }
+
+    public void setLocalGraphIDs(List<String> localGraphIDs) {
+        this.localGraphIDs = localGraphIDs;
+    }
 }

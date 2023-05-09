@@ -1,22 +1,15 @@
 package edu.upc.essi.dtim.odin.project;
 
-import edu.upc.essi.dtim.odin.NextiaStore.ORMStore.ProjectRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import javax.persistence.Query;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ProjectService {
-    private ProjectRepository projectRepository;
-
-    public ProjectService(@Autowired ProjectRepository projectRepository, @Autowired EntityManagerFactory entityManagerFactory) {
-        this.projectRepository = projectRepository;
-    }
-
     /**
      * Adds a local graph to the specified project.
      *
@@ -41,62 +34,109 @@ public class ProjectService {
         saveProject(project);
     }
 
-    @Transactional
-    public Project createProject(Project project) {
-        System.out.println("--------------------CREATING " + project);
-
-        Project tmp = projectRepository.save(project); // get the ProjectEntity object from somewhere
-        return tmp;
-    }
-    @Transactional
-    public void saveProject(Project project) {
-        if (projectRepository.existsById(project.getProjectId())) {
-            Optional<Project> existingProjectEntity = projectRepository.findById(project.getProjectId());
-            // update the fields of the existing project entity
-
-            existingProjectEntity.get().setLocalGraphIDs(project.getLocalGraphIDs());
-            // update any other fields as needed
-            projectRepository.save(existingProjectEntity.get());
-
-        } else {
-            projectRepository.save(project);
-        }
-    }
-
-    @Transactional(readOnly = true)
-    public List<Project> getAllProjects() {
-        List<Project> projects = projectRepository.findAll();
-        System.out.println(projects);
-
-
-        return projects;
-    }
-
-    @Transactional
-    public boolean deleteAllProjects() {
-        //projectRepository.deleteAll();
-        //projectRepository.flush();
-
-        return projectRepository.findAll().isEmpty();
-    }
-
     /**
      * Helper method to retrieve a project by ID.
      *
      * @param projectId the ID of the project to retrieve
      * @return the project with the given ID, or null if not found
      */
-    @Transactional
     public Project findById(String projectId) {
-        Optional<Project> projectEntityOptional = projectRepository.findById(projectId);
-        if (true) {
-            Project project = projectEntityOptional.get();
+        return null;
+    }
 
-            return project;
-        } else {
-            // Handle case where project with given id does not exist
-            return null;
+    public Project saveProject(Project project) {
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("ORMPersistenceUnit");
+        EntityManager em = emf.createEntityManager();
+        Project savedProject = null;
+        try {
+            em.getTransaction().begin();
+            if (project.getProjectId() == null) {
+                // New project, persist it
+                em.persist(project);
+                savedProject = project;
+            } else {
+                // Existing project, merge it
+                savedProject = em.merge(project);
+            }
+            em.getTransaction().commit();
+            System.out.println("Project saved successfully");
+
+        } catch (Exception e) {
+            System.out.println("Error saving project: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            em.close();
         }
+
+        return savedProject;
+    }
+
+
+    public Project getProject(String id) {
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("ORMPersistenceUnit");
+        EntityManager em = emf.createEntityManager();
+        Project project = null;
+        try {
+            project = em.find(Project.class, id);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            em.close();
+        }
+        return project;
+    }
+
+    public List<Project> getAllProjects() {
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("ORMPersistenceUnit");
+        EntityManager em = emf.createEntityManager();
+        List<Project> projects = null;
+        try {
+            Query query = em.createQuery("SELECT p FROM Project p");
+            projects = query.getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            em.close();
+        }
+        return projects;
+    }
+
+    public boolean deleteProject(String id) {
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("ORMPersistenceUnit");
+        EntityManager em = emf.createEntityManager();
+        boolean success = false;
+        try {
+            em.getTransaction().begin();
+            Project project = em.find(Project.class, id);
+            if (project != null) {
+                em.remove(project);
+                success = true;
+            }
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            em.close();
+        }
+        return success;
+    }
+
+    public boolean deleteAllProjects() {
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("ORMPersistenceUnit");
+        EntityManager em = emf.createEntityManager();
+        boolean success = false;
+        try {
+            em.getTransaction().begin();
+            Query query = em.createQuery("DELETE FROM Project");
+            int deletedCount = query.executeUpdate();
+            em.getTransaction().commit();
+            success = deletedCount > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            em.close();
+        }
+        return success;
     }
 }
 
