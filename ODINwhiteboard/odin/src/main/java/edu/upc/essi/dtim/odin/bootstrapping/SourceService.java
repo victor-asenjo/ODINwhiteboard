@@ -1,5 +1,6 @@
 package edu.upc.essi.dtim.odin.bootstrapping;
 
+import edu.upc.essi.dtim.DataSources.Tuple;
 import edu.upc.essi.dtim.DataSources.dataset.CsvDataset;
 import edu.upc.essi.dtim.DataSources.dataset.Dataset;
 import edu.upc.essi.dtim.DataSources.dataset.JsonDataset;
@@ -9,8 +10,8 @@ import edu.upc.essi.dtim.Graph.Triple;
 import edu.upc.essi.dtim.Graph.URI;
 import edu.upc.essi.dtim.odin.NextiaStore.GraphStore.GraphStoreFactory;
 import edu.upc.essi.dtim.odin.NextiaStore.GraphStore.GraphStoreInterface;
-import edu.upc.essi.dtim.odin.NextiaStore.ORMStore.ORMDatasetImplementation;
 import edu.upc.essi.dtim.odin.NextiaStore.ORMStore.ORMStoreInterface;
+import edu.upc.essi.dtim.odin.NextiaStore.ORMStore.ORMTupleImplementation;
 import edu.upc.essi.dtim.odin.config.AppConfig;
 import edu.upc.essi.dtim.odin.project.ProjectService;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -191,8 +192,8 @@ public class SourceService {
         projectService.addLocalGraphToProject(projectId, name);
     }
 
-    public Dataset saveDataset(Dataset dataset) {
-        ORMStoreInterface<Dataset> ormProject = new ORMDatasetImplementation();
+    public Tuple saveDataset(Tuple dataset) {
+        ORMStoreInterface<Tuple> ormProject = new ORMTupleImplementation();
         return ormProject.save(dataset);
     }
 }

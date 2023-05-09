@@ -1,6 +1,6 @@
 package edu.upc.essi.dtim.odin.bootstrapping;
 
-import edu.upc.essi.dtim.DataSources.dataset.CsvDataset;
+import edu.upc.essi.dtim.DataSources.Tuple;
 import edu.upc.essi.dtim.DataSources.dataset.Dataset;
 import edu.upc.essi.dtim.Graph.Graph;
 import edu.upc.essi.dtim.Graph.URI;
@@ -66,12 +66,13 @@ public class SourceController {
     }
 
     @PostMapping("/dataset")
-    public Dataset bootstrap(@RequestParam("datasetId") String datasetId,
-                            @RequestParam("datasetName") String datasetName){
-        Dataset dataset = new CsvDataset(null, datasetName, datasetName, datasetId);
-        System.out.println(dataset.getName());
-
-        return sourceService.saveDataset(dataset);
+    public Tuple savingCoreObject(@RequestParam("tupleId") String datasetId,
+                                  @RequestParam("tupleName") String tupleName,
+                                  @RequestParam("tupleDescription") String tupleDescription){
+        Tuple tuple = new Tuple();
+        tuple.setTupleName(tupleName);
+        tuple.setTupleDescription(tupleDescription);
+        return sourceService.saveDataset(tuple);
     }
 
 

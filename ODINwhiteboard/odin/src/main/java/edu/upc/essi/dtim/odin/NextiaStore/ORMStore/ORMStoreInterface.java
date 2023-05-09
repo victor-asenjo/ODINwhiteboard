@@ -6,7 +6,7 @@ public interface ORMStoreInterface<T> {
 
     T findById(String id);
 
-    T save(T project);
+    T save(T object);
 
     List<T> getAll();
 

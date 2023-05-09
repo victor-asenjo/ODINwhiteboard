@@ -31,19 +31,19 @@ public class ORMProjectImplementation implements ORMStoreInterface<Project>{
     }
 
     @Override
-    public Project save(Project project) {
+    public Project save(Project object) {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("ORMPersistenceUnit");
         EntityManager em = emf.createEntityManager();
         Project savedProject = null;
         try {
             em.getTransaction().begin();
-            if (project.getProjectId() == null) {
+            if (object.getProjectId() == null) {
                 // New project, persist it
-                em.persist(project);
-                savedProject = project;
+                em.persist(object);
+                savedProject = object;
             } else {
                 // Existing project, merge it
-                savedProject = em.merge(project);
+                savedProject = em.merge(object);
             }
             em.getTransaction().commit();
             System.out.println("Project saved successfully");

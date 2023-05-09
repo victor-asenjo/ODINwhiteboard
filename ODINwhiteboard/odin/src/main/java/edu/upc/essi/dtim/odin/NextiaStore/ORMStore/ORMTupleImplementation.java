@@ -1,49 +1,49 @@
 package edu.upc.essi.dtim.odin.NextiaStore.ORMStore;
 
-import edu.upc.essi.dtim.DataSources.dataset.Dataset;
+import edu.upc.essi.dtim.DataSources.Tuple;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import java.util.List;
 
-public class ORMDatasetImplementation implements ORMStoreInterface<Dataset>{
+public class ORMTupleImplementation implements ORMStoreInterface<Tuple>{
 
     @Override
-    public Dataset findById(String id) {
+    public Tuple findById(String id) {
         return null;
     }
 
     @Override
-    public Dataset save(Dataset object) {
+    public Tuple save(Tuple object) {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("ORMPersistenceUnit");
         EntityManager em = emf.createEntityManager();
-        Dataset savedDataset = null;
+        Tuple savedTuple = null;
         try {
             em.getTransaction().begin();
-            if (object.getDatasetId() == null) {
+            if (object.getTupleId() == null) {
                 // New project, persist it
                 em.persist(object);
-                savedDataset = object;
+                savedTuple = object;
             } else {
                 // Existing project, merge it
-                savedDataset = em.merge(object);
+                savedTuple = em.merge(object);
             }
             em.getTransaction().commit();
-            System.out.println("Dataset saved successfully");
+            System.out.println("Tuple saved successfully");
 
         } catch (Exception e) {
-            System.out.println("Error saving dataset: " + e.getMessage());
+            System.out.println("Error saving tuple: " + e.getMessage());
             e.printStackTrace();
         } finally {
             em.close();
         }
 
-        return savedDataset;
+        return savedTuple;
     }
 
     @Override
-    public List<Dataset> getAll() {
+    public List<Tuple> getAll() {
         return null;
     }
 

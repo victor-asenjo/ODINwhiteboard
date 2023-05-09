@@ -33,6 +33,19 @@
         </attributes>
     </entity>
 
-
+    <entity class="edu.upc.essi.dtim.DataSources.Tuple" name="Tuple">
+        <table name="Tuple"/>
+        <attributes>
+            <id name="tupleId">
+                <generated-value strategy="AUTO"/>
+            </id>
+            <basic name="tupleName">
+                <column name="DATASET_NAME"/>
+            </basic>
+            <basic name="tupleDescription">
+                <column name="DATASET_DESCRIPTION" length="5000"/>
+            </basic>
+        </attributes>
+    </entity>
 
 </entity-mappings>
