@@ -9,6 +9,8 @@ import edu.upc.essi.dtim.Graph.Triple;
 import edu.upc.essi.dtim.Graph.URI;
 import edu.upc.essi.dtim.odin.NextiaStore.GraphStore.GraphStoreFactory;
 import edu.upc.essi.dtim.odin.NextiaStore.GraphStore.GraphStoreInterface;
+import edu.upc.essi.dtim.odin.NextiaStore.ORMStore.ORMDatasetImplementation;
+import edu.upc.essi.dtim.odin.NextiaStore.ORMStore.ORMStoreInterface;
 import edu.upc.essi.dtim.odin.config.AppConfig;
 import edu.upc.essi.dtim.odin.project.ProjectService;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -187,6 +189,11 @@ public class SourceService {
 
     public void addLocalGraphToProject(String projectId, String name) {
         projectService.addLocalGraphToProject(projectId, name);
+    }
+
+    public Dataset saveDataset(Dataset dataset) {
+        ORMStoreInterface<Dataset> ormProject = new ORMDatasetImplementation();
+        return ormProject.save(dataset);
     }
 }
 

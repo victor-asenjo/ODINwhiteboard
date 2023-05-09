@@ -9,7 +9,6 @@
         <attributes>
             <id name="projectId">
                 <generated-value strategy="AUTO"/>
-                <column name="PROJECT_ID"/>
             </id>
             <basic name="projectName">
                 <column nullable="false" name="PROJECT_NAME"/>
@@ -30,9 +29,10 @@
                 <collection-table name="PROJECT_LOCAL_GRAPHS_IDS">
                     <join-column name="PROJECT_ID"/>
                 </collection-table>
-                <column name="LOCAL_GRAPH_ID"/>
             </element-collection>
         </attributes>
     </entity>
+
+
 
 </entity-mappings>

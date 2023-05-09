@@ -1,5 +1,6 @@
 package edu.upc.essi.dtim.odin.bootstrapping;
 
+import edu.upc.essi.dtim.DataSources.dataset.CsvDataset;
 import edu.upc.essi.dtim.DataSources.dataset.Dataset;
 import edu.upc.essi.dtim.Graph.Graph;
 import edu.upc.essi.dtim.Graph.URI;
@@ -64,6 +65,15 @@ public class SourceController {
         return graphId;
     }
 
+    @PostMapping("/dataset")
+    public Dataset bootstrap(@RequestParam("datasetId") String datasetId,
+                            @RequestParam("datasetName") String datasetName){
+        Dataset dataset = new CsvDataset(null, datasetName, datasetName, datasetId);
+        System.out.println(dataset.getName());
+
+        return sourceService.saveDataset(dataset);
+    }
+
 
     @GetMapping("/getGraph")
     public Graph getGraph(@RequestParam("graphId") String graphId) throws IOException {
@@ -87,7 +97,7 @@ public class SourceController {
      * @param authentication the authentication object representing the authenticated user
      * @throws ResponseStatusException if the user does not have permission to perform the bootstrapping process
      */
-    public boolean validateAccess(String authentication) {
+    private boolean validateAccess(String authentication) {
         System.out.println(authentication);
         /*
         // Extract the JWT token from the authentication object
