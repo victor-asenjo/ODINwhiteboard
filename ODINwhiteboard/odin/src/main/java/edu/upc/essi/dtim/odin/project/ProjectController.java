@@ -21,7 +21,7 @@ public class ProjectController {
     @GetMapping("/project")
     public Project getProject(@RequestParam String id)
     {
-        return projectService.getProject(id);
+        return projectService.findById(id);
     }
 
     @GetMapping("/projects")
@@ -35,7 +35,7 @@ public class ProjectController {
         return projectService.deleteProject(id);
     }
 
-    @DeleteMapping("/deleteProjects")
+    @DeleteMapping("projects/delete")
     public boolean deleteAllProjects(){
         return projectService.deleteAllProjects();
     }
