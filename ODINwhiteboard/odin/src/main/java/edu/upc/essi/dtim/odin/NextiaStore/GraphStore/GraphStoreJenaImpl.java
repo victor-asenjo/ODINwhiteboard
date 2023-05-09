@@ -99,7 +99,7 @@ public class GraphStoreJenaImpl implements GraphStoreInterface {
         }
     }
 
-    public static Graph adapt(Model model) {
+    private Graph adapt(Model model) {
         Set<Triple> triples = new HashSet<>();
         StmtIterator iter = model.listStatements();
         while (iter.hasNext()) {
