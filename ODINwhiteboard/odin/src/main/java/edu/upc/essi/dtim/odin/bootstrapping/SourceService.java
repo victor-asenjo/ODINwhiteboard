@@ -10,6 +10,7 @@ import edu.upc.essi.dtim.Graph.Triple;
 import edu.upc.essi.dtim.Graph.URI;
 import edu.upc.essi.dtim.odin.NextiaStore.GraphStore.GraphStoreFactory;
 import edu.upc.essi.dtim.odin.NextiaStore.GraphStore.GraphStoreInterface;
+import edu.upc.essi.dtim.odin.NextiaStore.ORMStore.ORMDatasetImplementation;
 import edu.upc.essi.dtim.odin.NextiaStore.ORMStore.ORMStoreInterface;
 import edu.upc.essi.dtim.odin.NextiaStore.ORMStore.ORMTupleImplementation;
 import edu.upc.essi.dtim.odin.config.AppConfig;
@@ -192,9 +193,12 @@ public class SourceService {
         projectService.addLocalGraphToProject(projectId, name);
     }
 
-    public Tuple saveDataset(Tuple dataset) {
+    public Tuple saveDataset(Tuple tuple) {
+        Dataset dataset1 = new CsvDataset(null, "Asenjo", "Descripción", "file.csv");
+        ORMStoreInterface<Dataset> ormDataset = new ORMDatasetImplementation();
+        ormDataset.save(dataset1);
         ORMStoreInterface<Tuple> ormProject = new ORMTupleImplementation();
-        return ormProject.save(dataset);
+        return ormProject.save(tuple);
     }
 }
 
