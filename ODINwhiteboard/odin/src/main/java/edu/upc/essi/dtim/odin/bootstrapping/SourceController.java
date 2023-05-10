@@ -101,7 +101,8 @@ public class SourceController {
             throw new RuntimeException(e);
         }
         Graph graph = graphStore.getGraph(new URI(graphId));
-        System.out.println(graph.toString());
+
+
         return graph;
     }
 
