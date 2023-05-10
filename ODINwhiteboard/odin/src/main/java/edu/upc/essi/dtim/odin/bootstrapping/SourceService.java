@@ -27,6 +27,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -193,12 +194,22 @@ public class SourceService {
         projectService.addLocalGraphToProject(projectId, name);
     }
 
-    public Tuple saveDataset(Tuple tuple) {
+    public Tuple saveTuple(Tuple tuple) {
         Dataset dataset1 = new CsvDataset(null, "Asenjo", "Descripción", "file.csv");
         ORMStoreInterface<Dataset> ormDataset = new ORMDatasetImplementation();
         ormDataset.save(dataset1);
         ORMStoreInterface<Tuple> ormProject = new ORMTupleImplementation();
         return ormProject.save(tuple);
+    }
+
+    public Dataset saveDataset(Dataset dataset) {
+        ORMStoreInterface<Dataset> ormDataset = new ORMDatasetImplementation();
+        return ormDataset.save(dataset);
+    }
+
+    public List<Dataset> getDatasets() {
+        ORMStoreInterface<Dataset> ormDataset = new ORMDatasetImplementation();
+        return ormDataset.getAll();
     }
 }
 

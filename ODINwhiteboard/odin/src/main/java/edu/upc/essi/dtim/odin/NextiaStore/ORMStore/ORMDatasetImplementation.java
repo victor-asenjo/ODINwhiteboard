@@ -5,6 +5,7 @@ import edu.upc.essi.dtim.DataSources.dataset.Dataset;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.persistence.Query;
 import java.util.List;
 
 public class ORMDatasetImplementation implements ORMStoreInterface<Dataset>{
@@ -44,7 +45,18 @@ public class ORMDatasetImplementation implements ORMStoreInterface<Dataset>{
 
     @Override
     public List<Dataset> getAll() {
-        return null;
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("ORMPersistenceUnit");
+        EntityManager em = emf.createEntityManager();
+        List<Dataset> datasets = null;
+        try {
+            Query query = em.createQuery("SELECT p FROM CsvDatasets p");
+            datasets = query.getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            em.close();
+        }
+        return datasets;
     }
 
     @Override

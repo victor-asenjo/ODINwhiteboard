@@ -1,6 +1,7 @@
 package edu.upc.essi.dtim.odin.bootstrapping;
 
 import edu.upc.essi.dtim.DataSources.Tuple;
+import edu.upc.essi.dtim.DataSources.dataset.CsvDataset;
 import edu.upc.essi.dtim.DataSources.dataset.Dataset;
 import edu.upc.essi.dtim.Graph.Graph;
 import edu.upc.essi.dtim.Graph.URI;
@@ -15,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 public class SourceController {
@@ -65,14 +67,28 @@ public class SourceController {
         return graphId;
     }
 
-    @PostMapping("/dataset")
-    public Tuple savingCoreObject(@RequestParam("tupleId") String datasetId,
+    @PostMapping("/tuple")
+    public Tuple savingTupleObject(@RequestParam("tupleId") String datasetId,
                                   @RequestParam("tupleName") String tupleName,
                                   @RequestParam("tupleDescription") String tupleDescription){
         Tuple tuple = new Tuple();
         tuple.setTupleName(tupleName);
         tuple.setTupleDescription(tupleDescription);
-        return sourceService.saveDataset(tuple);
+        return sourceService.saveTuple(tuple);
+    }
+
+    @PostMapping("/dataset")
+    public Dataset savingDatasetObject(@RequestParam("tupleId") String datasetId,
+                                  @RequestParam("tupleName") String tupleName,
+                                  @RequestParam("tupleDescription") String tupleDescription){
+        Dataset dataset1 = new CsvDataset(null, "Asenjo", "Descripción", "file.csv");
+        return sourceService.saveDataset(dataset1);
+    }
+
+    @GetMapping("/datasets")
+    public List<Dataset> getAllProjects()
+    {
+        return sourceService.getDatasets();
     }
 
 
