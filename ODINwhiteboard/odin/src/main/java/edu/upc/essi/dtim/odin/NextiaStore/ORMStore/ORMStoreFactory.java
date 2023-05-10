@@ -1,17 +1,15 @@
 package edu.upc.essi.dtim.odin.NextiaStore.ORMStore;
 
+import edu.upc.essi.dtim.DataSources.Tuple;
 import edu.upc.essi.dtim.DataSources.dataset.Dataset;
 import edu.upc.essi.dtim.odin.project.Project;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @Component
 public class ORMStoreFactory {
-    private static ORMStoreInterface instance = null;
     private static ORMStoreInterface<Project> ormProjectInstance = null;
     private static ORMStoreInterface<Dataset> ormDatasetInstance = null;
+    private static ORMStoreInterface<Tuple> ormTupleInstance = null;
 
     private ORMStoreFactory() {
         // Being private prevents the factory from being instantiated from outside the class
@@ -19,22 +17,18 @@ public class ORMStoreFactory {
 
     public static ORMStoreInterface getInstance(Class<?> ormClass) throws Exception {
         System.out.println("Creating new instance of ORMStoreInterface");
-
-        // Mapa que asocia una clase ORM con su implementación correspondiente
-        Map<Class<?>, ORMStoreInterface> instances = new HashMap<>();
-        instances.put(Project.class, new ORMProjectImplementation());
-        instances.put(Dataset.class, new ORMDatasetImplementation());
-
-        // Busca la instancia correspondiente en el mapa
-        ORMStoreInterface instance = instances.get(ormClass);
-
-        // Si no se encontró una instancia, lanza una excepción
-        if (instance == null) {
+        if (ormClass.equals(Project.class)) {
+            if (ormProjectInstance == null) ormProjectInstance = new ORMProjectImplementation();
+            return ormProjectInstance;
+        } else if (ormClass.equals(Dataset.class)) {
+            if (ormDatasetInstance == null) ormDatasetInstance = new ORMDatasetImplementation();
+            return ormDatasetInstance;
+        } else if (ormClass.equals(Tuple.class)) {
+            if (ormTupleInstance == null) ormTupleInstance = new ORMTupleImplementation();
+            return ormDatasetInstance;
+        } else {
             throw new Exception("The class that you are trying to store does not have ORM implementation.");
         }
-
-        System.out.println("Returning instance of ORMStoreInterface: "+ instance);
-        return instance;
     }
 
 }

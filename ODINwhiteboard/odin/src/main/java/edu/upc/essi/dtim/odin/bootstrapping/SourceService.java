@@ -10,9 +10,8 @@ import edu.upc.essi.dtim.Graph.Triple;
 import edu.upc.essi.dtim.Graph.URI;
 import edu.upc.essi.dtim.odin.NextiaStore.GraphStore.GraphStoreFactory;
 import edu.upc.essi.dtim.odin.NextiaStore.GraphStore.GraphStoreInterface;
-import edu.upc.essi.dtim.odin.NextiaStore.ORMStore.ORMDatasetImplementation;
+import edu.upc.essi.dtim.odin.NextiaStore.ORMStore.ORMStoreFactory;
 import edu.upc.essi.dtim.odin.NextiaStore.ORMStore.ORMStoreInterface;
-import edu.upc.essi.dtim.odin.NextiaStore.ORMStore.ORMTupleImplementation;
 import edu.upc.essi.dtim.odin.config.AppConfig;
 import edu.upc.essi.dtim.odin.project.ProjectService;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -195,20 +194,32 @@ public class SourceService {
     }
 
     public Tuple saveTuple(Tuple tuple) {
-        Dataset dataset1 = new CsvDataset(null, "Asenjo", "Descripción", "file.csv");
-        ORMStoreInterface<Dataset> ormDataset = new ORMDatasetImplementation();
-        ormDataset.save(dataset1);
-        ORMStoreInterface<Tuple> ormProject = new ORMTupleImplementation();
+        ORMStoreInterface<Tuple> ormProject = null;
+        try {
+            ormProject = ORMStoreFactory.getInstance(Tuple.class);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         return ormProject.save(tuple);
     }
 
     public Dataset saveDataset(Dataset dataset) {
-        ORMStoreInterface<Dataset> ormDataset = new ORMDatasetImplementation();
+        ORMStoreInterface<Dataset> ormDataset = null;
+        try {
+            ormDataset = ORMStoreFactory.getInstance(Dataset.class);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         return ormDataset.save(dataset);
     }
 
     public List<Dataset> getDatasets() {
-        ORMStoreInterface<Dataset> ormDataset = new ORMDatasetImplementation();
+        ORMStoreInterface<Dataset> ormDataset = null;
+        try {
+            ormDataset = ORMStoreFactory.getInstance(Dataset.class);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         return ormDataset.getAll();
     }
 }

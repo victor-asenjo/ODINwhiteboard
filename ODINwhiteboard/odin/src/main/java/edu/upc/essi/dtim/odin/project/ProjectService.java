@@ -1,6 +1,6 @@
 package edu.upc.essi.dtim.odin.project;
 
-import edu.upc.essi.dtim.odin.NextiaStore.ORMStore.ORMProjectImplementation;
+import edu.upc.essi.dtim.odin.NextiaStore.ORMStore.ORMStoreFactory;
 import edu.upc.essi.dtim.odin.NextiaStore.ORMStore.ORMStoreInterface;
 import org.springframework.stereotype.Service;
 
@@ -33,27 +33,52 @@ public class ProjectService {
     }
 
     public Project saveProject(Project project) {
-        ORMStoreInterface<Project> ormProject = new ORMProjectImplementation();
+        ORMStoreInterface<Project> ormProject = null;
+        try {
+            ormProject = ORMStoreFactory.getInstance(Project.class);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         return ormProject.save(project);
     }
 
     public Project findById(String projectId) {
-        ORMStoreInterface<Project> ormProject = new ORMProjectImplementation();
+        ORMStoreInterface<Project> ormProject = null;
+        try {
+            ormProject = ORMStoreFactory.getInstance(Project.class);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         return ormProject.findById(projectId);
     }
 
     public List<Project> getAllProjects() {
-        ORMStoreInterface<Project> ormProject = new ORMProjectImplementation();
+        ORMStoreInterface<Project> ormProject = null;
+        try {
+            ormProject = ORMStoreFactory.getInstance(Project.class);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         return ormProject.getAll();
     }
 
     public boolean deleteProject(String id) {
-        ORMStoreInterface<Project> ormProject = new ORMProjectImplementation();
+        ORMStoreInterface<Project> ormProject = null;
+        try {
+            ormProject = ORMStoreFactory.getInstance(Project.class);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         return ormProject.deleteOne(id);
     }
 
     public boolean deleteAllProjects() {
-        ORMStoreInterface<Project> ormProject = new ORMProjectImplementation();
+        ORMStoreInterface<Project> ormProject = null;
+        try {
+            ormProject = ORMStoreFactory.getInstance(Project.class);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         return ormProject.deleteAll();
     }
 }
