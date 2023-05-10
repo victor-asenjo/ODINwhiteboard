@@ -6,14 +6,15 @@ import edu.upc.essi.dtim.Graph.LocalGraph;
 import edu.upc.essi.dtim.Graph.Triple;
 import edu.upc.essi.dtim.Graph.URI;
 import edu.upc.essi.dtim.odin.config.AppConfig;
-import org.apache.jena.datatypes.RDFDatatype;
-import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.apache.jena.query.Dataset;
 import org.apache.jena.query.ReadWrite;
 import org.apache.jena.rdf.model.*;
-import org.apache.jena.tdb2.TDB2Factory;
+import org.apache.jena.rdf.model.impl.ModelCom;
+import org.apache.jena.rdf.model.impl.StatementImpl;
+import org.apache.jena.tdb.TDBFactory;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
@@ -24,9 +25,11 @@ public class GraphStoreJenaImpl implements GraphStoreInterface {
     private final Dataset dataset;
 
 
-    public GraphStoreJenaImpl(AppConfig appConfig) {
+    public GraphStoreJenaImpl(@Autowired AppConfig appConfig) {
         String directory = appConfig.getJenaPath();
-        dataset = TDB2Factory.connectDataset(directory);
+
+        //Open TDB Dataset
+        dataset = TDBFactory.createDataset(directory);
     }
 
     /**
@@ -40,14 +43,9 @@ public class GraphStoreJenaImpl implements GraphStoreInterface {
         dataset.begin(ReadWrite.WRITE);
         try {
             String modelName = graph.getName().getURI();
-            Model model = dataset.getNamedModel(modelName);
-            if (model.isEmpty()) {
-                model.add(modelToSave);
-                dataset.addNamedModel(modelName, model);
-            } else {
-                model.add(modelToSave);
-            }
+            dataset.addNamedModel(modelName, modelToSave);
             dataset.commit();
+            System.out.println("Graph "+ modelName +" saved successfully");
         } catch (final Exception ex) {
             dataset.abort();
             throw ex;
@@ -87,58 +85,62 @@ public class GraphStoreJenaImpl implements GraphStoreInterface {
     public Graph getGraph(URI name) {
         dataset.begin(ReadWrite.READ);
         try {
+            //Retrieve Named Graph from Dataset, or use Default Graph.
             String modelName = name.getURI();
             Model model = dataset.getNamedModel(modelName);
             if (model.isEmpty()) {
                 throw new IllegalArgumentException("Graph " + name + " is empty");
             } else {
-                return adapt(model);
+                System.out.println(model);
+                return adapt(model, name);
             }
         } finally {
             dataset.end();
         }
     }
 
-    private Graph adapt(Model model) {
+    private Graph adapt(Model model, URI name) {
         Set<Triple> triples = new HashSet<>();
+
         StmtIterator iter = model.listStatements();
         while (iter.hasNext()) {
-            Statement stmt = iter.nextStatement();
-            Resource subject = stmt.getSubject();
-            Property predicate = stmt.getPredicate();
-            RDFNode object = stmt.getObject();
-            if (object.isLiteral()) {
-                Literal literal = object.asLiteral();
-                RDFDatatype datatype = literal.getDatatype();
-                if (datatype == null) {
-                    datatype = XSDDatatype.XSDstring;
-                }
-                triples.add(new Triple(new URI(subject.getURI()), new URI(predicate.getURI()), new URI(object.asResource().getURI())));
-            } else {
-                triples.add(new Triple(new URI(subject.getURI()), new URI(predicate.getURI()), new URI(object.asResource().getURI())));
-            }
+            Statement stmt = iter.next();
+            triples.add(new Triple(
+                    new URI(stmt.getSubject().getURI()),
+                    new URI(stmt.getPredicate().getURI()),
+                    new URI(stmt.getObject().asResource().getURI())
+            ));
         }
-        return new LocalGraph(new URI(model.getGraph().toString()), triples);
+
+        Graph graph = new LocalGraph(name, triples);
+        for(Triple t : triples){
+            System.out.println();
+            System.out.println(t.getSubject().getURI());
+            System.out.println(t.getPredicate().getURI());
+            System.out.println(t.getObject());
+            System.out.println();
+        }
+        return graph;
     }
 
     private Model adapt(Graph graph) {
-        Set<Triple> triples = graph.getTriples();
         Model model = ModelFactory.createDefaultModel();
-        String graphUri = graph.getName().toString();
-        model.setNsPrefix("", graphUri + "#"); // set default namespace
-        for (Triple triple : triples) {
+        for (Triple triple : graph.getTriples()) {
             Resource subject = ResourceFactory.createResource(triple.getSubject().getURI());
             Property predicate = ResourceFactory.createProperty(triple.getPredicate().getURI());
-            RDFNode object;
-            if (triple.hasLiteralObject()) {
-                object = ResourceFactory.createPlainLiteral(triple.getObject().toString().replace(" ",""));
+            Statement statement = null;
+            if (true /*triple.getObject().isURI()*/) {
+                Resource object = ResourceFactory.createResource(triple.getObject().toString());
+                statement = new StatementImpl(subject, predicate, object);
             } else {
-                object = ResourceFactory.createResource(triple.getObject().toString());
+                org.apache.jena.datatypes.RDFDatatype datatype = null;
+                if (true /*triple.getObject().getLiteralDatatypeURI() != null*/) {
+                    datatype = org.apache.jena.datatypes.TypeMapper.getInstance().getSafeTypeByName(triple.getObject().toString());
+                }
+                statement = new StatementImpl(subject, predicate, (RDFNode) triple.getObject(), (ModelCom) datatype);
             }
-            Statement statement = ResourceFactory.createStatement(subject, predicate, object);
             model.add(statement);
         }
-        System.out.println("++++++++++++++++  "+model.getGraph().getPrefixMapping()+" ---------------------------");
         return model;
     }
 
