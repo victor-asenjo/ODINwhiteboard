@@ -1,28 +1,13 @@
 package edu.upc.essi.dtim.odin.project;
 
-import edu.upc.essi.dtim.odin.NextiaStore.ORMStore.ProjectEntity;
-import edu.upc.essi.dtim.odin.NextiaStore.ORMStore.ProjectEntityAdapter;
-import edu.upc.essi.dtim.odin.NextiaStore.ORMStore.ProjectEntityRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import edu.upc.essi.dtim.odin.NextiaStore.ORMStore.ORMStoreFactory;
+import edu.upc.essi.dtim.odin.NextiaStore.ORMStore.ORMStoreInterface;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ProjectService {
-    private final LocalContainerEntityManagerFactoryBean entityManagerFactory;
-    private ProjectEntityRepository projectRepository;
-
-    public ProjectService(@Autowired ProjectEntityRepository projectRepository, @Qualifier("entityManagerFactory") LocalContainerEntityManagerFactoryBean entityManagerFactory) {
-        this.projectRepository = projectRepository;
-        this.entityManagerFactory = entityManagerFactory;
-    }
-
     /**
      * Adds a local graph to the specified project.
      *
@@ -47,81 +32,54 @@ public class ProjectService {
         saveProject(project);
     }
 
-    @Transactional
-    public Project createProject(Project project) {
-        System.out.println("--------------------CREATING " + project);
-        ProjectEntityAdapter adapter = new ProjectEntityAdapter();
-        ProjectEntity projectEntity = adapter.adapt(project);
-        System.out.println("--------------------adapted " + projectEntity);
-        Project tmp = projectRepository.saveAndFlush(projectEntity); // get the ProjectEntity object from somewhere
-        return tmp;
-    }
-    @Transactional
-    public void saveProject(Project project) {
-        ProjectEntityAdapter adapter = new ProjectEntityAdapter();
-        ProjectEntity projectEntity = adapter.adapt(project);
-        if (projectRepository.existsById(projectEntity.getProjectId())) {
-            Optional<ProjectEntity> existingProjectEntity = projectRepository.findById(projectEntity.getProjectId());
-            // update the fields of the existing project entity
-            if(existingProjectEntity.isPresent()){
-                existingProjectEntity.get().setLocalGraphIDs(projectEntity.getLocalGraphIDs());
-                // update any other fields as needed
-                projectRepository.saveAndFlush(existingProjectEntity.get());
-            }
-        } else {
-            projectRepository.saveAndFlush(projectEntity);
+    public Project saveProject(Project project) {
+        ORMStoreInterface<Project> ormProject = null;
+        try {
+            ormProject = ORMStoreFactory.getInstance(Project.class);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
+        return ormProject.save(project);
     }
 
-    @Transactional(readOnly = true)
-    public List<Project> getAllProjects() {
-        projectRepository.flush();
-        List<ProjectEntity> projectEntities = projectRepository.findAll();
-        System.out.println(projectEntities);
-
-        ProjectEntityAdapter adapter = new ProjectEntityAdapter();
-        List<Project> projects = new ArrayList<>();
-        for (ProjectEntity projectEntity : projectEntities) {
-            Project project = adapter.adapt(projectEntity);
-            projects.add(project);
-        }
-
-        return projects;
-    }
-
-    @Transactional
-    public boolean deleteAllProjects() {
-        projectRepository.deleteAll();
-        projectRepository.flush();
-
-        return projectRepository.findAll().isEmpty();
-    }
-
-    /**
-     * Helper method to retrieve a project by ID.
-     *
-     * @param projectId the ID of the project to retrieve
-     * @return the project with the given ID, or null if not found
-     */
-    @Transactional
     public Project findById(String projectId) {
-        Optional<ProjectEntity> projectEntityOptional = projectRepository.findById(projectId);
-        if (projectEntityOptional.isPresent()) {
-            ProjectEntity projectEntity = projectEntityOptional.get();
-            Project project = new Project(
-                    projectEntity.getProjectId(),
-                    projectEntity.getProjectName(),
-                    projectEntity.getProjectDescription(),
-                    projectEntity.getProjectPrivacy(),
-                    projectEntity.getProjectColor(),
-                    projectEntity.getCreatedBy(),
-                    projectEntity.getLocalGraphIDs()
-            );
-            return project;
-        } else {
-            // Handle case where project with given id does not exist
-            return null;
+        ORMStoreInterface<Project> ormProject = null;
+        try {
+            ormProject = ORMStoreFactory.getInstance(Project.class);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
+        return ormProject.findById(projectId);
+    }
+
+    public List<Project> getAllProjects() {
+        ORMStoreInterface<Project> ormProject = null;
+        try {
+            ormProject = ORMStoreFactory.getInstance(Project.class);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return ormProject.getAll();
+    }
+
+    public boolean deleteProject(String id) {
+        ORMStoreInterface<Project> ormProject = null;
+        try {
+            ormProject = ORMStoreFactory.getInstance(Project.class);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return ormProject.deleteOne(id);
+    }
+
+    public boolean deleteAllProjects() {
+        ORMStoreInterface<Project> ormProject = null;
+        try {
+            ormProject = ORMStoreFactory.getInstance(Project.class);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return ormProject.deleteAll();
     }
 }
 

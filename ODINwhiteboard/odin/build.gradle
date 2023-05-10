@@ -37,14 +37,14 @@ dependencies {
 
 
 	/////////////////////////////////////// ORM DEPENDENCIES ///////////////////////////////////////
-	// https://mvnrepository.com/artifact/org.springframework.data/spring-data-jpa
-	implementation group: 'org.springframework.data', name: 'spring-data-jpa', version: '2.5.1'
+	// https://mvnrepository.com/artifact/org.hibernate.orm/hibernate-core
+	implementation group: 'org.hibernate.orm', name: 'hibernate-core', version: '6.2.2.Final'
 
-	// https://mvnrepository.com/artifact/org.hibernate/hibernate-entitymanager
-	implementation group: 'org.hibernate', name: 'hibernate-entitymanager', version: '5.6.15.Final'
+	// https://mvnrepository.com/artifact/org.hibernate.javax.persistence/hibernate-jpa-2.1-api
+	implementation 'org.eclipse.persistence:javax.persistence:2.0.0'
 
-	// https://mvnrepository.com/artifact/com.zaxxer/HikariCP
-	implementation group: 'com.zaxxer', name: 'HikariCP', version: '5.0.1'
+	// https://mvnrepository.com/artifact/org.eclipse.persistence/org.eclipse.persistence.jpa
+	implementation group: 'org.eclipse.persistence', name: 'org.eclipse.persistence.jpa', version: '2.5.0'
 
 	// https://mvnrepository.com/artifact/com.h2database/h2
 	runtimeOnly group: 'com.h2database', name: 'h2', version: '2.1.214'

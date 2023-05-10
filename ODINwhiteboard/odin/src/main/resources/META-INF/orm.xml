@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<entity-mappings xmlns="http://xmlns.jcp.org/xml/ns/persistence/orm"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence/orm http://xmlns.jcp.org/xml/ns/persistence/orm_2_1.xsd"
+                 version="2.1">
+
+    <entity class="edu.upc.essi.dtim.odin.project.Project" name="Project">
+        <table name="Project"/>
+        <attributes>
+            <id name="projectId">
+                <generated-value strategy="AUTO"/>
+            </id>
+            <basic name="projectName">
+                <column nullable="false" name="PROJECT_NAME"/>
+            </basic>
+            <basic name="projectDescription">
+                <column name="PROJECT_DESCRIPTION" length="5000"/>
+            </basic>
+            <basic name="projectPrivacy">
+                <column name="PROJECT_PRIVACY"/>
+            </basic>
+            <basic name="projectColor">
+                <column name="PROJECT_COLOR"/>
+            </basic>
+            <basic name="createdBy">
+                <column name="CREATED_BY"/>
+            </basic>
+            <element-collection name="localGraphIDs">
+                <collection-table name="PROJECT_LOCAL_GRAPHS_IDS">
+                    <join-column name="PROJECT_ID"/>
+                </collection-table>
+            </element-collection>
+        </attributes>
+    </entity>
+
+    <entity class="edu.upc.essi.dtim.DataSources.Tuple" name="Tuple">
+        <table name="Tuple"/>
+        <attributes>
+            <id name="tupleId">
+                <generated-value strategy="AUTO"/>
+            </id>
+            <basic name="tupleName">
+                <column name="TUPLE_NAME"/>
+            </basic>
+            <basic name="tupleDescription">
+                <column name="TUPLE_DESCRIPTION" length="5000"/>
+            </basic>
+        </attributes>
+    </entity>
+
+
+    <!--> MAPPING ABSTRACT CLASS DATASET <-->
+
+    <mapped-superclass class="edu.upc.essi.dtim.DataSources.dataset.Dataset">
+        <attributes>
+            <id name="datasetId">
+                <generated-value strategy="AUTO" />
+            </id>
+            <basic name="datasetName">
+                <column nullable="false" name="DATASET_NAME"/>
+            </basic>
+            <basic name="datasetDescription">
+                <column name="DATASET_DESCRIPTION" length="5000"/>
+            </basic>
+            <basic name="created_at">
+                <column name="CREATED_AT"/>
+            </basic>
+        </attributes>
+    </mapped-superclass>
+
+    <entity name="CsvDataset" class="edu.upc.essi.dtim.DataSources.dataset.CsvDataset">
+        <table name="CsvDatasets"/>
+        <attributes>
+            <basic name="path" />
+        </attributes>
+    </entity>
+
+    <entity name="JsonDataset" class="edu.upc.essi.dtim.DataSources.dataset.JsonDataset">
+        <table name="JsonDatasets"/>
+        <attributes>
+            <basic name="path" />
+        </attributes>
+    </entity>
+
+
+
+</entity-mappings>

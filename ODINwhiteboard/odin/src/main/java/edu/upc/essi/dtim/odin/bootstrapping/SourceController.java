@@ -1,5 +1,7 @@
 package edu.upc.essi.dtim.odin.bootstrapping;
 
+import edu.upc.essi.dtim.DataSources.Tuple;
+import edu.upc.essi.dtim.DataSources.dataset.CsvDataset;
 import edu.upc.essi.dtim.DataSources.dataset.Dataset;
 import edu.upc.essi.dtim.Graph.Graph;
 import edu.upc.essi.dtim.Graph.URI;
@@ -14,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 public class SourceController {
@@ -64,6 +67,30 @@ public class SourceController {
         return graphId;
     }
 
+    @PostMapping("/tuple")
+    public Tuple savingTupleObject(@RequestParam("tupleId") String datasetId,
+                                  @RequestParam("tupleName") String tupleName,
+                                  @RequestParam("tupleDescription") String tupleDescription){
+        Tuple tuple = new Tuple();
+        tuple.setTupleName(tupleName);
+        tuple.setTupleDescription(tupleDescription);
+        return sourceService.saveTuple(tuple);
+    }
+
+    @PostMapping("/dataset")
+    public Dataset savingDatasetObject(@RequestParam("tupleId") String datasetId,
+                                  @RequestParam("tupleName") String tupleName,
+                                  @RequestParam("tupleDescription") String tupleDescription){
+        Dataset dataset1 = new CsvDataset(null, "Asenjo", "Descripción", "file.csv");
+        return sourceService.saveDataset(dataset1);
+    }
+
+    @GetMapping("/datasets")
+    public List<Dataset> getAllProjects()
+    {
+        return sourceService.getDatasets();
+    }
+
 
     @GetMapping("/getGraph")
     public Graph getGraph(@RequestParam("graphId") String graphId) throws IOException {
@@ -87,7 +114,7 @@ public class SourceController {
      * @param authentication the authentication object representing the authenticated user
      * @throws ResponseStatusException if the user does not have permission to perform the bootstrapping process
      */
-    public boolean validateAccess(String authentication) {
+    private boolean validateAccess(String authentication) {
         System.out.println(authentication);
         /*
         // Extract the JWT token from the authentication object
