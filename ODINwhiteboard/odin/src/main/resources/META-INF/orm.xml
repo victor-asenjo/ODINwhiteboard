@@ -52,31 +52,25 @@
 
 
     <!--> MAPPING ABSTRACT CLASS DATASET <-->
-    <mapped-superclass class="edu.upc.essi.dtim.DataSources.dataset.Dataset">
+    <mapped-superclass class="edu.upc.essi.dtim.DataSources.dataset.Dataset" access="FIELD">
         <attributes>
-            <id name="datasetId"><generated-value strategy="AUTO" /></id>>
+            <id name="datasetId"><generated-value strategy="AUTO" /></id>
             <basic name="datasetName"/>
             <basic name="datasetDescription"/>
             <basic name="created_at"/>
         </attributes>
     </mapped-superclass>
 
-    <entity name="CsvDataset" class="edu.upc.essi.dtim.DataSources.dataset.CsvDataset">
+    <entity name="CsvDataset" class="edu.upc.essi.dtim.DataSources.dataset.CsvDataset" access="FIELD">
+        <table name="CsvDataset"/>
         <attributes>
-            <id name="datasetId"></id>>
-            <basic name="datasetName"/>
-            <basic name="datasetDescription"/>
-            <basic name="created_at"/>
             <basic name="path"/>
         </attributes>
     </entity>
 
-    <entity name="JsonDataset" class="edu.upc.essi.dtim.DataSources.dataset.JsonDataset">
+    <entity name="JsonDataset" class="edu.upc.essi.dtim.DataSources.dataset.JsonDataset" access="FIELD">
+        <table name="JsonDataset"/>
         <attributes>
-            <id name="datasetId"></id>>
-            <basic name="datasetName"/>
-            <basic name="datasetDescription"/>
-            <basic name="created_at"/>
             <basic name="path"/>
         </attributes>
     </entity>
