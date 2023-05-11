@@ -16,15 +16,24 @@ public class ORMStoreFactory {
     }
 
     public static ORMStoreInterface getInstance(Class<?> ormClass) throws Exception {
-        System.out.println("Creating new instance of ORMStoreInterface");
+        System.out.println("Getting or creating ORMStoreInterface" + ormClass.toString());
         if (ormClass.equals(Project.class)) {
-            if (ormProjectInstance == null) ormProjectInstance = new ORMProjectImplementation();
+            if (ormProjectInstance == null) {
+                System.out.println("Creating new instance of ormProjectInstance");
+                ormProjectInstance = new ORMProjectImplementation();
+            }
             return ormProjectInstance;
         } else if (ormClass.equals(Dataset.class)) {
-            if (ormDatasetInstance == null) ormDatasetInstance = new ORMDatasetImplementation();
+            if (ormDatasetInstance == null){
+                System.out.println("Creating new instance of ormDatasetInstance");
+                ormDatasetInstance = new ORMDatasetImplementation();
+            }
             return ormDatasetInstance;
         } else if (ormClass.equals(Tuple.class)) {
-            if (ormTupleInstance == null) ormTupleInstance = new ORMTupleImplementation();
+            if (ormTupleInstance == null) {
+                System.out.println("Creating new instance of ormTupleInstance");
+                ormTupleInstance = new ORMTupleImplementation();
+            }
             return ormDatasetInstance;
         } else {
             throw new Exception("The class that you are trying to store does not have ORM implementation.");
