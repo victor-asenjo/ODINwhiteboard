@@ -16,7 +16,7 @@ public class ORMStoreFactory {
     }
 
     public static ORMStoreInterface getInstance(Class<?> ormClass) throws Exception {
-        System.out.println("Getting or creating ORMStoreInterface" + ormClass.toString());
+        System.out.println("Getting ORMStoreInterface" + ormClass.toString());
         if (ormClass.equals(Project.class)) {
             if (ormProjectInstance == null) {
                 System.out.println("Creating new instance of ormProjectInstance");
