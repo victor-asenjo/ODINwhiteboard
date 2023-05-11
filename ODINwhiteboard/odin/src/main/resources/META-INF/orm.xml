@@ -4,6 +4,8 @@
                  xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence/orm http://xmlns.jcp.org/xml/ns/persistence/orm_2_1.xsd"
                  version="2.1">
 
+    <description>Object/Relational Mapping for classes</description>
+
     <entity class="edu.upc.essi.dtim.odin.project.Project" name="Project">
         <table name="Project"/>
         <attributes>
@@ -50,35 +52,32 @@
 
 
     <!--> MAPPING ABSTRACT CLASS DATASET <-->
-
     <mapped-superclass class="edu.upc.essi.dtim.DataSources.dataset.Dataset">
         <attributes>
-            <id name="datasetId">
-                <generated-value strategy="AUTO" />
-            </id>
-            <basic name="datasetName">
-                <column nullable="false" name="DATASET_NAME"/>
-            </basic>
-            <basic name="datasetDescription">
-                <column name="DATASET_DESCRIPTION" length="5000"/>
-            </basic>
-            <basic name="created_at">
-                <column name="CREATED_AT"/>
-            </basic>
+            <id name="datasetId"><generated-value strategy="AUTO" /></id>>
+            <basic name="datasetName"/>
+            <basic name="datasetDescription"/>
+            <basic name="created_at"/>
         </attributes>
     </mapped-superclass>
 
     <entity name="CsvDataset" class="edu.upc.essi.dtim.DataSources.dataset.CsvDataset">
-        <table name="CsvDatasets"/>
         <attributes>
-            <basic name="path" />
+            <id name="datasetId"></id>>
+            <basic name="datasetName"/>
+            <basic name="datasetDescription"/>
+            <basic name="created_at"/>
+            <basic name="path"/>
         </attributes>
     </entity>
 
     <entity name="JsonDataset" class="edu.upc.essi.dtim.DataSources.dataset.JsonDataset">
-        <table name="JsonDatasets"/>
         <attributes>
-            <basic name="path" />
+            <id name="datasetId"></id>>
+            <basic name="datasetName"/>
+            <basic name="datasetDescription"/>
+            <basic name="created_at"/>
+            <basic name="path"/>
         </attributes>
     </entity>
 

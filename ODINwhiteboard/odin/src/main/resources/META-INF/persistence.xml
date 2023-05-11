@@ -9,6 +9,9 @@
         <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
 
         <mapping-file>META-INF/orm.xml</mapping-file>
+        <class>edu.upc.essi.dtim.DataSources.dataset.Dataset</class>
+        <class>edu.upc.essi.dtim.DataSources.dataset.CsvDataset</class>
+        <class>edu.upc.essi.dtim.DataSources.dataset.JsonDataset</class>
 
         <properties>
             <!-- Database connection properties -->
