@@ -3,6 +3,7 @@ package edu.upc.essi.dtim.odin.bootstrapping;
 import edu.upc.essi.dtim.DataSources.Tuple;
 import edu.upc.essi.dtim.DataSources.dataset.CsvDataset;
 import edu.upc.essi.dtim.DataSources.dataset.Dataset;
+import edu.upc.essi.dtim.DataSources.dataset.JsonDataset;
 import edu.upc.essi.dtim.Graph.Graph;
 import edu.upc.essi.dtim.Graph.URI;
 import edu.upc.essi.dtim.odin.NextiaStore.GraphStore.GraphStoreFactory;
@@ -77,12 +78,30 @@ public class SourceController {
         return sourceService.saveTuple(tuple);
     }
 
-    @PostMapping("/dataset")
-    public Dataset savingDatasetObject(@RequestParam("tupleId") String datasetId,
-                                  @RequestParam("tupleName") String tupleName,
-                                  @RequestParam("tupleDescription") String tupleDescription){
-        Dataset dataset1 = new CsvDataset(null, "Asenjo", "Descripción", "file.csv");
-        return sourceService.saveDataset(dataset1);
+    @PostMapping("/datasets")
+    public Dataset savingDatasetObject(@RequestParam("datasetId") String datasetId,
+                                       @RequestParam("datasetName") String datasetName,
+                                       @RequestParam("datasetDescription") String datasetDescription,
+                                       @RequestParam("datasetPath") String path){
+
+        Dataset dataset = null;
+
+        String extension = "";
+        int dotIndex = path.lastIndexOf('.');
+        if (dotIndex > 0 && dotIndex < path.length() - 1) {
+            extension = path.substring(dotIndex + 1);
+        }
+        switch (extension.toLowerCase()){
+            case "csv":
+                dataset = new CsvDataset(datasetId, datasetName, datasetDescription, path);
+                break;
+            case "json":
+                dataset = new JsonDataset(datasetId, datasetName, datasetDescription, path);
+                break;
+            default:
+                throw new UnsupportedOperationException("Dataset type not supported: " + extension);
+        }
+        return sourceService.saveDataset(dataset);
     }
 
     @GetMapping("/datasets")

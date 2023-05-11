@@ -49,8 +49,10 @@ public class ORMDatasetImplementation implements ORMStoreInterface<Dataset>{
         EntityManager em = emf.createEntityManager();
         List<Dataset> datasets = null;
         try {
-            Query query = em.createQuery("SELECT p FROM CsvDataset p");
-            datasets = query.getResultList();
+            Query CSVquery = em.createQuery("SELECT p FROM CsvDataset p");
+            Query JSONquery = em.createQuery("SELECT p FROM JsonDataset p");
+            datasets= CSVquery.getResultList();
+            datasets.addAll(JSONquery.getResultList());
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
