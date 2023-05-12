@@ -1,10 +1,10 @@
 package edu.upc.essi.dtim.odin.bootstrapping;
 
-import edu.upc.essi.dtim.DataSources.dataset.CsvDataset;
-import edu.upc.essi.dtim.DataSources.dataset.Dataset;
-import edu.upc.essi.dtim.DataSources.dataset.JsonDataset;
-import edu.upc.essi.dtim.Graph.Graph;
-import edu.upc.essi.dtim.Graph.LocalGraph;
+import edu.upc.essi.dtim.NextiaCore.datasources.dataset.CsvDataset;
+import edu.upc.essi.dtim.NextiaCore.datasources.dataset.Dataset;
+import edu.upc.essi.dtim.NextiaCore.datasources.dataset.JsonDataset;
+import edu.upc.essi.dtim.NextiaCore.graph.Graph;
+import edu.upc.essi.dtim.NextiaCore.graph.LocalGraph;
 import edu.upc.essi.dtim.odin.config.AppConfig;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;

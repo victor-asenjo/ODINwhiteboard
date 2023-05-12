@@ -1,7 +1,7 @@
 package edu.upc.essi.dtim.odin.NextiaStore.ORMStore;
 
-import edu.upc.essi.dtim.DataSources.Tuple;
-import edu.upc.essi.dtim.DataSources.dataset.Dataset;
+import edu.upc.essi.dtim.NextiaCore.datasources.Tuple;
+import edu.upc.essi.dtim.NextiaCore.datasources.dataset.Dataset;
 import edu.upc.essi.dtim.odin.project.Project;
 import org.springframework.stereotype.Component;
 

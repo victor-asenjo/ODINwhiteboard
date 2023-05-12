@@ -1,7 +1,7 @@
 package edu.upc.essi.dtim.odin.NextiaStore.GraphStore;
 
-import edu.upc.essi.dtim.Graph.Graph;
-import edu.upc.essi.dtim.Graph.URI;
+import edu.upc.essi.dtim.NextiaCore.graph.Graph;
+import edu.upc.essi.dtim.NextiaCore.graph.URI;
 
 public interface GraphStoreInterface {
     /**

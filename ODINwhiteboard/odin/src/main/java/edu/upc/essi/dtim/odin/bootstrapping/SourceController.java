@@ -1,11 +1,11 @@
 package edu.upc.essi.dtim.odin.bootstrapping;
 
-import edu.upc.essi.dtim.DataSources.Tuple;
-import edu.upc.essi.dtim.DataSources.dataset.CsvDataset;
-import edu.upc.essi.dtim.DataSources.dataset.Dataset;
-import edu.upc.essi.dtim.DataSources.dataset.JsonDataset;
-import edu.upc.essi.dtim.Graph.Graph;
-import edu.upc.essi.dtim.Graph.URI;
+import edu.upc.essi.dtim.NextiaCore.datasources.Tuple;
+import edu.upc.essi.dtim.NextiaCore.datasources.dataset.CsvDataset;
+import edu.upc.essi.dtim.NextiaCore.datasources.dataset.Dataset;
+import edu.upc.essi.dtim.NextiaCore.datasources.dataset.JsonDataset;
+import edu.upc.essi.dtim.NextiaCore.graph.Graph;
+import edu.upc.essi.dtim.NextiaCore.graph.URI;
 import edu.upc.essi.dtim.odin.NextiaStore.GraphStore.GraphStoreFactory;
 import edu.upc.essi.dtim.odin.NextiaStore.GraphStore.GraphStoreInterface;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,10 +1,10 @@
 package edu.upc.essi.dtim.odin.NextiaStore.GraphStore;
 
 
-import edu.upc.essi.dtim.Graph.Graph;
-import edu.upc.essi.dtim.Graph.LocalGraph;
-import edu.upc.essi.dtim.Graph.Triple;
-import edu.upc.essi.dtim.Graph.URI;
+import edu.upc.essi.dtim.NextiaCore.graph.Graph;
+import edu.upc.essi.dtim.NextiaCore.graph.LocalGraph;
+import edu.upc.essi.dtim.NextiaCore.graph.Triple;
+import edu.upc.essi.dtim.NextiaCore.graph.URI;
 import edu.upc.essi.dtim.odin.config.AppConfig;
 import org.apache.jena.query.Dataset;
 import org.apache.jena.query.ReadWrite;

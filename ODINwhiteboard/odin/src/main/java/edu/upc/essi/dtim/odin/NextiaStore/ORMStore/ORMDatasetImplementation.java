@@ -1,6 +1,6 @@
 package edu.upc.essi.dtim.odin.NextiaStore.ORMStore;
 
-import edu.upc.essi.dtim.DataSources.dataset.Dataset;
+import edu.upc.essi.dtim.NextiaCore.datasources.dataset.Dataset;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;

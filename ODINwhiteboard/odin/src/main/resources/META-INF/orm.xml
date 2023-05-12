@@ -35,7 +35,7 @@
         </attributes>
     </entity>
 
-    <entity class="edu.upc.essi.dtim.DataSources.Tuple" name="Tuple">
+    <entity class="edu.upc.essi.dtim.NextiaCore.datasources.Tuple" name="Tuple">
         <table name="Tuple"/>
         <attributes>
             <id name="tupleId">
@@ -52,7 +52,7 @@
 
 
     <!--> MAPPING ABSTRACT CLASS DATASET <-->
-    <mapped-superclass class="edu.upc.essi.dtim.DataSources.dataset.Dataset" access="FIELD">
+    <mapped-superclass class="edu.upc.essi.dtim.NextiaCore.datasources.dataset.Dataset" access="FIELD">
         <attributes>
             <id name="datasetId"><generated-value strategy="AUTO" /></id>
             <basic name="datasetName"/>
@@ -61,14 +61,14 @@
         </attributes>
     </mapped-superclass>
 
-    <entity name="CsvDataset" class="edu.upc.essi.dtim.DataSources.dataset.CsvDataset" access="FIELD">
+    <entity name="CsvDataset" class="edu.upc.essi.dtim.NextiaCore.datasources.dataset.CsvDataset" access="FIELD">
         <table name="CsvDataset"/>
         <attributes>
             <basic name="path"/>
         </attributes>
     </entity>
 
-    <entity name="JsonDataset" class="edu.upc.essi.dtim.DataSources.dataset.JsonDataset" access="FIELD">
+    <entity name="JsonDataset" class="edu.upc.essi.dtim.NextiaCore.datasources.dataset.JsonDataset" access="FIELD">
         <table name="JsonDataset"/>
         <attributes>
             <basic name="path"/>
