@@ -1,7 +1,7 @@
 package edu.upc.essi.dtim.odin.project;
 
-import edu.upc.essi.dtim.odin.NextiaStore.ORMStore.ORMStoreFactory;
-import edu.upc.essi.dtim.odin.NextiaStore.ORMStore.ORMStoreInterface;
+import edu.upc.essi.dtim.odin.NextiaStore.RelationalStore.ORMStoreFactory;
+import edu.upc.essi.dtim.odin.NextiaStore.RelationalStore.ORMStoreInterface;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

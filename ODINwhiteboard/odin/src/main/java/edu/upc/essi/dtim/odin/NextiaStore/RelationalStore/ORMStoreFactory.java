@@ -1,4 +1,4 @@
-package edu.upc.essi.dtim.odin.NextiaStore.ORMStore;
+package edu.upc.essi.dtim.odin.NextiaStore.RelationalStore;
 
 import edu.upc.essi.dtim.NextiaCore.datasources.Tuple;
 import edu.upc.essi.dtim.NextiaCore.datasources.dataset.Dataset;
