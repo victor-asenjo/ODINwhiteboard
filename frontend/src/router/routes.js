@@ -42,12 +42,12 @@ const routes = [
     ]
 
   },
-  {
-    path: '/auth',
-    name: 'auth',
-    component: () => import('pages/Auth.vue'),
+  //{
+  //  path: '/auth',
+  //   name: 'auth',
+  //  component: () => import('pages/Auth.vue'),
 
-  },
+  // },
 
   // Always leave this as last one,
   // but you can also remove it
