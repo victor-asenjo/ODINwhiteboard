@@ -8,5 +8,5 @@ const headers = (token) => {
 export default {
     getAllProjects(token) { return odinApi.get('/projects'/*, headers(token)*/) },
     createProject(data, token) { return odinApi.post('/projects', data /*headers(token)*/) },
-    getProjectByID(id, token) { return odinApi.get('projects/'+id /*, headers(token) */) }
+    getProjectByID(id, token) { return odinApi.get('/projects/'+id /*, headers(token) */) }
 }

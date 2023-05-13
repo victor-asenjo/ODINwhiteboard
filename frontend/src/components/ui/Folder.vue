@@ -1,6 +1,6 @@
 <template>
 
-    <div class="folder" :class="activeFolder == props.row.id ? 'active' : ''" >
+    <div class="folder" :class="activeFolder == props.row.projectId ? 'active' : ''" >
         <div class="folder__back" :style="folderBackColor">
             <div class="paper"></div>
             <div class="paper"></div>
@@ -10,9 +10,9 @@
                 <!-- q-mt-md -->
                 <!-- <div class="col"> -->
                 <div class="row no-wrap items-center  q-pa-sm rounded-borders">
-                    <span> {{ props.row.name }}</span>
+                    <span> {{ props.row.projectName }}</span>
                     <q-space />
-                    <q-btn-dropdown @show="activeFolder = props.row.id" @before-hide="activeFolder = ''" color="primary"
+                    <q-btn-dropdown @show="activeFolder = props.row.projectId" @before-hide="activeFolder = ''" color="primary"
                         flat dropdown-icon="more_horiz" no-icon-animation padding="none" menu-anchor="top right"
                         menu-self="top left" @click.stop.prevent>
                         <q-list dense>
@@ -110,9 +110,9 @@ const folderBackColor = computed(() => {
     // console.log(colors.lighten(props.folderColor, -11))
     // console.log(colors.lighten(props.folderColor, -12))
     // console.log(colors.lighten(props.folderColor, -15))
-    
+
     // }
-   
+
     // console.log('background: darken ('+props.folderColor+',8%);')
     return 'background:' +colors.lighten(props.folderColor, -10)+';'
 })
@@ -123,7 +123,7 @@ const openFolder = (project) => {
 
     // storeDS.setProject(project)
     // storeDS.getDatasources()
-    router.push({name: 'home', params: {id: project.id}})
+    router.push({name: 'home', params: {id: project.projectId}})
 
 }
 
@@ -142,19 +142,19 @@ $paperColor: #ffffff;
     //   &.big &__back{
     // width: 264px;
     // height: 183px;;
-    //   }  
+    //   }
     //   &.medium &__back{
 
 
     // width: 176px;
     // height: 122px;
-    //   }  
+    //   }
 
     //   &.medium &__back::after{
     //     width: 64px;
     //     height: 16px;
 
-    //   }  
+    //   }
 
     &__back {
         position: relative;

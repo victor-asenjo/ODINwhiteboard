@@ -152,28 +152,11 @@ const pagination = ref({
 
     } )
 
-    // const rows = [
-    //     {"id":"1","name" : "Museums", "numberDS":"3", "createdBy":"DTIM user", "privacy":"public", "color":"#e1664e"},
-    //     {"id":"2","name" : "Arts", "numberDS":"3", "createdBy":"DTIM user", "privacy":"public", "color":"#3dbb94"},
-    //     {"id":"3","name" : "Arts", "numberDS":"3", "createdBy":"DTIM user", "privacy":"public", "color":"#62DE82"},
-    //     {"id":"4","name" : "Arts", "numberDS":"3", "createdBy":"DTIM user", "privacy":"public", "color":"#3dbb94"},
-    //     {"id":"5","name" : "Arts", "numberDS":"3", "createdBy":"DTIM user", "privacy":"public", "color":"#dbe2e7"},
-    //     {"id":"6","name" : "Arts", "numberDS":"3", "createdBy":"DTIM user", "privacy":"public", "color":"#3dbb94"},
-    //     {"id":"7","name" : "Arts", "numberDS":"3", "createdBy":"DTIM user", "privacy":"public", "color":"#3dbb94"},
-    //     {"id":"8","name" : "Arts", "numberDS":"3", "createdBy":"DTIM user", "privacy":"public", "color":"#3dbb94"},
-    //     {"id":"9","name" : "Arts", "numberDS":"3", "createdBy":"DTIM user", "privacy":"public", "color":"#4e68f5"},
-
-
-    // ];
     const title = "Projects";
 
 
 </script>
 
 <style lang="scss">
-
-
-
-
 
 </style>
