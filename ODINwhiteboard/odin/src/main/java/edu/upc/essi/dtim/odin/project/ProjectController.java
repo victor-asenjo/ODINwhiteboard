@@ -12,14 +12,14 @@ public class ProjectController {
         this.projectService = projectService;
     }
 
-    @PostMapping("/project")
+    @PostMapping("/projects")
     public Project saveProject(@RequestBody Project project)
     {
         return projectService.saveProject(project);
     }
 
-    @GetMapping("/project")
-    public Project getProject(@RequestParam String id)
+    @GetMapping("/projects/{id}")
+    public Project getProject(@PathVariable String id)
     {
         return projectService.findById(id);
     }
