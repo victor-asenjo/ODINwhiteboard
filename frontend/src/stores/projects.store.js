@@ -13,18 +13,18 @@ export const useProjectsStore = defineStore('projects',{
     actions: {
         // initStores(){
             //  authStore = useAuthStore();
-            //  
+            //
         // },
         init(){
             console.log("projects store init")
-            // this.initStores();   
-            const authStore = useAuthStore(); 
+            // this.initStores();
+            const authStore = useAuthStore();
             if(authStore.user.accessToken && this.projects.length === 0) {
                 this.getProjects()
             }
         },
         getProjects(){
-            const authStore = useAuthStore(); 
+            const authStore = useAuthStore();
             projectAPI.getAllProjects(authStore.user.accessToken)
                             .then(response => {
 
@@ -35,30 +35,30 @@ export const useProjectsStore = defineStore('projects',{
                                     this.projects = []
                                 } else {
                                     this.projects = response.data
-                                }      
+                                }
 
                             }).catch(err => {
                             console.log("error retrieving data sources")
                             console.log(err)
-                            }) 
+                            })
         },
         createProject(project, successCallback){
-            const authStore = useAuthStore(); 
+            const authStore = useAuthStore();
             const notify = useNotify();
 
             console.log("create project store...")
-            project.createdBy = authStore.user.username
+            project.createdBy = "Julio Berne"//authStore.user.username
             console.log("send project: ",project)
             projectAPI.createProject(project, authStore.user.accessToken ).then((response) => {
                 if (response.status == 201) {
-      
+
                     console.log(response)
                   notify.positive(`Project ${project.name} successfully created`)
                   // onReset()
-                //   
+                //
                     this.projects.push(response.data)
                   successCallback()
-                 
+
                 } else {
                   // console.log("error")
                   notify.negative("Cannot create project. Something went wrong in the server.")
@@ -69,8 +69,8 @@ export const useProjectsStore = defineStore('projects',{
                 if(error.response){
                     notify.negative("Something went wrong in the server for creating a project.")
                 }
-                  
-              
+
+
             });
 
 
@@ -78,13 +78,13 @@ export const useProjectsStore = defineStore('projects',{
 
 
         }
-       
+
 
     }
 
 
 
-})    
+})
 
 
 
@@ -110,15 +110,15 @@ export const useProjectsStore = defineStore('projects',{
 //         // },
 //         init(){
 //             console.log("projects store init")
-//             // this.initStores();   
-//             const authStore = useAuthStore(); 
+//             // this.initStores();
+//             const authStore = useAuthStore();
 //             if(authStore.user.accessToken && this.projects.length === 0) {
 //                 this.getProjects()
 //             }
 
 //         },
 //         getProjects(){
-//             const authStore = useAuthStore(); 
+//             const authStore = useAuthStore();
 //             projectAPI.getAllProjects(authStore.user.accessToken)
 //                             .then(response => {
 
@@ -129,12 +129,12 @@ export const useProjectsStore = defineStore('projects',{
 //                                     this.projects = []
 //                                 } else {
 //                                     this.projects = response.data
-//                                 }      
+//                                 }
 
 //                             }).catch(err => {
 //                             console.log("error retrieving data sources")
 //                             console.log(err)
-//                             }) 
+//                             })
 //         },
 //         createProject(project, successCallback){
 //             console.log("create project store...")
@@ -144,14 +144,14 @@ export const useProjectsStore = defineStore('projects',{
 //             console.log("send project: ",project)
 //             projectAPI.createProject(project, authStore.user.accessToken ).then((response) => {
 //                 if (response.status == 201) {
-      
+
 //                     console.log(response)
 //                   notify.positive(`Project ${project.name} successfully created`)
 //                   // onReset()
-//                 //   
+//                 //
 //                     this.projects.push(response.data)
 //                   successCallback()
-                 
+
 //                 } else {
 //                   // console.log("error")
 //                   notify.negative("Cannot create project. Something went wrong in the server.")
@@ -162,8 +162,8 @@ export const useProjectsStore = defineStore('projects',{
 //                 if(error.response){
 //                     notify.negative("Something went wrong in the server for creating a project.")
 //                 }
-                  
-              
+
+
 //             });
 
 
@@ -171,10 +171,10 @@ export const useProjectsStore = defineStore('projects',{
 
 
 //         }
-       
+
 
 //     }
 
 
 
-// })    
+// })

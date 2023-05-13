@@ -32,7 +32,6 @@ const routes = [
     children: [
         {path: '' , name: 'projects', component: () => import('pages/Projects.vue')}
     ]
-
   },
   {
     path: '/viewGraph',
@@ -44,10 +43,9 @@ const routes = [
   },
   //{
   //  path: '/auth',
-  //   name: 'auth',
-  //  component: () => import('pages/Auth.vue'),
-
-  // },
+    //name: 'auth',
+    //component: () => import('pages/Auth.vue'),
+  //},
 
   // Always leave this as last one,
   // but you can also remove it
