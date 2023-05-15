@@ -67,7 +67,6 @@ const optionsColor = ["#dbe2e7", "#4e68f5"]
     }
 
     const success = () => {
-
         //  console.log("success callback")
          form.value.resetValidation()
         //  console.log("reset validation")
@@ -81,9 +80,7 @@ const optionsColor = ["#dbe2e7", "#4e68f5"]
 
 
     const onSubmit = () => {
-
         projectsStore.createProject(project, success )
-
     }
 
 

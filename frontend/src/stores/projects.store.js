@@ -51,35 +51,41 @@ export const useProjectsStore = defineStore('projects',{
             console.log("send project: ",project)
             projectAPI.createProject(project, authStore.user.accessToken ).then((response) => {
                 if (response.status == 201) {
-
                     console.log(response)
                   notify.positive(`Project ${project.name} successfully created`)
-                  // onReset()
-                //
                     this.projects.push(response.data)
                   successCallback()
-
                 } else {
-                  // console.log("error")
                   notify.negative("Cannot create project. Something went wrong in the server.")
                 }
               }).catch( (error) => {
-
                 console.log("error is: "+error)
                 if(error.response){
                     notify.negative("Something went wrong in the server for creating a project.")
                 }
-
-
             });
+        },
+      deleteProjectByID(id, successCallback) {
+        const authStore = useAuthStore();
+        const notify = useNotify();
 
-
-
-
-
-        }
-
-
+        projectAPI.deleteProjectByID(id, authStore.user.accessToken)
+          .then((response) => {
+            if (response.status === 200) {
+              notify.positive(`Project ${id} successfully deleted`);
+              successCallback();
+              window.location.reload(); // Reload the page to reflect the changes
+            } else {
+              notify.negative("Cannot delete project. Something went wrong on the server.");
+            }
+          })
+          .catch((error) => {
+            console.log("Error is: " + error);
+            if (error.response) {
+              notify.negative("Something went wrong on the server while deleting a project.");
+            }
+          });
+      }
     }
 
 

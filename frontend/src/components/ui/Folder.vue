@@ -43,7 +43,7 @@
                                 </q-item-section>
                             </q-item>
 
-                            <q-item clickable v-close-popup @click="onItemClick">
+                            <q-item clickable v-close-popup @click="deleteItem(props.row.projectId)">
                                 <q-item-section avatar style="min-width: 30px;padding:0">
                                     <q-icon color="primary" name="delete" />
                                 </q-item-section>
@@ -82,50 +82,54 @@ import { ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { colors } from 'quasar'
 import { useDataSourceStore } from 'src/stores/datasources.store.js'
-
-// const storeDS = useDataSourceStore()
+import dataSourcesAPI from "src/api/dataSourcesAPI";
+import projectAPI from "src/api/projectAPI";
+import {useProjectsStore} from "stores/projects.store";
 
 const props = defineProps({
     row: {type:Object},
     folderColor: {type:String, default: "#3dbb94"}
 });
-
-// onMounted( () => {
-//     storeDS.init()
-// })
-
+const projectsStore = useProjectsStore()
 const router = useRouter()
 
 const activeFolder = ref("")
 
 const folderBackColor = computed(() => {
-    // console.log(colors.lighten(props.folderColor, -8))
-    // if(props.folderColor == "#62DE82") {
-    //      console.log(colors.lighten(props.folderColor, -5))
-    // console.log(colors.lighten(props.folderColor, -6))
-    // console.log(colors.lighten(props.folderColor, -7))
-    // console.log(colors.lighten(props.folderColor, -8))
-    // console.log(colors.lighten(props.folderColor, -9))
-    // console.log(colors.lighten(props.folderColor, -10))
-    // console.log(colors.lighten(props.folderColor, -11))
-    // console.log(colors.lighten(props.folderColor, -12))
-    // console.log(colors.lighten(props.folderColor, -15))
-
-    // }
-
-    // console.log('background: darken ('+props.folderColor+',8%);')
     return 'background:' +colors.lighten(props.folderColor, -10)+';'
 })
 
 const folderFrontColor = computed(() => 'background:' +props.folderColor+';')
 
 const openFolder = (project) => {
-
-    // storeDS.setProject(project)
-    // storeDS.getDatasources()
     router.push({name: 'home', params: {id: project.projectId}})
-
 }
+const onItemClick = (project, event) => {
+  const option = event.currentTarget.innerText;
+  switch (option) {
+    case 'Delete':
+      deleteItem(project.projectId);
+      break;
+    // Handle other options if needed
+    default:
+      break;
+  }
+};
+
+const token = 'your_token_value_here';
+
+const deleteItem = (id) => {
+  // Perform deletion logic here
+  projectsStore.deleteProjectByID(id, token)
+    .then(() => {
+      console.log('Item deleted');
+    })
+    .catch((error) => {
+      console.error('Error deleting item:', error);
+    });
+};
+
+
 
 </script>
 
@@ -139,36 +143,12 @@ $paperColor: #ffffff;
     margin: 10px;
     width: 100%;
 
-    //   &.big &__back{
-    // width: 264px;
-    // height: 183px;;
-    //   }
-    //   &.medium &__back{
-
-
-    // width: 176px;
-    // height: 122px;
-    //   }
-
-    //   &.medium &__back::after{
-    //     width: 64px;
-    //     height: 16px;
-
-    //   }
-
     &__back {
         position: relative;
-        // width: 100%;
         width: 100%;
         padding: 35%;
-        // width: 100px;
-        // min-height: 80px;
-        // background: darken($folderColor, 8%);
         border-radius: 0px 5px 5px 5px;
 
-
-        //The thing on the left top
-        // &::after {
         .folder__back_after{
             position: absolute;
             bottom: 98%; //if 100% you can see a little gap on Chrome
@@ -176,8 +156,6 @@ $paperColor: #ffffff;
             content: "";
             width: 35%;
             height: 10%;
-            //   width: 30px;
-            //   height: 10px;
             border-radius: 5px 5px 0 0;
         }
 
@@ -220,19 +198,9 @@ $paperColor: #ffffff;
         }
     }
 
-
-
-
-    //   &:hover {
-    //     transform: translateY(-8px);
-    //   }
     &.active {
         transform: translateY(-8px);
     }
-
-    //   &:hover .paper {
-    //     transform: translate(-50%, 0%);
-    //   }
 
     &.active .paper {
         transform: translate(-50%, 0%);

@@ -16,14 +16,14 @@ public class ProjectController {
 
     @PostMapping("/projects")
     public ResponseEntity<Project> saveProject(@RequestBody Project project) {
-        System.out.println("POST PROJECT RECEIVED");
-        System.out.println(project);
+        System.out.println("################### POST PROJECT RECEIVED ################### ");
         Project savedProject = projectService.saveProject(project);
         return new ResponseEntity<>(savedProject, HttpStatus.CREATED);
     }
 
     @GetMapping("/projects/{id}")
     public ResponseEntity<Project> getProject(@PathVariable("id") String id) {
+        System.out.println("################### GET PROJECT RECEIVED ################### " + id);
         Project project = projectService.findById(id);
         if (project != null) {
             return ResponseEntity.ok(project);
@@ -34,19 +34,29 @@ public class ProjectController {
 
     @GetMapping("/projects")
     public ResponseEntity<List<Project>> getAllProjects() {
+        System.out.println("################### GET ALL PROJECTS RECEIVED ################### ");
         List<Project> projects = projectService.getAllProjects();
         return ResponseEntity.ok(projects);
     }
 
-    @PostMapping("/deleteProjects")
-    public ResponseEntity<Boolean> deleteProject(@RequestParam String id) {
+    @PostMapping("/deleteProject/{id}")
+    public ResponseEntity<Boolean> deleteProject(@PathVariable("id") String id) {
+        // Print a message to indicate that the delete request was received
+        System.out.println("################### DELETE A PROJECT RECEIVED ################### " + id);
+
+        // Call the projectService to delete the project and get the result
         boolean deleted = projectService.deleteProject(id);
+
+        // Check if the project was deleted successfully
         if (deleted) {
+            // Return a ResponseEntity with HTTP status 200 (OK) and the boolean value true
             return ResponseEntity.ok(true);
         } else {
+            // Return a ResponseEntity with HTTP status 404 (Not Found)
             return ResponseEntity.notFound().build();
         }
     }
+
 
     @DeleteMapping("/projects/delete")
     public ResponseEntity<Boolean> deleteAllProjects() {
