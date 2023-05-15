@@ -39,7 +39,7 @@ public class ProjectController {
         return ResponseEntity.ok(projects);
     }
 
-    @PostMapping("/deleteProject/{id}")
+    @DeleteMapping("/deleteProject/{id}")
     public ResponseEntity<Boolean> deleteProject(@PathVariable("id") String id) {
         // Print a message to indicate that the delete request was received
         System.out.println("################### DELETE A PROJECT RECEIVED ################### " + id);
