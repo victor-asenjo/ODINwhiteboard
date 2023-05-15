@@ -98,7 +98,7 @@ export const useDataSourceStore = defineStore('datasource',{
         console.log("updating project info")
         const authStore = useAuthStore()
         const integrationStore = useIntegrationStore()
-        const response = await projectAPI.getProjectByID(this.project.id, authStore.user.accessToken)
+        const response = await projectAPI.getProjectByID(this.project.projectId, authStore.user.accessToken)
 
             if(response.status == 200){
               this.project = response.data
@@ -178,7 +178,7 @@ export const useDataSourceStore = defineStore('datasource',{
         deleteDataSource(ds){
           const authStore = useAuthStore()
           const notify  = useNotify()
-          api.deleteDS(this.project.id,ds.datasetId,authStore.user.accessToken)
+          api.deleteDS(this.project.projectId,ds.datasetId,authStore.user.accessToken)
           .then((response) => {
             if (response.status == 200) {
               notify.positive("Successfully deleted")

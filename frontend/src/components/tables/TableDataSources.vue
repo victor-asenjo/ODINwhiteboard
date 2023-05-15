@@ -148,11 +148,6 @@ const columns = [
 
 onMounted(() => {
   storeDS.getDatasources()
-//       console.log(projectsStore.projects)
-//       console.log("++d",projectsStore.projects.filter(function (el) {
-//   return el.name === 'Survey_NextiaDI'
-// }))
-
 } )
 const views = {
     "integration": ['Name', 'Type'],
@@ -174,18 +169,6 @@ const hasSourceGraph = (props) => {
 }
     const deleteRow = (props2) => {
         storeDS.deleteDataSource(props2.row)
-        // odinApi.delete(`/dataSource/${props2.row.id}`)
-        // api.deleteDS(props2.row.id)
-        // .then((response) => {
-        //   if (response.status == 204) {
-        //     notify.positive("Successfully deleted")
-        //     storeDS.deleteDataSource(props2.row)
-        //     // store.dispatch('deleteDatasource', props2.row)
-        //   } else {
-        //     // 500
-        //     notify.negative("Something went wrong in the server.")
-        //   }
-        // });
     }
 </script>
 
