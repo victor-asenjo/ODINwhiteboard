@@ -121,6 +121,7 @@ public class SourceController {
     public ResponseEntity<Boolean> deleteProject(@PathVariable("projectId") String projectId,
                                                  @PathVariable("id") String id) {
         // Print a message to indicate that the delete request was received
+        System.out.println("################### DELETE A DATASOURCE from project ################### " + projectId);
         System.out.println("################### DELETE A DATASOURCE RECEIVED ################### " + id);
 
         // Call the projectService to delete the project and get the result

@@ -178,7 +178,7 @@ export const useDataSourceStore = defineStore('datasource',{
         deleteDataSource(ds){
           const authStore = useAuthStore()
           const notify  = useNotify()
-          api.deleteDS(this.project.id,ds.id,authStore.user.accessToken)
+          api.deleteDS(this.project.id,ds.datasetId,authStore.user.accessToken)
           .then((response) => {
             if (response.status == 200) {
               notify.positive("Successfully deleted")
