@@ -106,7 +106,7 @@ public class ProjectService {
             throw new RuntimeException(e);
         }
         Project project = ormProject.findById(projectId);
-        return project.getLocalGraphIDs().contains(id);
+        return project.getDatasetIDs().contains(id);
     }
 
     public List<String> getDatasetIds(String id) {

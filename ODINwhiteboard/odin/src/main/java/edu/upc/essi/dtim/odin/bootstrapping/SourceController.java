@@ -124,7 +124,7 @@ public class SourceController {
     }
 
     @DeleteMapping("/project/{projectId}/datasource/{id}")
-    public ResponseEntity<Boolean> deleteProject(@PathVariable("projectId") String projectId,
+    public ResponseEntity<Boolean> deleteDatasource(@PathVariable("projectId") String projectId,
                                                  @PathVariable("id") String id) {
         // Print a message to indicate that the delete request was received
         System.out.println("################### DELETE A DATASOURCE from project ################### " + projectId);
@@ -134,6 +134,9 @@ public class SourceController {
 
         //Check if the dataset is part of that project
         if(sourceService.projectContains(projectId, id)){
+            // Delete the relation with project
+            //sourceService.deleteDatasourceIdFromProject();
+
             // Call the projectService to delete the project and get the result
             deleted = sourceService.deleteDatasource(id);
         }
