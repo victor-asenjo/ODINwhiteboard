@@ -222,6 +222,16 @@ public class SourceService {
         }
         return ormDataset.getAll();
     }
+
+    public boolean deleteDatasource(String id) {
+        ORMStoreInterface<Dataset> ormDataset = null;
+        try {
+            ormDataset = ORMStoreFactory.getInstance(Dataset.class);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return ormDataset.deleteOne(id);
+    }
 }
 
 

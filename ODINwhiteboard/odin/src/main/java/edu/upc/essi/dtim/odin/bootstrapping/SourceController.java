@@ -117,6 +117,25 @@ public class SourceController {
         }
     }
 
+    @DeleteMapping("/project/{projectId}/datasource/{id}")
+    public ResponseEntity<Boolean> deleteProject(@PathVariable("projectId") String projectId,
+                                                 @PathVariable("id") String id) {
+        // Print a message to indicate that the delete request was received
+        System.out.println("################### DELETE A DATASOURCE RECEIVED ################### " + id);
+
+        // Call the projectService to delete the project and get the result
+        boolean deleted = sourceService.deleteDatasource(id);
+
+        // Check if the project was deleted successfully
+        if (deleted) {
+            // Return a ResponseEntity with HTTP status 200 (OK) and the boolean value true
+            return ResponseEntity.ok(true);
+        } else {
+            // Return a ResponseEntity with HTTP status 404 (Not Found)
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @GetMapping("/project/{id}/datasources")
     public ResponseEntity<?> getAllDatasource(@PathVariable String id) {
         try {

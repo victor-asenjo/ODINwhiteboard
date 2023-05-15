@@ -1,6 +1,8 @@
 package edu.upc.essi.dtim.odin.NextiaStore.RelationalStore;
 
+import edu.upc.essi.dtim.NextiaCore.datasources.dataset.CsvDataset;
 import edu.upc.essi.dtim.NextiaCore.datasources.dataset.Dataset;
+import edu.upc.essi.dtim.NextiaCore.datasources.dataset.JsonDataset;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -63,8 +65,37 @@ public class ORMDatasetImplementation implements ORMStoreInterface<Dataset>{
 
     @Override
     public boolean deleteOne(String id) {
-        return false;
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("ORMPersistenceUnit");
+        EntityManager em = emf.createEntityManager();
+        boolean success = false;
+        try {
+            System.out.println("PPPPPPPPPPPPPPPPPPPPPPPPPPPPAL LOBYYYY ALGUIEN");
+            em.getTransaction().begin();
+
+            CsvDataset csvDataset = em.find(CsvDataset.class, id);
+            if (csvDataset != null) {
+                System.out.println("PPPPPPPPPPPPPPPPPPPPPPPPPPPPAL LOBYYYY CSV");
+                em.remove(csvDataset);
+                success = true;
+            } else {
+                System.out.println("PPPPPPPPPPPPPPPPPPPPPPPPPPPPAL LOBYYYY JSON");
+                JsonDataset jsonDataset = em.find(JsonDataset.class, id);
+                if (jsonDataset != null) {
+                    em.remove(jsonDataset);
+                    success = true;
+                }
+            }
+
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            em.close();
+        }
+        return success;
     }
+
+
 
     @Override
     public boolean deleteAll() {
