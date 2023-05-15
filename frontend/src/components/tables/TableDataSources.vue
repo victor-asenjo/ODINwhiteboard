@@ -148,7 +148,16 @@ const columns = [
 ];
 
 onMounted(() => {
-  storeDS.getDatasources(1)
+  const url = window.location.href; // Get the current URL
+  const regex = /project\/(\d+)\//;
+  const match = url.match(regex);
+  let projectId;
+  if (match) {
+    projectId = match[1];
+    console.log(projectId); // Output: 1
+  }
+
+  storeDS.getDatasources(projectId)
 } )
 const views = {
     "integration": ['Name', 'Type'],
