@@ -195,6 +195,10 @@ public class SourceService {
         projectService.addDatasetIdToProject(projectId, datasetId);
     }
 
+    public void deleteDatasetIdFromProject(String projectId, String datasetId) {
+        projectService.deleteDatasetIdFromProject(projectId, datasetId);
+    }
+
     public Tuple saveTuple(Tuple tuple) {
         ORMStoreInterface<Tuple> ormProject = null;
         try {

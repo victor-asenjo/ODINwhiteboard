@@ -48,6 +48,23 @@ public class ProjectService {
         saveProject(project);
     }
 
+    public void deleteDatasetIdFromProject(String projectId, String datasetId) {
+        // Retrieve the project with the given ID
+        Project project = findById(projectId);
+
+        // If the project is not found, throw an exception
+        if (project == null) {
+            throw new IllegalArgumentException("Project not found");
+        }
+        System.out.println("--------------------------->"+project.getDatasetIDs());
+        // Add the URI of the local graph to the project's list of local graph IDs
+        int indexToRemove = project.getDatasetIDs().indexOf(datasetId);
+        project.getDatasetIDs().remove(indexToRemove);
+        System.out.println("--------------------------->"+project.getDatasetIDs());
+        //saving the updated project
+        saveProject(project);
+    }
+
     public Project saveProject(Project project) {
         ORMStoreInterface<Project> ormProject = null;
         try {

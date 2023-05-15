@@ -135,7 +135,7 @@ public class SourceController {
         //Check if the dataset is part of that project
         if(sourceService.projectContains(projectId, id)){
             // Delete the relation with project
-            //sourceService.deleteDatasourceIdFromProject();
+            sourceService.deleteDatasetIdFromProject(projectId, id);
 
             // Call the projectService to delete the project and get the result
             deleted = sourceService.deleteDatasource(id);
