@@ -25,6 +25,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -98,8 +99,6 @@ public class SourceService {
     public Dataset extractData(String filePath, String datasetName, String datasetDescription) {
         // Extract the extension of the file from the file path
         String extension = filePath.substring(filePath.lastIndexOf(".") + 1);
-        System.out.println(extension);
-        System.out.println(filePath);
 
         Dataset dataset;
 
@@ -192,6 +191,9 @@ public class SourceService {
     public void addLocalGraphToProject(String projectId, String name) {
         projectService.addLocalGraphToProject(projectId, name);
     }
+    public void addDatasetIdToProject(String projectId, String datasetId) {
+        projectService.addDatasetIdToProject(projectId, datasetId);
+    }
 
     public Tuple saveTuple(Tuple tuple) {
         ORMStoreInterface<Tuple> ormProject = null;
@@ -231,6 +233,34 @@ public class SourceService {
             throw new RuntimeException(e);
         }
         return ormDataset.deleteOne(id);
+    }
+
+    public boolean projectContains(String projectId, String id) {
+        return projectService.projectContains(projectId, id);
+    }
+
+    public List<Dataset> getDatasetsOfProject(String id) {
+        // Initializing ORMStoreInterface
+        ORMStoreInterface<Dataset> ormDataset = null;
+        try {
+            ormDataset = ORMStoreFactory.getInstance(Dataset.class);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        // Getting a list of dataset IDs associated with the project ID
+        List<String> datasetIds = projectService.getDatasetIds(id);
+
+        // Initializing the list to store datasets of the project
+        List<Dataset> datasetsOfProject = new ArrayList<>();
+
+        // Retrieving and adding datasets to the list using ORM
+        for (String datasetId : datasetIds) {
+            datasetsOfProject.add(ormDataset.findById(datasetId));
+        }
+
+        // Returning the list of datasets associated with the project
+        return datasetsOfProject;
     }
 }
 

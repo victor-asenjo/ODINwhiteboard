@@ -65,7 +65,7 @@ export const useDataSourceStore = defineStore('datasource',{
         // && this.datasources.length === 0
         if(authStore.user.accessToken ) {
           console.log("retrieving persistent data sources...")
-           this.getDatasources()
+           this.getDatasources(proj.id)
          }
          return this.project;
       },
@@ -107,11 +107,11 @@ export const useDataSourceStore = defineStore('datasource',{
       },
 
 
-        async getDatasources() {
+        async getDatasources(projectId) {
           const notify  = useNotify()
           const authStore = useAuthStore()
             console.log("Pinia getting data sources...")
-            const res = await api.getAll(this.project.projectId, authStore.user.accessToken).then(response => {
+            const res = await api.getAll(projectId, authStore.user.accessToken).then(response => {
 
               console.log("ds received", response.data)
 

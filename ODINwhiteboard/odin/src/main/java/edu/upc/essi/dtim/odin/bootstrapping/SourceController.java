@@ -61,9 +61,12 @@ public class SourceController {
 
         String graphId = graph.getName().getURI();
 
-        // Add the local graph to the project's list of local graph IDs if it was saved
         if (isSaved) {
+            // Add the local graph to the project's list of local graph IDs if it was saved
             sourceService.addLocalGraphToProject(projectId, graphId);
+
+            if(datasource.getClass() == CsvDataset.class) savingDatasetObject(datasource.getName(), datasource.getDescription(), ((CsvDataset) datasource).getPath(), projectId);
+            else if (datasource.getClass() == CsvDataset.class) savingDatasetObject(datasource.getName(), datasource.getDescription(), ((JsonDataset) datasource).getPath(), projectId);
         }
 
         // Return success message
@@ -80,14 +83,14 @@ public class SourceController {
         return sourceService.saveTuple(tuple);
     }
 
-    @PostMapping("/project/{id}/datasources")
+    @PostMapping("/project/{projectId}/datasources")
     public ResponseEntity<?> savingDatasetObject(
             @RequestParam("datasetName") String datasetName,
             @RequestParam("datasetDescription") String datasetDescription,
             @RequestParam("datasetPath") String path,
-            @PathVariable String id) {
+            @PathVariable String projectId) {
         try {
-            System.out.println("################### POST A DATASOURCE RECEIVED ################### " + id);
+            System.out.println("################### POST A DATASOURCE RECEIVED ################### " + projectId);
             Dataset dataset = null;
 
             String extension = "";
@@ -109,6 +112,9 @@ public class SourceController {
 
             Dataset savedDataset = sourceService.saveDataset(dataset);
 
+            //Create the relation with project adding the datasetId
+            sourceService.addDatasetIdToProject(projectId, savedDataset.getDatasetId());
+
             return new ResponseEntity<>(savedDataset, HttpStatus.OK);
         } catch (UnsupportedOperationException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -124,8 +130,13 @@ public class SourceController {
         System.out.println("################### DELETE A DATASOURCE from project ################### " + projectId);
         System.out.println("################### DELETE A DATASOURCE RECEIVED ################### " + id);
 
-        // Call the projectService to delete the project and get the result
-        boolean deleted = sourceService.deleteDatasource(id);
+        boolean deleted = false;
+
+        //Check if the dataset is part of that project
+        if(sourceService.projectContains(projectId, id)){
+            // Call the projectService to delete the project and get the result
+            deleted = sourceService.deleteDatasource(id);
+        }
 
         // Check if the project was deleted successfully
         if (deleted) {
@@ -138,9 +149,25 @@ public class SourceController {
     }
 
     @GetMapping("/project/{id}/datasources")
-    public ResponseEntity<?> getAllDatasource(@PathVariable String id) {
+    public ResponseEntity<?> getDatasourcesFromProject(@PathVariable String id) {
         try {
-            System.out.println("################### GET ALL DATASOURCE RECEIVED ################### " + id);
+            System.out.println("################### GET ALL DATASOURCE FROM PROJECT ################### " + id);
+            List<Dataset> datasets = sourceService.getDatasetsOfProject(id);
+
+            if (datasets.isEmpty()) {
+                return new ResponseEntity<>("No datasets found", HttpStatus.NOT_FOUND);
+            }
+
+            return new ResponseEntity<>(datasets, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("An error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/datasources")
+    public ResponseEntity<?> getAllDatasource() {
+        try {
+            System.out.println("################### GET ALL DATASOURCE RECEIVED ################### ");
             List<Dataset> datasets = sourceService.getDatasets();
 
             if (datasets.isEmpty()) {

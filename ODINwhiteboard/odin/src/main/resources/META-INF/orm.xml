@@ -32,6 +32,11 @@
                     <join-column name="PROJECT_ID"/>
                 </collection-table>
             </element-collection>
+            <element-collection name="datasetIDs" target-class="java.lang.String">
+                <collection-table name="PROJECT_DATASET_IDS">
+                    <join-column name="PROJECT_ID"/>
+                </collection-table>
+            </element-collection>
         </attributes>
     </entity>
 

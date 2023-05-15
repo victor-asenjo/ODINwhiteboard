@@ -32,6 +32,22 @@ public class ProjectService {
         saveProject(project);
     }
 
+    public void addDatasetIdToProject(String projectId, String datasetId) {
+        // Retrieve the project with the given ID
+        Project project = findById(projectId);
+
+        // If the project is not found, throw an exception
+        if (project == null) {
+            throw new IllegalArgumentException("Project not found");
+        }
+
+        // Add the URI of the local graph to the project's list of local graph IDs
+        project.getDatasetIDs().add(datasetId);
+
+        //saving the updated project
+        saveProject(project);
+    }
+
     public Project saveProject(Project project) {
         ORMStoreInterface<Project> ormProject = null;
         try {
@@ -80,6 +96,28 @@ public class ProjectService {
             throw new RuntimeException(e);
         }
         return ormProject.deleteAll();
+    }
+
+    public boolean projectContains(String projectId, String id) {
+        ORMStoreInterface<Project> ormProject = null;
+        try {
+            ormProject = ORMStoreFactory.getInstance(Project.class);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        Project project = ormProject.findById(projectId);
+        return project.getLocalGraphIDs().contains(id);
+    }
+
+    public List<String> getDatasetIds(String id) {
+        ORMStoreInterface<Project> ormProject = null;
+        try {
+            ormProject = ORMStoreFactory.getInstance(Project.class);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        Project project = ormProject.findById(id);
+        return project.getDatasetIDs();
     }
 }
 

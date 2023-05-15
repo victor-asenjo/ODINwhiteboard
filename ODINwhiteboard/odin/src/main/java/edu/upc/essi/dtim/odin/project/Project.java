@@ -16,14 +16,25 @@ public class Project {
     // Privacy level of the project (e.g. private, public)
     private String projectPrivacy;
 
-    // Color associated with the project (not sure what this is used for)
+    // Color associated with the project
     private String projectColor;
 
     // Username of the user who created the project
     private String createdBy;
 
-    // List of local graph IDs associated with the project (not sure what this is used for)
+    // List of local graph IDs associated with the project
     private List<String> localGraphIDs;
+
+    // List of dataset IDs associated with the project
+    private List<String> datasetIDs;
+
+    public List<String> getDatasetIDs() {
+        return datasetIDs;
+    }
+
+    public void setDatasetIDs(List<String> datasetIDs) {
+        this.datasetIDs = datasetIDs;
+    }
 
     public String getProjectId() {
         return projectId;

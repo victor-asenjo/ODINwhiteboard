@@ -14,8 +14,29 @@ public class ORMDatasetImplementation implements ORMStoreInterface<Dataset>{
 
     @Override
     public Dataset findById(String id) {
-        return null;
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("ORMPersistenceUnit");
+        EntityManager em = emf.createEntityManager();
+        Dataset dataset = null;
+        try {
+            // Find the dataset with the given id in the CsvDataset entity
+            CsvDataset csvDataset = em.find(CsvDataset.class, id);
+            if (csvDataset != null) {
+                dataset = csvDataset;
+            } else {
+                // If the dataset is not found in CsvDataset, look for it in the JsonDataset entity
+                JsonDataset jsonDataset = em.find(JsonDataset.class, id);
+                if (jsonDataset != null) {
+                    dataset = jsonDataset;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            em.close();
+        }
+        return dataset;
     }
+
 
     @Override
     public Dataset save(Dataset object) {

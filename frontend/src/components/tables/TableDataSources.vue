@@ -114,6 +114,7 @@ import {useNotify} from 'src/use/useNotify.js'
 import FormNewDataSource from "components/forms/FormNewDataSource.vue";
 // import { odinApi } from "boot/axios";
 import api from "src/api/dataSourcesAPI.js";
+
 /*
   props
 */
@@ -147,7 +148,7 @@ const columns = [
 ];
 
 onMounted(() => {
-  storeDS.getDatasources()
+  storeDS.getDatasources(1)
 } )
 const views = {
     "integration": ['Name', 'Type'],
