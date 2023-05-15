@@ -23,7 +23,7 @@ public class ProjectController {
     }
 
     @GetMapping("/projects/{id}")
-    public ResponseEntity<Project> getProject(@PathVariable String id) {
+    public ResponseEntity<Project> getProject(@PathVariable("id") String id) {
         Project project = projectService.findById(id);
         if (project != null) {
             return ResponseEntity.ok(project);

@@ -9,10 +9,9 @@ import edu.upc.essi.dtim.NextiaCore.graph.URI;
 import edu.upc.essi.dtim.odin.NextiaStore.GraphStore.GraphStoreFactory;
 import edu.upc.essi.dtim.odin.NextiaStore.GraphStore.GraphStoreInterface;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -30,23 +29,22 @@ public class SourceController {
     /**
      * Bootstrap a new datasource into the project.
      * @param projectId The ID of the project.
-     * @param datasetDescription Additional metadata about the datasource.
      * @param file The Multipart file containing the datasource.
      * @return A success message if the bootstrap was successful, or an error message if it failed.
      */
-    @PostMapping("/api/addSource")
-    public String bootstrap(@RequestParam("projectId") String projectId,
-                            @RequestParam("datasetName") String datasetName,
-                            @RequestParam("datasetDescription") String datasetDescription,
-                            @RequestParam("file") MultipartFile file) throws IOException {
-
+    @PostMapping(value="/project/{id}", consumes = {"multipart/form-data"})
+    public ResponseEntity<String> bootstrap(@PathVariable("id") String projectId,
+                                            @RequestPart String datasetName,
+                                            @RequestPart String datasetDescription,
+                                            @RequestPart MultipartFile attach_file) throws IOException {
+        System.out.println("POST DATASOURCE RECIVED");
         // Validate and authenticate access here
         if (!validateAccess(projectId)) {
-            return "Access denied";
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied");
         }
 
         // Reconstruct file from Multipart file
-        String filePath = sourceService.reconstructFile(file);
+        String filePath = sourceService.reconstructFile(attach_file);
 
         // Extract data from datasource file
         Dataset datasource = sourceService.extractData(filePath, datasetName, datasetDescription);
@@ -65,7 +63,7 @@ public class SourceController {
         }
 
         // Return success message
-        return graphId;
+        return ResponseEntity.ok(graphId);
     }
 
     @PostMapping("/tuple")
