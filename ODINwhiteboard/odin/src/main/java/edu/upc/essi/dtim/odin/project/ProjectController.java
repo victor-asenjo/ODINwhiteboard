@@ -56,8 +56,7 @@ public class ProjectController {
             return ResponseEntity.notFound().build();
         }
     }
-
-
+    
     @DeleteMapping("/projects/delete")
     public ResponseEntity<Boolean> deleteAllProjects() {
         boolean deleted = projectService.deleteAllProjects();

@@ -28,16 +28,20 @@ public class SourceController {
 
     /**
      * Bootstrap a new datasource into the project.
+     *
      * @param projectId The ID of the project.
-     * @param file The Multipart file containing the datasource.
-     * @return A success message if the bootstrap was successful, or an error message if it failed.
+     * @param attach_file The Multipart file containing the datasource.
+     * @param datasetName The name of the dataset.
+     * @param datasetDescription The description of the dataset.
+     * @return A ResponseEntity with a success message if the bootstrap was successful, or an error message if it failed.
+     * @throws IOException If there is an error with the file handling.
      */
     @PostMapping(value="/project/{id}", consumes = {"multipart/form-data"})
     public ResponseEntity<String> bootstrap(@PathVariable("id") String projectId,
                                             @RequestPart String datasetName,
                                             @RequestPart String datasetDescription,
                                             @RequestPart MultipartFile attach_file) throws IOException {
-        System.out.println("POST DATASOURCE RECIVED");
+        System.out.println("################### POST DATASOURCE RECIVED ###################");
         // Validate and authenticate access here
         if (!validateAccess(projectId)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied");
@@ -76,38 +80,58 @@ public class SourceController {
         return sourceService.saveTuple(tuple);
     }
 
-    @PostMapping("/datasets")
-    public Dataset savingDatasetObject(@RequestParam("datasetId") String datasetId,
-                                       @RequestParam("datasetName") String datasetName,
-                                       @RequestParam("datasetDescription") String datasetDescription,
-                                       @RequestParam("datasetPath") String path){
+    @PostMapping("/project/{id}/datasources")
+    public ResponseEntity<?> savingDatasetObject(
+            @RequestParam("datasetName") String datasetName,
+            @RequestParam("datasetDescription") String datasetDescription,
+            @RequestParam("datasetPath") String path,
+            @PathVariable String id) {
+        try {
+            System.out.println("################### POST A DATASOURCE RECEIVED ################### " + id);
+            Dataset dataset = null;
 
-        Dataset dataset = null;
+            String extension = "";
+            int dotIndex = path.lastIndexOf('.');
+            if (dotIndex > 0 && dotIndex < path.length() - 1) {
+                extension = path.substring(dotIndex + 1);
+            }
 
-        String extension = "";
-        int dotIndex = path.lastIndexOf('.');
-        if (dotIndex > 0 && dotIndex < path.length() - 1) {
-            extension = path.substring(dotIndex + 1);
+            switch (extension.toLowerCase()) {
+                case "csv":
+                    dataset = new CsvDataset(null, datasetName, datasetDescription, path);
+                    break;
+                case "json":
+                    dataset = new JsonDataset(null, datasetName, datasetDescription, path);
+                    break;
+                default:
+                    throw new UnsupportedOperationException("Dataset type not supported: " + extension);
+            }
+
+            Dataset savedDataset = sourceService.saveDataset(dataset);
+
+            return new ResponseEntity<>(savedDataset, HttpStatus.OK);
+        } catch (UnsupportedOperationException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<>("An error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        switch (extension.toLowerCase()){
-            case "csv":
-                dataset = new CsvDataset(datasetId, datasetName, datasetDescription, path);
-                break;
-            case "json":
-                dataset = new JsonDataset(datasetId, datasetName, datasetDescription, path);
-                break;
-            default:
-                throw new UnsupportedOperationException("Dataset type not supported: " + extension);
-        }
-        return sourceService.saveDataset(dataset);
     }
 
-    @GetMapping("/datasets")
-    public List<Dataset> getAllProjects()
-    {
-        return sourceService.getDatasets();
-    }
+    @GetMapping("/project/{id}/datasources")
+    public ResponseEntity<?> getAllDatasource(@PathVariable String id) {
+        try {
+            System.out.println("################### GET ALL DATASOURCE RECEIVED ################### " + id);
+            List<Dataset> datasets = sourceService.getDatasets();
 
+            if (datasets.isEmpty()) {
+                return new ResponseEntity<>("No datasets found", HttpStatus.NOT_FOUND);
+            }
+
+            return new ResponseEntity<>(datasets, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("An error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
     @GetMapping("/getGraph")
     public Graph getGraph(@RequestParam("graphId") String graphId) throws IOException {
