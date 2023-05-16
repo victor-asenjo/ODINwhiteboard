@@ -29,7 +29,7 @@ import {odinApi} from 'boot/axios';
 export default {
   bootstrap(projectID, token, data) { return odinApi.post('/project/'+projectID, data) },
   getAll (projectID, token) { return odinApi.get('/project/'+projectID+'/datasources'/*, {headers: { Authorization: `Bearer ${token}` }} */  ) },
-  deleteDS(projectID,id, token) {return odinApi.delete('/project/'+projectID+'/datasource/'+ id/*, {headers: { Authorization: `Bearer ${token}` }}*/ )},
+  deleteDatasource(projectID, id, token) {return odinApi.delete('/project/'+projectID+'/datasource/'+ id/*, {headers: { Authorization: `Bearer ${token}` }}*/ )},
 
 
   createDSPersistent (projectID, datasource, token) { return odinApi.post('/project/'+projectID+'/datasources/persist', datasource,  {headers: { Authorization: `Bearer ${token}` }})},
