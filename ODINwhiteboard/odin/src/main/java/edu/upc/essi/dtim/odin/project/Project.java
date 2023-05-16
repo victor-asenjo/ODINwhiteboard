@@ -1,5 +1,7 @@
 package edu.upc.essi.dtim.odin.project;
 
+import edu.upc.essi.dtim.NextiaCore.datasources.dataset.Dataset;
+
 import java.util.List;
 
 public class Project {
@@ -25,15 +27,15 @@ public class Project {
     // List of local graph IDs associated with the project
     private List<String> localGraphIDs;
 
-    // List of dataset IDs associated with the project
-    private List<String> datasetIDs;
+    // List of dataset associated with the project
+    private List<Dataset> datasets;
 
-    public List<String> getDatasetIDs() {
-        return datasetIDs;
+    public List<Dataset> getDatasets() {
+        return datasets;
     }
 
-    public void setDatasetIDs(List<String> datasetIDs) {
-        this.datasetIDs = datasetIDs;
+    public void setDatasets(List<Dataset> datasets) {
+        this.datasets = datasets;
     }
 
     public String getProjectId() {

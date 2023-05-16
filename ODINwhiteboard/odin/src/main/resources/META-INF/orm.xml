@@ -32,11 +32,13 @@
                     <join-column name="PROJECT_ID"/>
                 </collection-table>
             </element-collection>
-            <element-collection name="datasetIDs" target-class="java.lang.String">
-                <collection-table name="PROJECT_DATASET_IDS">
-                    <join-column name="PROJECT_ID"/>
-                </collection-table>
-            </element-collection>
+
+            <one-to-many orphan-removal="true" name="datasets" target-entity="edu.upc.essi.dtim.NextiaCore.datasources.dataset.CsvDataset">
+                <cascade>
+                    <cascade-all/>
+                </cascade>
+                <join-column name="PROJECT_ID"/>
+            </one-to-many>
         </attributes>
     </entity>
 
@@ -56,13 +58,26 @@
     </entity>
 
 
+    <!--> MAPPING ABSTRACT CLASS GRAPH <-->
+    <mapped-superclass class="edu.upc.essi.dtim.NextiaCore.graph.Graph" access="FIELD">
+        <attributes>
+            <id name="id"><generated-value strategy="AUTO" /></id>
+            <basic name="name"/>
+            <basic name="graphicalSchema"/>
+        </attributes>
+    </mapped-superclass>
+
+    <entity name="LocalGraph" class="edu.upc.essi.dtim.NextiaCore.graph.LocalGraph" access="FIELD">
+        <table name="LocalGraph"/>
+    </entity>
+
+
     <!--> MAPPING ABSTRACT CLASS DATASET <-->
     <mapped-superclass class="edu.upc.essi.dtim.NextiaCore.datasources.dataset.Dataset" access="FIELD">
         <attributes>
             <id name="datasetId"><generated-value strategy="AUTO" /></id>
             <basic name="datasetName"/>
             <basic name="datasetDescription"/>
-            <basic name="graphicalSchema"/>
             <basic name="created_at"/>
         </attributes>
     </mapped-superclass>

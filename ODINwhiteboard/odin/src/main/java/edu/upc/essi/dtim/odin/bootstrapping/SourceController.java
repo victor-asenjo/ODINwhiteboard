@@ -41,7 +41,7 @@ public class SourceController {
                                             @RequestPart String datasetName,
                                             @RequestPart String datasetDescription,
                                             @RequestPart MultipartFile attach_file) throws IOException {
-        System.out.println("################### POST DATASOURCE RECIVED FOR BOOTSTRAP###################");
+        System.out.println("################### POST DATASOURCE RECEIVED FOR BOOTSTRAP###################");
         // Validate and authenticate access here
         if (!validateAccess(projectId)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied");
@@ -58,7 +58,6 @@ public class SourceController {
 
         String visualSchema = sourceService.generateVisualSchema(graph);
         System.out.println(visualSchema);
-        datasource.setGraphicalSchema(visualSchema);
         System.out.println("-----------------------------------> VISUAL SCHEMA INSERTED");
         // Save graph into database
         boolean isSaved = sourceService.saveGraphToDatabase(graph);
@@ -69,8 +68,8 @@ public class SourceController {
             // Add the local graph to the project's list of local graph IDs if it was saved
             sourceService.addLocalGraphToProject(projectId, graphId);
 
-            if(datasource.getClass() == CsvDataset.class) savingDatasetObject(datasource.getName(), datasource.getDescription(), ((CsvDataset) datasource).getPath(), datasource.getGraphicalSchema(), projectId);
-            else if (datasource.getClass() == CsvDataset.class) savingDatasetObject(datasource.getName(), datasource.getDescription(), ((JsonDataset) datasource).getPath(), datasource.getGraphicalSchema(), projectId);
+            if(datasource.getClass() == CsvDataset.class) savingDatasetObject(datasource.getName(), datasource.getDescription(), ((CsvDataset) datasource).getPath(), projectId);
+            else if (datasource.getClass() == JsonDataset.class) savingDatasetObject(datasource.getName(), datasource.getDescription(), ((JsonDataset) datasource).getPath(), projectId);
         }
 
         // Return success message
@@ -78,10 +77,11 @@ public class SourceController {
     }
 
     @PostMapping("/tuple")
-    public Tuple savingTupleObject(@RequestParam("tupleId") String datasetId,
+    public Tuple savingTupleObject(@RequestParam("tupleId") String tupleId,
                                   @RequestParam("tupleName") String tupleName,
                                   @RequestParam("tupleDescription") String tupleDescription){
         Tuple tuple = new Tuple();
+        tuple.setTupleId(tupleId);
         tuple.setTupleName(tupleName);
         tuple.setTupleDescription(tupleDescription);
         return sourceService.saveTuple(tuple);
@@ -92,11 +92,10 @@ public class SourceController {
             @RequestParam("datasetName") String datasetName,
             @RequestParam("datasetDescription") String datasetDescription,
             @RequestParam("datasetPath") String path,
-            @RequestParam("graphicSchema") String graphicSchema,
             @PathVariable String projectId) {
         try {
             System.out.println("################### POST A DATASOURCE RECEIVED ################### " + projectId);
-            Dataset dataset = null;
+            Dataset dataset;
 
             String extension = "";
             int dotIndex = path.lastIndexOf('.');
@@ -106,10 +105,10 @@ public class SourceController {
 
             switch (extension.toLowerCase()) {
                 case "csv":
-                    dataset = new CsvDataset(null, datasetName, datasetDescription, path, graphicSchema);
+                    dataset = new CsvDataset(null, datasetName, datasetDescription, path);
                     break;
                 case "json":
-                    dataset = new JsonDataset(null, datasetName, datasetDescription, path, graphicSchema);
+                    dataset = new JsonDataset(null, datasetName, datasetDescription, path);
                     break;
                 default:
                     throw new UnsupportedOperationException("Dataset type not supported: " + extension);
@@ -118,7 +117,7 @@ public class SourceController {
             Dataset savedDataset = sourceService.saveDataset(dataset);
 
             //Create the relation with project adding the datasetId
-            sourceService.addDatasetIdToProject(projectId, savedDataset.getDatasetId());
+            sourceService.addDatasetIdToProject(projectId, savedDataset);
 
             return new ResponseEntity<>(savedDataset, HttpStatus.OK);
         } catch (UnsupportedOperationException e) {
@@ -140,7 +139,7 @@ public class SourceController {
         //Check if the dataset is part of that project
         if(sourceService.projectContains(projectId, id)){
             // Delete the relation with project
-            sourceService.deleteDatasetIdFromProject(projectId, id);
+            sourceService.deleteDatasetFromProject(projectId, id);
 
             // Call the projectService to delete the project and get the result
             deleted = sourceService.deleteDatasource(id);
@@ -189,17 +188,15 @@ public class SourceController {
     }
 
     @GetMapping("/getGraph")
-    public Graph getGraph(@RequestParam("graphId") String graphId) throws IOException {
-        GraphStoreInterface graphStore = null;
+    public Graph getGraph(@RequestParam("graphId") String graphId) {
+        GraphStoreInterface graphStore;
         try {
             graphStore = GraphStoreFactory.getInstance();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        Graph graph = graphStore.getGraph(new URI(graphId));
 
-
-        return graph;
+        return graphStore.getGraph(new URI(graphId));
     }
 
 
@@ -213,24 +210,7 @@ public class SourceController {
      */
     private boolean validateAccess(String authentication) {
         System.out.println(authentication);
-        /*
-        // Extract the JWT token from the authentication object
-        JwtAuthenticationToken token = (JwtAuthenticationToken) authentication;
-        // Extract the attributes (claims) from the JWT token
-        Map<String, Object> attributes = token.getTokenAttributes();
-        // Extract the username from the attributes
-        String username = attributes.get("username").toString();
-        // Extract the roles from the attributes
-        List<String> roles = (List<String>) attributes.get("roles");
-        // Check if the user has the 'ROLE_ADMIN' role
-        boolean isAdmin = roles.contains("ROLE_ADMIN");
-        // If the user is not an admin, throw an exception indicating that they don't have permission
-        if (!isAdmin) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User " + username + " does not have access to perform the bootstrapping process.");
-        }
-        */
-
-
+        //TODO: IMPLEMENTATION
         return true;
 
     }

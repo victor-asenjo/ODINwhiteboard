@@ -29,7 +29,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -109,10 +108,10 @@ public class SourceService {
         // Create a new dataset object with the extracted data
         switch (extension.toLowerCase()){
             case "csv":
-                dataset = new CsvDataset(filePath, datasetName, datasetDescription, filePath, null);
+                dataset = new CsvDataset(filePath, datasetName, datasetDescription, filePath);
                 break;
             case "json":
-                dataset = new JsonDataset(filePath, datasetName, datasetDescription, filePath, null);
+                dataset = new JsonDataset(filePath, datasetName, datasetDescription, filePath);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported file format: " + extension);
@@ -138,7 +137,7 @@ public class SourceService {
             return graph;
         } catch (UnsupportedOperationException e) {
             // If the dataset format is not supported, return an error graph
-            Graph errorGraph = new LocalGraph(new URI(datasetName), new HashSet<>());
+            Graph errorGraph = new LocalGraph(null, new URI(datasetName), new HashSet<>(), "ERROR");
             errorGraph.addTriple(new Triple(
                     new URI(dataset.getDatasetId()),
                     new URI("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
@@ -173,12 +172,12 @@ public class SourceService {
     public void addLocalGraphToProject(String projectId, String name) {
         projectService.addLocalGraphToProject(projectId, name);
     }
-    public void addDatasetIdToProject(String projectId, String datasetId) {
-        projectService.addDatasetIdToProject(projectId, datasetId);
+    public void addDatasetIdToProject(String projectId, Dataset dataset) {
+        projectService.addDatasetIdToProject(projectId, dataset);
     }
 
-    public void deleteDatasetIdFromProject(String projectId, String datasetId) {
-        projectService.deleteDatasetIdFromProject(projectId, datasetId);
+    public void deleteDatasetFromProject(String projectId, String datasetId) {
+        projectService.deleteDatasetFromProject(projectId, datasetId);
     }
 
     public Tuple saveTuple(Tuple tuple) {
@@ -226,24 +225,8 @@ public class SourceService {
     }
 
     public List<Dataset> getDatasetsOfProject(String id) {
-        // Initializing ORMStoreInterface
-        ORMStoreInterface<Dataset> ormDataset = null;
-        try {
-            ormDataset = ORMStoreFactory.getInstance(Dataset.class);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
         // Getting a list of dataset IDs associated with the project ID
-        List<String> datasetIds = projectService.getDatasetIds(id);
-
-        // Initializing the list to store datasets of the project
-        List<Dataset> datasetsOfProject = new ArrayList<>();
-
-        // Retrieving and adding datasets to the list using ORM
-        for (String datasetId : datasetIds) {
-            datasetsOfProject.add(ormDataset.findById(datasetId));
-        }
+        List<Dataset> datasetsOfProject = projectService.getDatasetsOfProject(id);
 
         // Returning the list of datasets associated with the project
         return datasetsOfProject;
@@ -285,7 +268,7 @@ public class SourceService {
                 new URI("in water")
         ));
 
-        Graph graph = new LocalGraph(new URI(graphName), triples);
+        Graph graph = new LocalGraph(null, new URI(graphName), triples, "");
         return graph;
     }
 

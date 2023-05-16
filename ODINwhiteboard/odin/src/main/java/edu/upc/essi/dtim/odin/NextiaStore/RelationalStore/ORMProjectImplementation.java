@@ -84,8 +84,8 @@ public class ORMProjectImplementation implements ORMStoreInterface<Project>{
             Project project = em.find(Project.class, id);
             if (project != null) {
                 //Deleting the relations with project
-                List<String> datasetsIds = project.getDatasetIDs();
-                for (String idToRemove : datasetsIds){
+                List<Dataset> datasetsIds = project.getDatasets();
+                for (Dataset datasetToRemove : datasetsIds){
                     // Initializing ORMStoreInterface
                     ORMStoreInterface<Dataset> ormDataset = null;
                     try {
@@ -93,7 +93,7 @@ public class ORMProjectImplementation implements ORMStoreInterface<Project>{
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
-                    ormDataset.deleteOne(idToRemove);
+                    ormDataset.deleteOne(datasetToRemove.getDatasetId());
                 }
 
                 //Finally we remove the project object

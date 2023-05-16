@@ -1,5 +1,6 @@
 package edu.upc.essi.dtim.odin.project;
 
+import edu.upc.essi.dtim.NextiaCore.datasources.dataset.Dataset;
 import edu.upc.essi.dtim.odin.NextiaStore.RelationalStore.ORMStoreFactory;
 import edu.upc.essi.dtim.odin.NextiaStore.RelationalStore.ORMStoreInterface;
 import org.springframework.stereotype.Service;
@@ -32,7 +33,7 @@ public class ProjectService {
         saveProject(project);
     }
 
-    public void addDatasetIdToProject(String projectId, String datasetId) {
+    public void addDatasetIdToProject(String projectId, Dataset dataset) {
         // Retrieve the project with the given ID
         Project project = findById(projectId);
 
@@ -42,13 +43,13 @@ public class ProjectService {
         }
 
         // Add the URI of the local graph to the project's list of local graph IDs
-        project.getDatasetIDs().add(datasetId);
+        project.getDatasets().add(dataset);
 
         //saving the updated project
         saveProject(project);
     }
 
-    public void deleteDatasetIdFromProject(String projectId, String datasetId) {
+    public void deleteDatasetFromProject(String projectId, String datasetId) {
         // Retrieve the project with the given ID
         Project project = findById(projectId);
 
@@ -56,17 +57,21 @@ public class ProjectService {
         if (project == null) {
             throw new IllegalArgumentException("Project not found");
         }
-        System.out.println("--------------------------->"+project.getDatasetIDs());
-        // Add the URI of the local graph to the project's list of local graph IDs
-        int indexToRemove = project.getDatasetIDs().indexOf(datasetId);
-        project.getDatasetIDs().remove(indexToRemove);
-        System.out.println("--------------------------->"+project.getDatasetIDs());
+        System.out.println("--------------------------->"+project.getDatasets());
+        ORMStoreInterface<Dataset> ormDataset;
+        try {
+            ormDataset = ORMStoreFactory.getInstance(Dataset.class);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        project.getDatasets().remove(ormDataset.findById(datasetId));
+        System.out.println("--------------------------->"+project.getDatasets());
         //saving the updated project
         saveProject(project);
     }
 
     public Project saveProject(Project project) {
-        ORMStoreInterface<Project> ormProject = null;
+        ORMStoreInterface<Project> ormProject;
         try {
             ormProject = ORMStoreFactory.getInstance(Project.class);
         } catch (Exception e) {
@@ -76,7 +81,7 @@ public class ProjectService {
     }
 
     public Project findById(String projectId) {
-        ORMStoreInterface<Project> ormProject = null;
+        ORMStoreInterface<Project> ormProject;
         try {
             ormProject = ORMStoreFactory.getInstance(Project.class);
         } catch (Exception e) {
@@ -86,7 +91,7 @@ public class ProjectService {
     }
 
     public List<Project> getAllProjects() {
-        ORMStoreInterface<Project> ormProject = null;
+        ORMStoreInterface<Project> ormProject;
         try {
             ormProject = ORMStoreFactory.getInstance(Project.class);
         } catch (Exception e) {
@@ -96,7 +101,7 @@ public class ProjectService {
     }
 
     public boolean deleteProject(String id) {
-        ORMStoreInterface<Project> ormProject = null;
+        ORMStoreInterface<Project> ormProject;
         try {
             ormProject = ORMStoreFactory.getInstance(Project.class);
         } catch (Exception e) {
@@ -106,7 +111,7 @@ public class ProjectService {
     }
 
     public boolean deleteAllProjects() {
-        ORMStoreInterface<Project> ormProject = null;
+        ORMStoreInterface<Project> ormProject;
         try {
             ormProject = ORMStoreFactory.getInstance(Project.class);
         } catch (Exception e) {
@@ -116,25 +121,28 @@ public class ProjectService {
     }
 
     public boolean projectContains(String projectId, String id) {
-        ORMStoreInterface<Project> ormProject = null;
+        ORMStoreInterface<Project> ormProject;
+        ORMStoreInterface<Dataset> ormDataset;
         try {
             ormProject = ORMStoreFactory.getInstance(Project.class);
+            ormDataset = ORMStoreFactory.getInstance(Dataset.class);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
         Project project = ormProject.findById(projectId);
-        return project.getDatasetIDs().contains(id);
+        Dataset dataset = ormDataset.findById(id);
+        return project.getDatasets().contains(dataset);
     }
 
-    public List<String> getDatasetIds(String id) {
-        ORMStoreInterface<Project> ormProject = null;
+    public List<Dataset> getDatasetsOfProject(String id) {
+        ORMStoreInterface<Project> ormProject;
         try {
             ormProject = ORMStoreFactory.getInstance(Project.class);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
         Project project = ormProject.findById(id);
-        return project.getDatasetIDs();
+        return project.getDatasets();
     }
 }
 
