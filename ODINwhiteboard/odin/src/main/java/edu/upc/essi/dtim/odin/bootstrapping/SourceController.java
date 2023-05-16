@@ -41,7 +41,7 @@ public class SourceController {
                                             @RequestPart String datasetName,
                                             @RequestPart String datasetDescription,
                                             @RequestPart MultipartFile attach_file) throws IOException {
-        System.out.println("################### POST DATASOURCE RECIVED ###################");
+        System.out.println("################### POST DATASOURCE RECIVED FOR BOOTSTRAP###################");
         // Validate and authenticate access here
         if (!validateAccess(projectId)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied");
@@ -56,6 +56,10 @@ public class SourceController {
         // Transform datasource into graph
         Graph graph = sourceService.transformToGraph(datasource);
 
+        String visualSchema = sourceService.generateVisualSchema(graph);
+        System.out.println(visualSchema);
+        datasource.setGraphicalSchema(visualSchema);
+        System.out.println("-----------------------------------> VISUAL SCHEMA INSERTED");
         // Save graph into database
         boolean isSaved = sourceService.saveGraphToDatabase(graph);
 
@@ -65,8 +69,8 @@ public class SourceController {
             // Add the local graph to the project's list of local graph IDs if it was saved
             sourceService.addLocalGraphToProject(projectId, graphId);
 
-            if(datasource.getClass() == CsvDataset.class) savingDatasetObject(datasource.getName(), datasource.getDescription(), ((CsvDataset) datasource).getPath(), projectId);
-            else if (datasource.getClass() == CsvDataset.class) savingDatasetObject(datasource.getName(), datasource.getDescription(), ((JsonDataset) datasource).getPath(), projectId);
+            if(datasource.getClass() == CsvDataset.class) savingDatasetObject(datasource.getName(), datasource.getDescription(), ((CsvDataset) datasource).getPath(), datasource.getGraphicalSchema(), projectId);
+            else if (datasource.getClass() == CsvDataset.class) savingDatasetObject(datasource.getName(), datasource.getDescription(), ((JsonDataset) datasource).getPath(), datasource.getGraphicalSchema(), projectId);
         }
 
         // Return success message
@@ -88,6 +92,7 @@ public class SourceController {
             @RequestParam("datasetName") String datasetName,
             @RequestParam("datasetDescription") String datasetDescription,
             @RequestParam("datasetPath") String path,
+            @RequestParam("graphicSchema") String graphicSchema,
             @PathVariable String projectId) {
         try {
             System.out.println("################### POST A DATASOURCE RECEIVED ################### " + projectId);
@@ -101,10 +106,10 @@ public class SourceController {
 
             switch (extension.toLowerCase()) {
                 case "csv":
-                    dataset = new CsvDataset(null, datasetName, datasetDescription, path);
+                    dataset = new CsvDataset(null, datasetName, datasetDescription, path, graphicSchema);
                     break;
                 case "json":
-                    dataset = new JsonDataset(null, datasetName, datasetDescription, path);
+                    dataset = new JsonDataset(null, datasetName, datasetDescription, path, graphicSchema);
                     break;
                 default:
                     throw new UnsupportedOperationException("Dataset type not supported: " + extension);

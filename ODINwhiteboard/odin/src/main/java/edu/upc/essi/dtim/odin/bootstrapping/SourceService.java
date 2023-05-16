@@ -15,6 +15,9 @@ import edu.upc.essi.dtim.odin.NextiaStore.RelationalStore.ORMStoreInterface;
 import edu.upc.essi.dtim.odin.config.AppConfig;
 import edu.upc.essi.dtim.odin.project.ProjectService;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.vocabulary.RDF;
+import org.apache.jena.vocabulary.RDFS;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -105,10 +108,10 @@ public class SourceService {
         // Create a new dataset object with the extracted data
         switch (extension.toLowerCase()){
             case "csv":
-                dataset = new CsvDataset(filePath, datasetName, datasetDescription, filePath);
+                dataset = new CsvDataset(filePath, datasetName, datasetDescription, filePath, null);
                 break;
             case "json":
-                dataset = new JsonDataset(filePath, datasetName, datasetDescription, filePath);
+                dataset = new JsonDataset(filePath, datasetName, datasetDescription, filePath, null);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported file format: " + extension);
@@ -144,37 +147,49 @@ public class SourceService {
         }
     }
 
-    private Graph hardcodedGraph(String graphName) {
-        Set<Triple> triples = new HashSet<>();
+    public String generateVisualSchema(Graph graph) {
+        //TODO: generate the visual schema from graph
+        /* EXAMPLE
+        {
+          "nodes": [
+            {
+              "iri": "http://www.example.com/resource1",
+              "id": "Class1",
+              "label": "resource1",
+              "iriType": "http://www.w3.org/2002/07/owl#Class",
+              "shortType": "owl:Class",
+              "type": "class"
+            },
+            {
+              "iri": "http://www.example.com/property1",
+              "id": "Property1",
+              "label": "property1",
+              "type": "property",
+              "domain": "http://www.example.com/resource1",
+              "range": "http://www.example.com/resource2"
+            },
+            {
+              "iri": "http://www.example.com/resource2",
+              "id": "Class2",
+              "label": "resource2",
+              "iriType": "http://www.w3.org/2002/07/owl#Class",
+              "shortType": "owl:Class",
+              "type": "class"
+            }
+          ],
+          "links": [
+            {
+              "id": "Link1",
+              "nodeId": "Property1",
+              "source": "Class1",
+              "target": "Class2",
+              "label": "property1"
+            }
+          ]
+        }
 
-        triples.add(new Triple(
-                new URI("http://somewhere/cat"),
-                new URI("http://www.w3.org/2001/vcard-rdf/3.0#TYPE"),
-                new URI("http://www.w3.org/2001/vcard-rdf/3.0#Animal")
-        ));
-        triples.add(new Triple(
-                new URI("http://somewhere/cat"),
-                new URI("http://www.w3.org/2001/vcard-rdf/3.0#FN"),
-                new URI("tail")
-        ));
-        triples.add(new Triple(
-                new URI("http://somewhere/dog"),
-                new URI("http://somewhere/has"),
-                new URI("paws")
-        ));
-        triples.add(new Triple(
-                new URI("http://somewhere/bird"),
-                new URI("http://somewhere/can"),
-                new URI("fly")
-        ));
-        triples.add(new Triple(
-                new URI("http://somewhere/fish"),
-                new URI("http://somewhere/lives"),
-                new URI("in water")
-        ));
-
-        Graph graph = new LocalGraph(new URI(graphName), triples);
-        return graph;
+         */
+        return "{'nodes': [{'iri': 'http://www.example.com/resource1','id': 'Class1','label': 'resource1','iriType': 'http://www.w3.org/2002/07/owl#Class','shortType': 'owl:Class','type': 'class'},{'iri': 'http://www.example.com/property1','id': 'Property1','label': 'property1','type': 'property','domain': 'http://www.example.com/resource1','range': 'http://www.example.com/resource2'}],'links': [{'id': 'Link1','nodeId': 'Property1','source': 'Class1','target': 'Class2','label': 'property1'}]}";
     }
 
     public boolean saveGraphToDatabase(Graph graph) {
@@ -265,6 +280,66 @@ public class SourceService {
 
         // Returning the list of datasets associated with the project
         return datasetsOfProject;
+    }
+
+
+
+
+
+
+
+
+    private Graph hardcodedGraph(String graphName) {
+        Set<Triple> triples = new HashSet<>();
+
+        triples.add(new Triple(
+                new URI("http://somewhere/cat"),
+                new URI("http://www.w3.org/2001/vcard-rdf/3.0#TYPE"),
+                new URI("http://www.w3.org/2001/vcard-rdf/3.0#Animal")
+        ));
+        triples.add(new Triple(
+                new URI("http://somewhere/cat"),
+                new URI("http://www.w3.org/2001/vcard-rdf/3.0#FN"),
+                new URI("tail")
+        ));
+        triples.add(new Triple(
+                new URI("http://somewhere/dog"),
+                new URI("http://somewhere/has"),
+                new URI("paws")
+        ));
+        triples.add(new Triple(
+                new URI("http://somewhere/bird"),
+                new URI("http://somewhere/can"),
+                new URI("fly")
+        ));
+        triples.add(new Triple(
+                new URI("http://somewhere/fish"),
+                new URI("http://somewhere/lives"),
+                new URI("in water")
+        ));
+
+        Graph graph = new LocalGraph(new URI(graphName), triples);
+        return graph;
+    }
+
+    Model hardcodedModel(String name){
+        Model model = ModelFactory.createDefaultModel();
+
+        // Crear propiedades y recursos
+        Property hasTitle = model.createProperty("https://example.com/hasTitle");
+        Resource book = model.createResource("https://example.com/"+name);
+        Resource title = model.createResource("https://example.com/Title");
+
+        // Crear declaraciones y agregar al modelo
+        Statement stmt1 = model.createStatement(book, RDF.type, RDFS.Class);
+        Statement stmt2 = model.createStatement(hasTitle, RDF.type, RDF.Property);
+        Statement stmt3 = model.createStatement(book, hasTitle, title);
+
+        model.add(stmt1);
+        model.add(stmt2);
+        model.add(stmt3);
+
+        return model;
     }
 }
 

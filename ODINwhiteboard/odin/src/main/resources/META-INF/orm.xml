@@ -62,6 +62,7 @@
             <id name="datasetId"><generated-value strategy="AUTO" /></id>
             <basic name="datasetName"/>
             <basic name="datasetDescription"/>
+            <basic name="graphicalSchema"/>
             <basic name="created_at"/>
         </attributes>
     </mapped-superclass>

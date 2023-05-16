@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
 import {useNotify} from 'src/use/useNotify.js'
-// import {odinApi} from "boot/axios";
 import api from "src/api/dataSourcesAPI.js";
 import integrationAPI from "src/api/integration.api.js";
 import { useAuthStore } from 'stores/auth.store.js'
@@ -183,7 +182,7 @@ export const useIntegrationStore = defineStore('integration',{
           const authStore = useAuthStore()
 
             console.log("Pinia getting temporal data sources...")
-            const res = await api.getAllTemporal(this.project.id, authStore.user.accessToken).then(response => {
+            const res = await api.getAll(this.project.id, authStore.user.accessToken).then(response => {
 
               console.log("ds temporal received", response)
 
