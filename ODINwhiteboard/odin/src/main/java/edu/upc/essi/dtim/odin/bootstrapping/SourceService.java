@@ -8,6 +8,7 @@ import edu.upc.essi.dtim.NextiaCore.graph.Graph;
 import edu.upc.essi.dtim.NextiaCore.graph.LocalGraph;
 import edu.upc.essi.dtim.NextiaCore.graph.Triple;
 import edu.upc.essi.dtim.NextiaCore.graph.URI;
+import edu.upc.essi.dtim.odin.NextiaGraphy.NextiaGraphy;
 import edu.upc.essi.dtim.odin.NextiaStore.GraphStore.GraphStoreFactory;
 import edu.upc.essi.dtim.odin.NextiaStore.GraphStore.GraphStoreInterface;
 import edu.upc.essi.dtim.odin.NextiaStore.RelationalStore.ORMStoreFactory;
@@ -149,47 +150,13 @@ public class SourceService {
 
     public String generateVisualSchema(Graph graph) {
         //TODO: generate the visual schema from graph
-        /* EXAMPLE
-        {
-          "nodes": [
-            {
-              "iri": "http://www.example.com/resource1",
-              "id": "Class1",
-              "label": "resource1",
-              "iriType": "http://www.w3.org/2002/07/owl#Class",
-              "shortType": "owl:Class",
-              "type": "class"
-            },
-            {
-              "iri": "http://www.example.com/property1",
-              "id": "Property1",
-              "label": "property1",
-              "type": "property",
-              "domain": "http://www.example.com/resource1",
-              "range": "http://www.example.com/resource2"
-            },
-            {
-              "iri": "http://www.example.com/resource2",
-              "id": "Class2",
-              "label": "resource2",
-              "iriType": "http://www.w3.org/2002/07/owl#Class",
-              "shortType": "owl:Class",
-              "type": "class"
-            }
-          ],
-          "links": [
-            {
-              "id": "Link1",
-              "nodeId": "Property1",
-              "source": "Class1",
-              "target": "Class2",
-              "label": "property1"
-            }
-          ]
-        }
 
-         */
-        return "{'nodes': [{'iri': 'http://www.example.com/resource1','id': 'Class1','label': 'resource1','iriType': 'http://www.w3.org/2002/07/owl#Class','shortType': 'owl:Class','type': 'class'},{'iri': 'http://www.example.com/property1','id': 'Property1','label': 'property1','type': 'property','domain': 'http://www.example.com/resource1','range': 'http://www.example.com/resource2'}],'links': [{'id': 'Link1','nodeId': 'Property1','source': 'Class1','target': 'Class2','label': 'property1'}]}";
+//        return "{'nodes': [{'iri': 'http://www.example.com/resource1','id': 'Class1','label': 'resource1','iriType': 'http://www.w3.org/2002/07/owl#Class','shortType': 'owl:Class','type': 'class'},{'iri': 'http://www.example.com/property1','id': 'Property1','label': 'property1','type': 'property','domain': 'http://www.example.com/resource1','range': 'http://www.example.com/resource2'}],'links': [{'id': 'Link1','nodeId': 'Property1','source': 'Class1','target': 'Class2','label': 'property1'}]}";
+
+        NextiaGraphy visualLib = new NextiaGraphy();
+        String visualSchema = visualLib.generateVisualGraphNew(hardcodedModel("Demo"));
+        System.out.println(visualSchema);
+        return visualSchema;
     }
 
     public boolean saveGraphToDatabase(Graph graph) {
