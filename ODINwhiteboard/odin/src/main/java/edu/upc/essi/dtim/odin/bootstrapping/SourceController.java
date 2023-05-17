@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -34,13 +33,12 @@ public class SourceController {
      * @param datasetName The name of the dataset.
      * @param datasetDescription The description of the dataset.
      * @return A ResponseEntity with a success message if the bootstrap was successful, or an error message if it failed.
-     * @throws IOException If there is an error with the file handling.
      */
     @PostMapping(value="/project/{id}", consumes = {"multipart/form-data"})
     public ResponseEntity<String> bootstrap(@PathVariable("id") String projectId,
                                             @RequestPart String datasetName,
                                             @RequestPart String datasetDescription,
-                                            @RequestPart MultipartFile attach_file) throws IOException {
+                                            @RequestPart MultipartFile attach_file) {
         System.out.println("################### POST DATASOURCE RECEIVED FOR BOOTSTRAP###################");
         // Validate and authenticate access here
         if (!validateAccess(projectId)) {
@@ -71,6 +69,8 @@ public class SourceController {
             if(datasource.getClass() == CsvDataset.class) savingDatasetObject(datasource.getName(), datasource.getDescription(), ((CsvDataset) datasource).getPath(), projectId);
             else if (datasource.getClass() == JsonDataset.class) savingDatasetObject(datasource.getName(), datasource.getDescription(), ((JsonDataset) datasource).getPath(), projectId);
         }
+
+
 
         // Return success message
         return ResponseEntity.ok(graphId);

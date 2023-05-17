@@ -36,7 +36,7 @@ import java.util.Set;
 @Service
 public class SourceService {
 
-    private ProjectService projectService;
+    private final ProjectService projectService;
 
     private final AppConfig appConfig;
 
@@ -125,7 +125,7 @@ public class SourceService {
      * @param dataset Un objeto Dataset con los datos a transformar
      * @return Un objeto Graph con los datos transformados a RDF
      */
-    public Graph transformToGraph(Dataset dataset) throws IOException {
+    public Graph transformToGraph(Dataset dataset) {
         //todo: call NextiaBS
         String datasetName = dataset.getName();
         if (datasetName == null) datasetName = "DatasetNameIsEmpty";
@@ -140,8 +140,8 @@ public class SourceService {
             Graph errorGraph = new LocalGraph(null, new URI(datasetName), new HashSet<>(), "ERROR");
             errorGraph.addTriple(new Triple(
                     new URI(dataset.getDatasetId()),
-                    new URI("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
-                    new URI("http://example.org/error#UnsupportedDatasetFormat")
+                    new URI("https://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
+                    new URI("https://example.org/error#UnsupportedDatasetFormat")
             ));
             return errorGraph;
         }
@@ -181,7 +181,7 @@ public class SourceService {
     }
 
     public Tuple saveTuple(Tuple tuple) {
-        ORMStoreInterface<Tuple> ormProject = null;
+        ORMStoreInterface<Tuple> ormProject;
         try {
             ormProject = ORMStoreFactory.getInstance(Tuple.class);
         } catch (Exception e) {
@@ -191,7 +191,7 @@ public class SourceService {
     }
 
     public Dataset saveDataset(Dataset dataset) {
-        ORMStoreInterface<Dataset> ormDataset = null;
+        ORMStoreInterface<Dataset> ormDataset;
         try {
             ormDataset = ORMStoreFactory.getInstance(Dataset.class);
         } catch (Exception e) {
@@ -201,7 +201,7 @@ public class SourceService {
     }
 
     public List<Dataset> getDatasets() {
-        ORMStoreInterface<Dataset> ormDataset = null;
+        ORMStoreInterface<Dataset> ormDataset;
         try {
             ormDataset = ORMStoreFactory.getInstance(Dataset.class);
         } catch (Exception e) {
@@ -211,7 +211,7 @@ public class SourceService {
     }
 
     public boolean deleteDatasource(String id) {
-        ORMStoreInterface<Dataset> ormDataset = null;
+        ORMStoreInterface<Dataset> ormDataset;
         try {
             ormDataset = ORMStoreFactory.getInstance(Dataset.class);
         } catch (Exception e) {
@@ -225,11 +225,8 @@ public class SourceService {
     }
 
     public List<Dataset> getDatasetsOfProject(String id) {
-        // Getting a list of dataset IDs associated with the project ID
-        List<Dataset> datasetsOfProject = projectService.getDatasetsOfProject(id);
-
         // Returning the list of datasets associated with the project
-        return datasetsOfProject;
+        return projectService.getDatasetsOfProject(id);
     }
 
 
