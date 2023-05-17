@@ -1,5 +1,7 @@
 package edu.upc.essi.dtim.odin.project;
 
+import edu.upc.essi.dtim.NextiaCore.datasources.dataset.Dataset;
+
 import java.util.List;
 
 public class Project {
@@ -16,14 +18,25 @@ public class Project {
     // Privacy level of the project (e.g. private, public)
     private String projectPrivacy;
 
-    // Color associated with the project (not sure what this is used for)
+    // Color associated with the project
     private String projectColor;
 
     // Username of the user who created the project
     private String createdBy;
 
-    // List of local graph IDs associated with the project (not sure what this is used for)
+    // List of local graph IDs associated with the project
     private List<String> localGraphIDs;
+
+    // List of dataset associated with the project
+    private List<Dataset> datasets;
+
+    public List<Dataset> getDatasets() {
+        return datasets;
+    }
+
+    public void setDatasets(List<Dataset> datasets) {
+        this.datasets = datasets;
+    }
 
     public String getProjectId() {
         return projectId;

@@ -1,5 +1,6 @@
 package edu.upc.essi.dtim.odin.NextiaStore.RelationalStore;
 
+import edu.upc.essi.dtim.NextiaCore.datasources.dataset.Dataset;
 import edu.upc.essi.dtim.odin.project.Project;
 
 import javax.persistence.EntityManager;
@@ -82,6 +83,20 @@ public class ORMProjectImplementation implements ORMStoreInterface<Project>{
             em.getTransaction().begin();
             Project project = em.find(Project.class, id);
             if (project != null) {
+                //Deleting the relations with project
+                List<Dataset> datasetsIds = project.getDatasets();
+                for (Dataset datasetToRemove : datasetsIds){
+                    // Initializing ORMStoreInterface
+                    ORMStoreInterface<Dataset> ormDataset = null;
+                    try {
+                        ormDataset = ORMStoreFactory.getInstance(Dataset.class);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                    ormDataset.deleteOne(datasetToRemove.getDatasetId());
+                }
+
+                //Finally we remove the project object
                 em.remove(project);
                 success = true;
             }

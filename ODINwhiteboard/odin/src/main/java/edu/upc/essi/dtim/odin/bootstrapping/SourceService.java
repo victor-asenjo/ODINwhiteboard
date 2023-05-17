@@ -8,6 +8,7 @@ import edu.upc.essi.dtim.NextiaCore.graph.Graph;
 import edu.upc.essi.dtim.NextiaCore.graph.LocalGraph;
 import edu.upc.essi.dtim.NextiaCore.graph.Triple;
 import edu.upc.essi.dtim.NextiaCore.graph.URI;
+import edu.upc.essi.dtim.odin.NextiaGraphy.NextiaGraphy;
 import edu.upc.essi.dtim.odin.NextiaStore.GraphStore.GraphStoreFactory;
 import edu.upc.essi.dtim.odin.NextiaStore.GraphStore.GraphStoreInterface;
 import edu.upc.essi.dtim.odin.NextiaStore.RelationalStore.ORMStoreFactory;
@@ -15,6 +16,9 @@ import edu.upc.essi.dtim.odin.NextiaStore.RelationalStore.ORMStoreInterface;
 import edu.upc.essi.dtim.odin.config.AppConfig;
 import edu.upc.essi.dtim.odin.project.ProjectService;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.vocabulary.RDF;
+import org.apache.jena.vocabulary.RDFS;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -98,8 +102,6 @@ public class SourceService {
     public Dataset extractData(String filePath, String datasetName, String datasetDescription) {
         // Extract the extension of the file from the file path
         String extension = filePath.substring(filePath.lastIndexOf(".") + 1);
-        System.out.println(extension);
-        System.out.println(filePath);
 
         Dataset dataset;
 
@@ -135,7 +137,7 @@ public class SourceService {
             return graph;
         } catch (UnsupportedOperationException e) {
             // If the dataset format is not supported, return an error graph
-            Graph errorGraph = new LocalGraph(new URI(datasetName), new HashSet<>());
+            Graph errorGraph = new LocalGraph(null, new URI(datasetName), new HashSet<>(), "ERROR");
             errorGraph.addTriple(new Triple(
                     new URI(dataset.getDatasetId()),
                     new URI("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
@@ -145,37 +147,15 @@ public class SourceService {
         }
     }
 
-    private Graph hardcodedGraph(String graphName) {
-        Set<Triple> triples = new HashSet<>();
+    public String generateVisualSchema(Graph graph) {
+        //TODO: generate the visual schema from graph
 
-        triples.add(new Triple(
-                new URI("http://somewhere/cat"),
-                new URI("http://www.w3.org/2001/vcard-rdf/3.0#TYPE"),
-                new URI("http://www.w3.org/2001/vcard-rdf/3.0#Animal")
-        ));
-        triples.add(new Triple(
-                new URI("http://somewhere/cat"),
-                new URI("http://www.w3.org/2001/vcard-rdf/3.0#FN"),
-                new URI("tail")
-        ));
-        triples.add(new Triple(
-                new URI("http://somewhere/dog"),
-                new URI("http://somewhere/has"),
-                new URI("paws")
-        ));
-        triples.add(new Triple(
-                new URI("http://somewhere/bird"),
-                new URI("http://somewhere/can"),
-                new URI("fly")
-        ));
-        triples.add(new Triple(
-                new URI("http://somewhere/fish"),
-                new URI("http://somewhere/lives"),
-                new URI("in water")
-        ));
+//        return "{'nodes': [{'iri': 'http://www.example.com/resource1','id': 'Class1','label': 'resource1','iriType': 'http://www.w3.org/2002/07/owl#Class','shortType': 'owl:Class','type': 'class'},{'iri': 'http://www.example.com/property1','id': 'Property1','label': 'property1','type': 'property','domain': 'http://www.example.com/resource1','range': 'http://www.example.com/resource2'}],'links': [{'id': 'Link1','nodeId': 'Property1','source': 'Class1','target': 'Class2','label': 'property1'}]}";
 
-        Graph graph = new LocalGraph(new URI(graphName), triples);
-        return graph;
+        NextiaGraphy visualLib = new NextiaGraphy();
+        String visualSchema = visualLib.generateVisualGraphNew(hardcodedModel("Demo"));
+        System.out.println(visualSchema);
+        return visualSchema;
     }
 
     public boolean saveGraphToDatabase(Graph graph) {
@@ -191,6 +171,13 @@ public class SourceService {
 
     public void addLocalGraphToProject(String projectId, String name) {
         projectService.addLocalGraphToProject(projectId, name);
+    }
+    public void addDatasetIdToProject(String projectId, Dataset dataset) {
+        projectService.addDatasetIdToProject(projectId, dataset);
+    }
+
+    public void deleteDatasetFromProject(String projectId, String datasetId) {
+        projectService.deleteDatasetFromProject(projectId, datasetId);
     }
 
     public Tuple saveTuple(Tuple tuple) {
@@ -221,6 +208,88 @@ public class SourceService {
             throw new RuntimeException(e);
         }
         return ormDataset.getAll();
+    }
+
+    public boolean deleteDatasource(String id) {
+        ORMStoreInterface<Dataset> ormDataset = null;
+        try {
+            ormDataset = ORMStoreFactory.getInstance(Dataset.class);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return ormDataset.deleteOne(id);
+    }
+
+    public boolean projectContains(String projectId, String id) {
+        return projectService.projectContains(projectId, id);
+    }
+
+    public List<Dataset> getDatasetsOfProject(String id) {
+        // Getting a list of dataset IDs associated with the project ID
+        List<Dataset> datasetsOfProject = projectService.getDatasetsOfProject(id);
+
+        // Returning the list of datasets associated with the project
+        return datasetsOfProject;
+    }
+
+
+
+
+
+
+
+
+    private Graph hardcodedGraph(String graphName) {
+        Set<Triple> triples = new HashSet<>();
+
+        triples.add(new Triple(
+                new URI("http://somewhere/cat"),
+                new URI("http://www.w3.org/2001/vcard-rdf/3.0#TYPE"),
+                new URI("http://www.w3.org/2001/vcard-rdf/3.0#Animal")
+        ));
+        triples.add(new Triple(
+                new URI("http://somewhere/cat"),
+                new URI("http://www.w3.org/2001/vcard-rdf/3.0#FN"),
+                new URI("tail")
+        ));
+        triples.add(new Triple(
+                new URI("http://somewhere/dog"),
+                new URI("http://somewhere/has"),
+                new URI("paws")
+        ));
+        triples.add(new Triple(
+                new URI("http://somewhere/bird"),
+                new URI("http://somewhere/can"),
+                new URI("fly")
+        ));
+        triples.add(new Triple(
+                new URI("http://somewhere/fish"),
+                new URI("http://somewhere/lives"),
+                new URI("in water")
+        ));
+
+        Graph graph = new LocalGraph(null, new URI(graphName), triples, "");
+        return graph;
+    }
+
+    Model hardcodedModel(String name){
+        Model model = ModelFactory.createDefaultModel();
+
+        // Crear propiedades y recursos
+        Property hasTitle = model.createProperty("https://example.com/hasTitle");
+        Resource book = model.createResource("https://example.com/"+name);
+        Resource title = model.createResource("https://example.com/Title");
+
+        // Crear declaraciones y agregar al modelo
+        Statement stmt1 = model.createStatement(book, RDF.type, RDFS.Class);
+        Statement stmt2 = model.createStatement(hasTitle, RDF.type, RDF.Property);
+        Statement stmt3 = model.createStatement(book, hasTitle, title);
+
+        model.add(stmt1);
+        model.add(stmt2);
+        model.add(stmt3);
+
+        return model;
     }
 }
 

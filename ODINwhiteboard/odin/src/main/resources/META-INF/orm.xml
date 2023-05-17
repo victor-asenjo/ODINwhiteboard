@@ -32,6 +32,13 @@
                     <join-column name="PROJECT_ID"/>
                 </collection-table>
             </element-collection>
+
+            <one-to-many orphan-removal="true" name="datasets" target-entity="edu.upc.essi.dtim.NextiaCore.datasources.dataset.CsvDataset">
+                <cascade>
+                    <cascade-all/>
+                </cascade>
+                <join-column name="PROJECT_ID"/>
+            </one-to-many>
         </attributes>
     </entity>
 
@@ -48,6 +55,20 @@
                 <column name="TUPLE_DESCRIPTION" length="5000"/>
             </basic>
         </attributes>
+    </entity>
+
+
+    <!--> MAPPING ABSTRACT CLASS GRAPH <-->
+    <mapped-superclass class="edu.upc.essi.dtim.NextiaCore.graph.Graph" access="FIELD">
+        <attributes>
+            <id name="id"><generated-value strategy="AUTO" /></id>
+            <basic name="name"/>
+            <basic name="graphicalSchema"/>
+        </attributes>
+    </mapped-superclass>
+
+    <entity name="LocalGraph" class="edu.upc.essi.dtim.NextiaCore.graph.LocalGraph" access="FIELD">
+        <table name="LocalGraph"/>
     </entity>
 
 

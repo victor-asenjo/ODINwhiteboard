@@ -12,8 +12,6 @@ import org.apache.jena.rdf.model.*;
 import org.apache.jena.rdf.model.impl.ModelCom;
 import org.apache.jena.rdf.model.impl.StatementImpl;
 import org.apache.jena.tdb.TDBFactory;
-import org.apache.jena.vocabulary.RDF;
-import org.apache.jena.vocabulary.RDFS;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -112,7 +110,7 @@ public class GraphStoreJenaImpl implements GraphStoreInterface {
             ));
         }
 
-        Graph graph = new LocalGraph(name, triples);
+        Graph graph = new LocalGraph(null, name, triples, "");
         for(Triple t : triples){
             System.out.println();
             System.out.println(t.getSubject().getURI());
@@ -143,31 +141,5 @@ public class GraphStoreJenaImpl implements GraphStoreInterface {
         }
         return model;
     }
-
-
-
-
-    Model hardcodedModel(String name){
-        Model model = ModelFactory.createDefaultModel();
-
-        // Crear propiedades y recursos
-        Property hasTitle = model.createProperty("https://example.com/hasTitle");
-        Resource book = model.createResource("https://example.com/"+name);
-        Resource title = model.createResource("https://example.com/Title");
-
-        // Crear declaraciones y agregar al modelo
-        Statement stmt1 = model.createStatement(book, RDF.type, RDFS.Class);
-        Statement stmt2 = model.createStatement(hasTitle, RDF.type, RDF.Property);
-        Statement stmt3 = model.createStatement(book, hasTitle, title);
-
-        model.add(stmt1);
-        model.add(stmt2);
-        model.add(stmt3);
-
-        return model;
-    }
-
-
-
 }
 
