@@ -63,7 +63,7 @@
 
 
     <!--> MAPPING DATASET CLASS<-->
-    <entity class="edu.upc.essi.dtim.NextiaCore.datasources.dataset.Dataset">
+    <entity class="edu.upc.essi.dtim.NextiaCore.datasources.dataset.Dataset" access="FIELD">
         <table name="Dataset">
 
         </table>
@@ -72,6 +72,11 @@
             <id name="datasetId">
                 <generated-value strategy="AUTO"/>
             </id>
+            <basic name="datasetName"/>
+            <basic name="datasetDescription"/>
+            <basic name="created_at">
+                <temporal>TIMESTAMP</temporal>
+            </basic>
         </attributes>
     </entity>
 
