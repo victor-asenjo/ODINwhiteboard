@@ -64,8 +64,16 @@ public class ProjectService {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        project.getDatasets().remove(ormDataset.findById(datasetId));
-        System.out.println("--------------------------->"+project.getDatasets());
+        List<Dataset> datasetsOfProjectToUpload = project.getDatasets();
+        for (Dataset datasetInProject : datasetsOfProjectToUpload) {
+            if (datasetId.equals(datasetInProject.getDatasetId())) {
+                datasetsOfProjectToUpload.remove(datasetInProject);
+                project.setDatasets(datasetsOfProjectToUpload);
+                break; // Rompemos el bucle después de eliminar el objeto
+            }
+        }
+        System.out.println("--------------------------->"+project.getDatasets().toString());
+
         //saving the updated project
         saveProject(project);
     }
@@ -120,7 +128,7 @@ public class ProjectService {
         return ormProject.deleteAll();
     }
 
-    public boolean projectContains(String projectId, String id) {
+    public boolean projectContains(String projectId, String datasetId) {
         ORMStoreInterface<Project> ormProject;
         ORMStoreInterface<Dataset> ormDataset;
         try {
@@ -130,8 +138,13 @@ public class ProjectService {
             throw new RuntimeException(e);
         }
         Project project = ormProject.findById(projectId);
-        Dataset dataset = ormDataset.findById(id);
-        return project.getDatasets().contains(dataset);
+        for (Dataset datasetInProject : project.getDatasets()) {
+            String comp = datasetInProject.getDatasetId();
+            System.out.println("------------------>" + comp);
+            System.out.println("------------------>" + datasetId);
+            if(datasetId.equals(comp)) return true;
+        }
+        return false;
     }
 
     public List<Dataset> getDatasetsOfProject(String id) {

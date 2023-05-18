@@ -1,7 +1,7 @@
 package edu.upc.essi.dtim.odin.NextiaStore.RelationalStore;
 
-import edu.upc.essi.dtim.NextiaCore.datasources.Tuple;
 import edu.upc.essi.dtim.NextiaCore.datasources.dataset.Dataset;
+import edu.upc.essi.dtim.NextiaCore.graph.Graph;
 import edu.upc.essi.dtim.odin.project.Project;
 import org.springframework.stereotype.Component;
 
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 public class ORMStoreFactory {
     private static ORMStoreInterface<Project> ormProjectInstance = null;
     private static ORMStoreInterface<Dataset> ormDatasetInstance = null;
-    private static ORMStoreInterface<Tuple> ormTupleInstance = null;
+    private static ORMStoreInterface<Graph> ormGraphInstance = null;
 
     private ORMStoreFactory() {
         // Being private prevents the factory from being instantiated from outside the class
@@ -29,10 +29,10 @@ public class ORMStoreFactory {
                 ormDatasetInstance = new ORMDatasetImplementation();
             }
             return ormDatasetInstance;
-        } else if (ormClass.equals(Tuple.class)) {
-            if (ormTupleInstance == null) {
+        } else if (ormClass.equals(Graph.class)) {
+            if (ormGraphInstance == null) {
                 System.out.println("Creating new instance of ormTupleInstance");
-                ormTupleInstance = new ORMTupleImplementation();
+                ormGraphInstance = new ORMGraphImplementation();
             }
             return ormDatasetInstance;
         } else {

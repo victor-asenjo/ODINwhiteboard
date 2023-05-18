@@ -72,10 +72,8 @@ public class ORMDatasetImplementation implements ORMStoreInterface<Dataset>{
         EntityManager em = emf.createEntityManager();
         List<Dataset> datasets = null;
         try {
-            Query CSVquery = em.createQuery("SELECT p FROM CsvDataset p");
-            Query JSONquery = em.createQuery("SELECT p FROM JsonDataset p");
-            datasets= CSVquery.getResultList();
-            datasets.addAll(JSONquery.getResultList());
+            Query datasetsOfDB = em.createQuery("SELECT d FROM Dataset d");
+            datasets= datasetsOfDB.getResultList();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -93,18 +91,13 @@ public class ORMDatasetImplementation implements ORMStoreInterface<Dataset>{
             System.out.println("PPPPPPPPPPPPPPPPPPPPPPPPPPPPAL LOBYYYY ALGUIEN");
             em.getTransaction().begin();
 
-            CsvDataset csvDataset = em.find(CsvDataset.class, id);
-            if (csvDataset != null) {
-                System.out.println("PPPPPPPPPPPPPPPPPPPPPPPPPPPPAL LOBYYYY CSV");
-                em.remove(csvDataset);
+            Dataset datasetToRemove = em.find(Dataset.class, id);
+            if (datasetToRemove != null) {
+                System.out.println("PPPPPPPPPPPPPPPPPPPPPPPPPPPPAL LOBYYYY DATASET");
+                em.remove(datasetToRemove);
                 success = true;
             } else {
-                System.out.println("PPPPPPPPPPPPPPPPPPPPPPPPPPPPAL LOBYYYY JSON");
-                JsonDataset jsonDataset = em.find(JsonDataset.class, id);
-                if (jsonDataset != null) {
-                    em.remove(jsonDataset);
-                    success = true;
-                }
+                System.out.println("NNNNNNNNNNNNNOOO SE HA ELIMINADOO LOBYYYY FAIL DATASET");
             }
 
             em.getTransaction().commit();
