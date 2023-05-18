@@ -130,7 +130,9 @@ public class SourceController {
             sourceService.deleteDatasetFromProject(projectId, id);
 
             // Call the projectService to delete the project and get the result
-            deleted = sourceService.deleteDatasource(id);
+            //this is not necessary since we have the cascade all call in relation one-to-many
+            //deleted = sourceService.deleteDatasource(id);
+            deleted = true;
         }
 
         // Check if the project was deleted successfully

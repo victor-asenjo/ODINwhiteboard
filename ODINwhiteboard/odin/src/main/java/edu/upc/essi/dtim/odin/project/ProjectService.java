@@ -64,10 +64,11 @@ public class ProjectService {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        List<Dataset> datasetsOfProject = project.getDatasets();
-        for (Dataset datasetInProject : datasetsOfProject) {
-            if (datasetInProject.getDatasetId() == datasetId) {
-                project.getDatasets().remove(datasetInProject);
+        List<Dataset> datasetsOfProjectToUpload = project.getDatasets();
+        for (Dataset datasetInProject : datasetsOfProjectToUpload) {
+            if (datasetId.equals(datasetInProject.getDatasetId())) {
+                datasetsOfProjectToUpload.remove(datasetInProject);
+                project.setDatasets(datasetsOfProjectToUpload);
                 break; // Rompemos el bucle después de eliminar el objeto
             }
         }
