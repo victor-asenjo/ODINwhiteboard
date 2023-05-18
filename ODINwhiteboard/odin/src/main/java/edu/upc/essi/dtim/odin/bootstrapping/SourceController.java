@@ -1,6 +1,5 @@
 package edu.upc.essi.dtim.odin.bootstrapping;
 
-import edu.upc.essi.dtim.NextiaCore.datasources.Tuple;
 import edu.upc.essi.dtim.NextiaCore.datasources.dataset.CsvDataset;
 import edu.upc.essi.dtim.NextiaCore.datasources.dataset.Dataset;
 import edu.upc.essi.dtim.NextiaCore.datasources.dataset.JsonDataset;
@@ -74,17 +73,6 @@ public class SourceController {
 
         // Return success message
         return ResponseEntity.ok(graphId);
-    }
-
-    @PostMapping("/tuple")
-    public Tuple savingTupleObject(@RequestParam("tupleId") String tupleId,
-                                  @RequestParam("tupleName") String tupleName,
-                                  @RequestParam("tupleDescription") String tupleDescription){
-        Tuple tuple = new Tuple();
-        tuple.setTupleId(tupleId);
-        tuple.setTupleName(tupleName);
-        tuple.setTupleDescription(tupleDescription);
-        return sourceService.saveTuple(tuple);
     }
 
     @PostMapping("/project/{projectId}/datasources")

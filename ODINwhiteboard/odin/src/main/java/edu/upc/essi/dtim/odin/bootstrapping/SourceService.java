@@ -1,6 +1,5 @@
 package edu.upc.essi.dtim.odin.bootstrapping;
 
-import edu.upc.essi.dtim.NextiaCore.datasources.Tuple;
 import edu.upc.essi.dtim.NextiaCore.datasources.dataset.CsvDataset;
 import edu.upc.essi.dtim.NextiaCore.datasources.dataset.Dataset;
 import edu.upc.essi.dtim.NextiaCore.datasources.dataset.JsonDataset;
@@ -178,16 +177,6 @@ public class SourceService {
 
     public void deleteDatasetFromProject(String projectId, String datasetId) {
         projectService.deleteDatasetFromProject(projectId, datasetId);
-    }
-
-    public Tuple saveTuple(Tuple tuple) {
-        ORMStoreInterface<Tuple> ormProject;
-        try {
-            ormProject = ORMStoreFactory.getInstance(Tuple.class);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        return ormProject.save(tuple);
     }
 
     public Dataset saveDataset(Dataset dataset) {
