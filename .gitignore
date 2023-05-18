@@ -9,3 +9,4 @@ ODINwhiteboard/odin/src/main/resources/credentials.properties
 *.bdf
 *.lock
 *.db
+*.json
