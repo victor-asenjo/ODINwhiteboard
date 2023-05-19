@@ -1,5 +1,6 @@
 package edu.upc.essi.dtim.odin.bootstrapping;
 
+import edu.upc.essi.dtim.NextiaCore.datasources.Tuple;
 import edu.upc.essi.dtim.NextiaCore.datasources.dataset.CsvDataset;
 import edu.upc.essi.dtim.NextiaCore.datasources.dataset.Dataset;
 import edu.upc.essi.dtim.NextiaCore.datasources.dataset.JsonDataset;
@@ -101,7 +102,10 @@ public class SourceController {
                 default:
                     throw new UnsupportedOperationException("Dataset type not supported: " + extension);
             }
-
+            //todo: delete this example one-to-one
+            Tuple t = new Tuple();
+            t.setTupleName("Tupla dentro de DS");
+            dataset.setTuple(t);
             Dataset savedDataset = sourceService.saveDataset(dataset);
 
             //Create the relation with project adding the datasetId

@@ -6,6 +6,11 @@
 
     <description>Object/Relational Mapping for classes</description>
 
+    <!--> TO IGNORE ANY ANNOTATION
+    <persistence-unit-metadata>
+        <xml-mapping-metadata-complete/>
+    </persistence-unit-metadata><-->
+
     <!--> MAPPING PROJECT CLASS<-->
     <entity class="edu.upc.essi.dtim.odin.project.Project" name="Project">
         <table name="Project">
@@ -69,6 +74,19 @@
         <table name="LocalGraph"/>
     </entity>
 
+    <!--> JUST FOR ONE-TO-ONE EXAMPLE<-->
+    <entity class="edu.upc.essi.dtim.NextiaCore.datasources.Tuple" name="Tuple">
+        <table name="Tuple"/>
+        <attributes>
+            <id name="tupleId">
+                <generated-value strategy="AUTO"/>
+            </id>
+            <basic name="tupleName">
+                <column name="TUPLE_NAME"/>
+            </basic>
+            <transient name="tupleDescription"/>
+        </attributes>
+    </entity>
 
     <!--> MAPPING DATASET CLASS<-->
     <entity class="edu.upc.essi.dtim.NextiaCore.datasources.dataset.Dataset" access="FIELD">
@@ -87,26 +105,23 @@
             <basic name="created_at">
                 <temporal>TIMESTAMP</temporal>
             </basic>
+
+            <one-to-one name="tuple">
+                <cascade><cascade-all/></cascade>
+            </one-to-one>
+
         </attributes>
     </entity>
 
     <entity name="CsvDataset" class="edu.upc.essi.dtim.NextiaCore.datasources.dataset.CsvDataset">
-        <table name="CsvDataset">
-            <unique-constraint>
-                <column-name>datasetId</column-name>
-            </unique-constraint>
-        </table>
+        <table name="CsvDataset"/>
         <attributes>
             <basic name="path"/>
         </attributes>
     </entity>
 
     <entity name="JsonDataset" class="edu.upc.essi.dtim.NextiaCore.datasources.dataset.JsonDataset">
-        <table name="JsonDataset">
-            <unique-constraint>
-                <column-name>datasetId</column-name>
-            </unique-constraint>
-        </table>
+        <table name="JsonDataset"/>
         <attributes>
             <basic name="path"/>
         </attributes>
