@@ -51,6 +51,11 @@
 
     <!--> MAPPING CLASS GRAPH <-->
     <entity class="edu.upc.essi.dtim.NextiaCore.graph.Graph" access="FIELD">
+        <table name="Graph">
+            <unique-constraint>
+                <column-name>id</column-name>
+            </unique-constraint>
+        </table>
         <inheritance strategy="JOINED"/>
         <attributes>
             <id name="id"><generated-value strategy="AUTO" /></id>
@@ -68,7 +73,9 @@
     <!--> MAPPING DATASET CLASS<-->
     <entity class="edu.upc.essi.dtim.NextiaCore.datasources.dataset.Dataset" access="FIELD">
         <table name="Dataset">
-
+            <unique-constraint>
+                <column-name>datasetId</column-name>
+            </unique-constraint>
         </table>
         <inheritance strategy="JOINED"/>
         <attributes>
@@ -84,14 +91,22 @@
     </entity>
 
     <entity name="CsvDataset" class="edu.upc.essi.dtim.NextiaCore.datasources.dataset.CsvDataset">
-        <table name="CsvDataset"/>
+        <table name="CsvDataset">
+            <unique-constraint>
+                <column-name>datasetId</column-name>
+            </unique-constraint>
+        </table>
         <attributes>
             <basic name="path"/>
         </attributes>
     </entity>
 
     <entity name="JsonDataset" class="edu.upc.essi.dtim.NextiaCore.datasources.dataset.JsonDataset">
-        <table name="JsonDataset"/>
+        <table name="JsonDataset">
+            <unique-constraint>
+                <column-name>datasetId</column-name>
+            </unique-constraint>
+        </table>
         <attributes>
             <basic name="path"/>
         </attributes>
