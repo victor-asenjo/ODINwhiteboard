@@ -64,7 +64,6 @@
         <inheritance strategy="JOINED"/>
         <attributes>
             <id name="id"><generated-value strategy="AUTO" /></id>
-            <basic name="graphicalSchema"/>
             <transient name="name"/>
             <transient name="triples"/>
             <transient name="queryResult"/>
@@ -72,6 +71,9 @@
     </entity>
     <entity name="LocalGraph" class="edu.upc.essi.dtim.NextiaCore.graph.LocalGraph" access="FIELD">
         <table name="LocalGraph"/>
+        <attributes>
+            <basic name="graphicalSchema"/>
+        </attributes>
     </entity>
 
     <!--> JUST FOR ONE-TO-ONE EXAMPLE<-->
@@ -106,7 +108,7 @@
                 <temporal>TIMESTAMP</temporal>
             </basic>
 
-            <one-to-one name="tuple">
+            <one-to-one name="localGraph">
                 <cascade><cascade-all/></cascade>
             </one-to-one>
 

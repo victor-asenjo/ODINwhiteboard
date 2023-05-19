@@ -105,7 +105,8 @@ public class SourceController {
             //todo: delete this example one-to-one
             Tuple t = new Tuple();
             t.setTupleName("Tupla dentro de DS");
-            dataset.setTuple(t);
+            t.setTupleDescription("ESTO NO DEBERÍA SALIR");
+            dataset.setLocalGraph(t);
             Dataset savedDataset = sourceService.saveDataset(dataset);
 
             //Create the relation with project adding the datasetId

@@ -22,7 +22,7 @@
 
             <!-- Hibernate properties -->
             <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
-            <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
+            <property name="javax.persistence.schema-generation.database.action" value="create"/>
 
             <property name="hibernate.show_sql" value="false" /> <!-- Better use LOG4J instead of this show_sql -->
             <property name="hibernate.format_sql" value="true" /> <!-- Format the SQLs -->
