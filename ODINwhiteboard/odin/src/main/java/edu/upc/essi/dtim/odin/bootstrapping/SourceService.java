@@ -126,7 +126,7 @@ public class SourceService {
      */
     public Graph transformToGraph(Dataset dataset) {
         //todo: call NextiaBS
-        String datasetName = dataset.getName();
+        String datasetName = dataset.getDatasetName();
         if (datasetName == null) datasetName = "DatasetNameIsEmpty";
         try {
             // Try to convert the dataset to a graph

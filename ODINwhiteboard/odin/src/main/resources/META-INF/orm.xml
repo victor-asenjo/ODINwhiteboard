@@ -5,13 +5,6 @@
                  version="2.1">
 
     <description>Object/Relational Mapping for classes</description>
-    <mapped-superclass class="edu.upc.essi.dtim.NextiaCore.graph.Graph" access="FIELD">
-        <attributes>
-            <id name="id"><generated-value strategy="AUTO" /></id>
-            <basic name="name"/>
-            <basic name="graphicalSchema"/>
-        </attributes>
-    </mapped-superclass>
 
     <!--> MAPPING PROJECT CLASS<-->
     <entity class="edu.upc.essi.dtim.odin.project.Project" name="Project">
@@ -41,22 +34,30 @@
             <basic name="createdBy">
                 <column name="CREATED_BY"/>
             </basic>
-            <element-collection name="localGraphIDs">
-                <collection-table name="PROJECT_LOCAL_GRAPHS_IDS">
-                    <join-column name="PROJECT_ID"/>
-                </collection-table>
-            </element-collection>
             <one-to-many orphan-removal="true" name="datasets" target-entity="edu.upc.essi.dtim.NextiaCore.datasources.dataset.Dataset">
                 <join-column name="PROJECTID"/>
                 <cascade>
                     <cascade-all/>
                 </cascade>
             </one-to-many>
+            <element-collection name="localGraphIDs">
+                <collection-table name="PROJECT_LOCAL_GRAPHS_IDS">
+                    <join-column name="PROJECT_ID"/>
+                </collection-table>
+            </element-collection>
         </attributes>
 
     </entity>
 
     <!--> MAPPING CLASS GRAPH <-->
+    <entity class="edu.upc.essi.dtim.NextiaCore.graph.Graph" access="FIELD">
+        <inheritance strategy="JOINED"/>
+        <attributes>
+            <id name="id"><generated-value strategy="AUTO" /></id>
+            <basic name="graphicalSchema"/>
+            <transient name="name"/>
+        </attributes>
+    </entity>
     <entity name="LocalGraph" class="edu.upc.essi.dtim.NextiaCore.graph.LocalGraph" access="FIELD">
         <table name="LocalGraph"/>
     </entity>

@@ -65,8 +65,8 @@ public class SourceController {
             // Add the local graph to the project's list of local graph IDs if it was saved
             sourceService.addLocalGraphToProject(projectId, graphId);
 
-            if(datasource.getClass() == CsvDataset.class) savingDatasetObject(datasource.getName(), datasource.getDescription(), ((CsvDataset) datasource).getPath(), projectId);
-            else if (datasource.getClass() == JsonDataset.class) savingDatasetObject(datasource.getName(), datasource.getDescription(), ((JsonDataset) datasource).getPath(), projectId);
+            if(datasource.getClass() == CsvDataset.class) savingDatasetObject(datasource.getDatasetName(), datasource.getDatasetDescription(), ((CsvDataset) datasource).getPath(), projectId);
+            else if (datasource.getClass() == JsonDataset.class) savingDatasetObject(datasource.getDatasetName(), datasource.getDatasetDescription(), ((JsonDataset) datasource).getPath(), projectId);
         }
 
 
