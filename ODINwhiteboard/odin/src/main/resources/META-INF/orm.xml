@@ -56,6 +56,8 @@
             <id name="id"><generated-value strategy="AUTO" /></id>
             <basic name="graphicalSchema"/>
             <transient name="name"/>
+            <transient name="triples"/>
+            <transient name="queryResult"/>
         </attributes>
     </entity>
     <entity name="LocalGraph" class="edu.upc.essi.dtim.NextiaCore.graph.LocalGraph" access="FIELD">

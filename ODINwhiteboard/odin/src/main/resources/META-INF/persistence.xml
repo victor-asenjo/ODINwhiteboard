@@ -5,6 +5,7 @@
              xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
 
     <persistence-unit name="ORMPersistenceUnit" transaction-type="RESOURCE_LOCAL">
+        <description> Hibernate JPA Configuration</description>
 
         <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
 
@@ -12,16 +13,19 @@
 
         <properties>
             <!-- Database connection properties -->
-            <property name="javax.persistence.jdbc.driver" value="org.h2.Driver"/>
             <property name="javax.persistence.jdbc.url" value="jdbc:h2:file:.\\odin\\dbFiles\\sqlFiles\\sqlEmbeddedFile.db"/>
             <property name="javax.persistence.jdbc.user" value="sa"/>
             <property name="javax.persistence.jdbc.password" value=""/>
+            <property name="javax.persistence.jdbc.driver" value="org.h2.Driver"/>
 
             <!-- Hibernate properties -->
             <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
-            <property name="hibernate.show_sql" value="true"/>
-            <property name="hibernate.hbm2ddl.auto" value="create"/>
-            <property name="javax.persistence.schema-generation.database.action" value="create"/>
+            <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
+
+            <property name="hibernate.show_sql" value="false" /> <!-- Better use LOG4J instead of this show_sql -->
+            <property name="hibernate.format_sql" value="true" /> <!-- Format the SQLs -->
+            <property name="hibernate.hbm2ddl.auto" value="update" />
+            <property name="hibernate.connection.autocommit" value="false"/><!-- Is always better control when to commit or not -->
         </properties>
 
     </persistence-unit>
