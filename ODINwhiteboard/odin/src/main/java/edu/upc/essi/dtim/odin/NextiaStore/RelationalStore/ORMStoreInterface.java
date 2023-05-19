@@ -3,14 +3,13 @@ package edu.upc.essi.dtim.odin.NextiaStore.RelationalStore;
 import java.util.List;
 
 public interface ORMStoreInterface<T> {
-
-    T findById(String id);
-
     T save(T object);
 
-    List<T> getAll();
+    T findById(Class<T> entityClass, String id);
+
+    List<T> getAll(Class<T> entityClass);
 
     boolean deleteOne(String id);
 
-    boolean deleteAll();
+    boolean deleteAll(Class<T> entityClass);
 }

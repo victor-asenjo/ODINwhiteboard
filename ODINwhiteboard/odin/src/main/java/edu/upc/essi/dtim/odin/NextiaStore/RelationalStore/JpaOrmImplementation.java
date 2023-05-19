@@ -1,7 +1,6 @@
 package edu.upc.essi.dtim.odin.NextiaStore.RelationalStore;
 
 import edu.upc.essi.dtim.NextiaCore.datasources.dataset.Dataset;
-import edu.upc.essi.dtim.odin.project.Project;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -9,97 +8,78 @@ import javax.persistence.Persistence;
 import javax.persistence.Query;
 import java.util.List;
 
-public class ORMProjectImplementation implements ORMStoreInterface<Project>{
-    /**
-     * Helper method to retrieve a project by ID.
-     *
-     * @param id the ID of the project to retrieve
-     * @return the project with the given ID, or null if not found
-     */
+public class JpaOrmImplementation<T> implements ORMStoreInterface<T> {
     @Override
-    public Project findById(String id) {
+    public T save(T object) {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("ORMPersistenceUnit");
         EntityManager em = emf.createEntityManager();
-        Project project = null;
-        try {
-            project = em.find(Project.class, id);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            em.close();
-        }
-        return project;
-    }
-
-    @Override
-    public Project save(Project object) {
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("ORMPersistenceUnit");
-        EntityManager em = emf.createEntityManager();
-        Project savedProject = null;
+        T savedObject = null;
         try {
             em.getTransaction().begin();
-            if (object.getProjectId() == null) {
-                // New project, persist it
-                em.persist(object);
-                savedProject = object;
-            } else {
-                // Existing project, merge it
-                savedProject = em.merge(object);
-            }
+
+            savedObject = em.merge(object);
+
             em.getTransaction().commit();
-            System.out.println("Project saved successfully");
+            System.out.println("Object "+ object.getClass() +" saved successfully");
 
         } catch (Exception e) {
-            System.out.println("Error saving project: " + e.getMessage());
+            System.out.println("Error saving object" + object.getClass() + e.getMessage());
             e.printStackTrace();
         } finally {
             em.close();
         }
-
-        return savedProject;
+        return savedObject;
+    }
+    @Override
+    public T findById(Class<T> entityClass, String id) {
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("ORMPersistenceUnit");
+        EntityManager em = emf.createEntityManager();
+        T object = null;
+        try {
+            // Find the object with the given id in the entity
+            object = (T) em.find(entityClass, id);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            em.close();
+        }
+        return object;
     }
 
     @Override
-    public List<Project> getAll() {
+    public List<T> getAll(Class<T> entityClass) {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("ORMPersistenceUnit");
         EntityManager em = emf.createEntityManager();
-        List<Project> projects = null;
+        List<T> objects = null;
         try {
-            Query query = em.createQuery("SELECT p FROM Project p");
-            projects = query.getResultList();
+            Query datasetsOfDB = em.createQuery("SELECT d FROM "+entityClass.getSimpleName()+" d");
+            objects= datasetsOfDB.getResultList();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             em.close();
         }
-        return projects;
+        return objects;
     }
+
     @Override
     public boolean deleteOne(String id) {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("ORMPersistenceUnit");
         EntityManager em = emf.createEntityManager();
         boolean success = false;
         try {
+            System.out.println("PPPPPPPPPPPPPPPPPPPPPPPPPPPPAL LOBYYYY ALGUIEN");
             em.getTransaction().begin();
-            Project project = em.find(Project.class, id);
-            if (project != null) {
-                //Deleting the relations with project
-                List<Dataset> datasetsIds = project.getDatasets();
-                for (Dataset datasetToRemove : datasetsIds){
-                    // Initializing ORMStoreInterface
-                    ORMStoreInterface<Dataset> ormDataset = null;
-                    try {
-                        ormDataset = ORMStoreFactory.getInstance(Dataset.class);
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                    ormDataset.deleteOne(datasetToRemove.getDatasetId());
-                }
 
-                //Finally we remove the project object
-                em.remove(project);
+            Dataset datasetToRemove = em.find(Dataset.class, id);
+            if (datasetToRemove != null) {
+                System.out.println("PPPPPPPPPPPPPPPPPPPPPPPPPPPPAL LOBYYYY DATASET");
+                em.remove(datasetToRemove);
                 success = true;
+            } else {
+                System.out.println("NNNNNNNNNNNNNOOO SE HA ELIMINADOO LOBYYYY FAIL DATASET");
             }
+
             em.getTransaction().commit();
         } catch (Exception e) {
             e.printStackTrace();
@@ -110,13 +90,13 @@ public class ORMProjectImplementation implements ORMStoreInterface<Project>{
     }
 
     @Override
-    public boolean deleteAll() {
+    public boolean deleteAll(Class<T> entityClass) {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("ORMPersistenceUnit");
         EntityManager em = emf.createEntityManager();
         boolean success = false;
         try {
             em.getTransaction().begin();
-            Query query = em.createQuery("DELETE FROM Project");
+            Query query = em.createQuery("DELETE FROM "+entityClass.getSimpleName());
             int deletedCount = query.executeUpdate();
             em.getTransaction().commit();
             success = deletedCount > 0;
@@ -127,4 +107,5 @@ public class ORMProjectImplementation implements ORMStoreInterface<Project>{
         }
         return success;
     }
+
 }

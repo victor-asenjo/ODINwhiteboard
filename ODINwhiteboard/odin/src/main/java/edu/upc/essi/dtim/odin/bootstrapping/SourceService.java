@@ -204,7 +204,7 @@ public class SourceService {
     public Dataset saveDataset(Dataset dataset) {
         ORMStoreInterface<Dataset> ormDataset;
         try {
-            ormDataset = ORMStoreFactory.getInstance(Dataset.class);
+            ormDataset = ORMStoreFactory.getInstance();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -214,17 +214,17 @@ public class SourceService {
     public List<Dataset> getDatasets() {
         ORMStoreInterface<Dataset> ormDataset;
         try {
-            ormDataset = ORMStoreFactory.getInstance(Dataset.class);
+            ormDataset = ORMStoreFactory.getInstance();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        return ormDataset.getAll();
+        return ormDataset.getAll(Dataset.class);
     }
 
     public boolean deleteDatasource(String id) {
         ORMStoreInterface<Dataset> ormDataset;
         try {
-            ormDataset = ORMStoreFactory.getInstance(Dataset.class);
+            ormDataset = ORMStoreFactory.getInstance();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
