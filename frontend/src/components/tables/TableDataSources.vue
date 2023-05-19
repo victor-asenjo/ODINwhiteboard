@@ -136,7 +136,7 @@ onBeforeMount( () => {
 // select, name, tag, size, type -> owner, members -> delete, view local schema
 const columns = [
     { name: "datasetId", label: "Id", align: "center", field: "datasetId", sortable: true, },
-    { name: "Name", label: "Name", align: "center", field: "name", sortable: true, },
+    { name: "Name", label: "Name", align: "center", field: "datasetName", sortable: true, },
     { name: "datasetType", label: "Type", align: "center", field: "datasetType", sortable: true, },
     // {name: "#Wrappers", label: "#Wrappers", align: "center", field: "wrappers", sortable: true,},
     { name: "View_triples", label: "View triples", align: "center", field: "View_triples", sortable: false, },

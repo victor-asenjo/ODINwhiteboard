@@ -34,7 +34,7 @@ public class SourceController {
      * @param datasetDescription The description of the dataset.
      * @return A ResponseEntity with a success message if the bootstrap was successful, or an error message if it failed.
      */
-    @PostMapping(value="/project/{id}", consumes = {"multipart/form-data"})
+    @PostMapping(value="/project/{id}")//, consumes = {"multipart/form-data"})
     public ResponseEntity<String> bootstrap(@PathVariable("id") String projectId,
                                             @RequestPart String datasetName,
                                             @RequestPart String datasetDescription,
@@ -66,8 +66,8 @@ public class SourceController {
             // Add the local graph to the project's list of local graph IDs if it was saved
             sourceService.addLocalGraphToProject(projectId, graphId);
 
-            if(datasource.getClass() == CsvDataset.class) savingDatasetObject(datasource.getDatasetName(), datasource.getDatasetDescription(), ((CsvDataset) datasource).getPath(), projectId);
-            else if (datasource.getClass() == JsonDataset.class) savingDatasetObject(datasource.getDatasetName(), datasource.getDatasetDescription(), ((JsonDataset) datasource).getPath(), projectId);
+            if(datasource.getClass() == CsvDataset.class) savingDatasetObject(datasource.getDatasetName(), datasource.getDatasetDescription(), ((CsvDataset) datasource).getPath(), projectId, visualSchema);
+            else if (datasource.getClass() == JsonDataset.class) savingDatasetObject(datasource.getDatasetName(), datasource.getDatasetDescription(), ((JsonDataset) datasource).getPath(), projectId, visualSchema);
         }
 
 
@@ -81,7 +81,7 @@ public class SourceController {
             @RequestParam("datasetName") String datasetName,
             @RequestParam("datasetDescription") String datasetDescription,
             @RequestParam("datasetPath") String path,
-            @PathVariable String projectId) {
+            @PathVariable String projectId, String visualSchema) {
         try {
             System.out.println("################### POST A DATASOURCE RECEIVED ################### " + projectId);
             Dataset dataset;
@@ -104,7 +104,7 @@ public class SourceController {
             }
             //todo: delete this example one-to-one
             Tuple t = new Tuple();
-            t.setTupleName("Tupla dentro de DS");
+            t.setTupleName(visualSchema);
             t.setTupleDescription("ESTO NO DEBERÍA SALIR");
             dataset.setLocalGraph(t);
             Dataset savedDataset = sourceService.saveDataset(dataset);
