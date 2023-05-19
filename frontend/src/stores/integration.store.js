@@ -52,8 +52,10 @@ export const useIntegrationStore = defineStore('integration',{
             return state.project.graphicalGlobalSchema
         },
         getGraphicalB(state){
-          if(state.selectedDS.length == 1)
-              return state.selectedDS[0].graphicalSchema
+          if(state.selectedDS.length == 1){
+            console.log("******************"+state.selectedDS[0])
+              return state.selectedDS[0].localGraph.tupleName
+          }
           else
               return ""
         },
@@ -228,6 +230,9 @@ export const useIntegrationStore = defineStore('integration',{
             });
         },
         addSelectedDatasource(ds){
+        console.log(
+          "METODO ADDSELECTEDDATASOURCE**************************",ds
+        )
           // we can only have one selected ds
           this.selectedDS = []
           this.selectedDS.push(ds)

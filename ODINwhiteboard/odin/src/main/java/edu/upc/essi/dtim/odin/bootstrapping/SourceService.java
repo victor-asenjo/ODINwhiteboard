@@ -18,6 +18,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
+import org.apache.jena.vocabulary.XSD;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -269,11 +270,13 @@ public class SourceService {
         // Crear declaraciones y agregar al modelo
         Statement stmt1 = model.createStatement(book, RDF.type, RDFS.Class);
         Statement stmt2 = model.createStatement(hasTitle, RDF.type, RDF.Property);
-        Statement stmt3 = model.createStatement(book, hasTitle, title);
+        Statement stmt3 = model.createStatement(hasTitle, RDFS.domain, book);
+        Statement stmt4 = model.createStatement(hasTitle, RDFS.range, XSD.xstring);
 
         model.add(stmt1);
         model.add(stmt2);
         model.add(stmt3);
+        model.add(stmt4);
 
         return model;
     }

@@ -35,14 +35,14 @@ public class SourceController {
      * @return A ResponseEntity with a success message if the bootstrap was successful, or an error message if it failed.
      */
     @PostMapping(value="/project/{id}")//, consumes = {"multipart/form-data"})
-    public ResponseEntity<String> bootstrap(@PathVariable("id") String projectId,
+    public ResponseEntity<?> bootstrap(@PathVariable("id") String projectId,
                                             @RequestPart String datasetName,
                                             @RequestPart String datasetDescription,
                                             @RequestPart MultipartFile attach_file) {
         System.out.println("################### POST DATASOURCE RECEIVED FOR BOOTSTRAP###################");
         // Validate and authenticate access here
         if (!validateAccess(projectId)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied");
+            //return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied");
         }
 
         // Reconstruct file from Multipart file
@@ -61,27 +61,30 @@ public class SourceController {
         boolean isSaved = sourceService.saveGraphToDatabase(graph);
 
         String graphId = graph.getName().getURI();
-
+        Dataset savedDataset = null;
         if (isSaved) {
             // Add the local graph to the project's list of local graph IDs if it was saved
             sourceService.addLocalGraphToProject(projectId, graphId);
 
-            if(datasource.getClass() == CsvDataset.class) savingDatasetObject(datasource.getDatasetName(), datasource.getDatasetDescription(), ((CsvDataset) datasource).getPath(), projectId, visualSchema);
-            else if (datasource.getClass() == JsonDataset.class) savingDatasetObject(datasource.getDatasetName(), datasource.getDatasetDescription(), ((JsonDataset) datasource).getPath(), projectId, visualSchema);
+            Tuple t = new Tuple();
+            t.setTupleName(visualSchema);
+            t.setTupleDescription("ESTO NO DEBERÍA SALIR");
+            datasource.setLocalGraph(t);
+
+            if(datasource.getClass() == CsvDataset.class) savedDataset = sourceService.saveDataset(datasource);
+            else if (datasource.getClass() == JsonDataset.class) savedDataset= sourceService.saveDataset(datasource);;
         }
 
-
-
         // Return success message
-        return ResponseEntity.ok(graphId);
+        return new ResponseEntity<>(savedDataset, HttpStatus.OK);
     }
 
     @PostMapping("/project/{projectId}/datasources")
-    public ResponseEntity<?> savingDatasetObject(
+    public ResponseEntity<Dataset> savingDatasetObject(
             @RequestParam("datasetName") String datasetName,
             @RequestParam("datasetDescription") String datasetDescription,
             @RequestParam("datasetPath") String path,
-            @PathVariable String projectId, String visualSchema) {
+            @PathVariable String projectId) {
         try {
             System.out.println("################### POST A DATASOURCE RECEIVED ################### " + projectId);
             Dataset dataset;
@@ -102,21 +105,17 @@ public class SourceController {
                 default:
                     throw new UnsupportedOperationException("Dataset type not supported: " + extension);
             }
-            //todo: delete this example one-to-one
-            Tuple t = new Tuple();
-            t.setTupleName(visualSchema);
-            t.setTupleDescription("ESTO NO DEBERÍA SALIR");
-            dataset.setLocalGraph(t);
+
             Dataset savedDataset = sourceService.saveDataset(dataset);
 
             //Create the relation with project adding the datasetId
             sourceService.addDatasetIdToProject(projectId, savedDataset);
 
-            return new ResponseEntity<>(savedDataset, HttpStatus.OK);
+            return new ResponseEntity<>(savedDataset, HttpStatus.CREATED);
         } catch (UnsupportedOperationException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Data source not created sucessfully");
         } catch (Exception e) {
-            return new ResponseEntity<>("An error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Data source not created sucessfully");
         }
     }
 
