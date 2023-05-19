@@ -58,7 +58,8 @@ public class SourceController {
         System.out.println(visualSchema);
         System.out.println("-----------------------------------> VISUAL SCHEMA INSERTED");
         // Save graph into database
-        boolean isSaved = sourceService.saveGraphToDatabase(graph.getGraph());
+        boolean isSaved = true;
+                //sourceService.saveGraphToDatabase(graph.getGraph());
 
         String graphId = graph.getGraph().getName().getURI();
         Dataset savedDataset = null;
