@@ -7,6 +7,8 @@ import edu.upc.essi.dtim.NextiaCore.graph.Graph;
 import edu.upc.essi.dtim.NextiaCore.graph.LocalGraph;
 import edu.upc.essi.dtim.NextiaCore.graph.Triple;
 import edu.upc.essi.dtim.NextiaCore.graph.URI;
+import edu.upc.essi.dtim.nextiadi.bootstraping.CSVBootstrap;
+import edu.upc.essi.dtim.nextiadi.bootstraping.JSONBootstrapSWJ;
 import edu.upc.essi.dtim.odin.NextiaGraphy.NextiaGraphy;
 import edu.upc.essi.dtim.odin.NextiaStore.GraphStore.GraphStoreFactory;
 import edu.upc.essi.dtim.odin.NextiaStore.GraphStore.GraphStoreInterface;
@@ -16,6 +18,8 @@ import edu.upc.essi.dtim.odin.config.AppConfig;
 import edu.upc.essi.dtim.odin.project.ProjectService;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.jena.rdf.model.*;
+import org.apache.jena.rdf.model.impl.ModelCom;
+import org.apache.jena.rdf.model.impl.StatementImpl;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
 import org.apache.jena.vocabulary.XSD;
@@ -23,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -125,16 +130,30 @@ public class SourceService {
      * @param dataset Un objeto Dataset con los datos a transformar
      * @return Un objeto Graph con los datos transformados a RDF
      */
-    public Graph transformToGraph(Dataset dataset) {
-        //todo: call NextiaBS
+    public GraphModelPair transformToGraph(Dataset dataset) {
         String datasetName = dataset.getDatasetName();
         if (datasetName == null) datasetName = "DatasetNameIsEmpty";
         try {
-            // Try to convert the dataset to a graph
-            //return dataset.convertToGraph(dataset.getDatasetId(), datasetName, dataset.getPath());
-            //todo: here goes the transformation call to our localGraph
-            Graph graph = hardcodedGraph(datasetName);
-            return graph;
+            // Try to convert the dataset to a graph BY BOOTSTRAP CALL
+            Model bootstrapM = ModelFactory.createDefaultModel();
+            if (dataset.getClass().equals(CsvDataset.class)) {
+                CSVBootstrap bootstrap = new CSVBootstrap();
+                try {
+                    bootstrapM = bootstrap.bootstrapSchema(dataset.getDatasetId(), dataset.getDatasetName(), ((CsvDataset) dataset).getPath());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            } else if (dataset.getClass().equals(JsonDataset.class)) {
+                JSONBootstrapSWJ j = new JSONBootstrapSWJ();
+                try {
+                    bootstrapM = j.bootstrapSchema(dataset.getDatasetName(), dataset.getDatasetId(), ((JsonDataset) dataset).getPath());
+                } catch (FileNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            Graph bootstrappedGraph = adapt(bootstrapM, new URI(dataset.getDatasetName()));
+
+            return new GraphModelPair(bootstrappedGraph, bootstrapM);
         } catch (UnsupportedOperationException e) {
             // If the dataset format is not supported, return an error graph
             Graph errorGraph = new LocalGraph(null, new URI(datasetName), new HashSet<>(), "ERROR");
@@ -143,17 +162,19 @@ public class SourceService {
                     new URI("https://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
                     new URI("https://example.org/error#UnsupportedDatasetFormat")
             ));
-            return errorGraph;
+
+            return new GraphModelPair(errorGraph, null);
         }
     }
 
-    public String generateVisualSchema(Graph graph) {
+
+    public String generateVisualSchema(GraphModelPair graph) {
         //TODO: generate the visual schema from graph
 
 //        return "{'nodes': [{'iri': 'http://www.example.com/resource1','id': 'Class1','label': 'resource1','iriType': 'http://www.w3.org/2002/07/owl#Class','shortType': 'owl:Class','type': 'class'},{'iri': 'http://www.example.com/property1','id': 'Property1','label': 'property1','type': 'property','domain': 'http://www.example.com/resource1','range': 'http://www.example.com/resource2'}],'links': [{'id': 'Link1','nodeId': 'Property1','source': 'Class1','target': 'Class2','label': 'property1'}]}";
 
         NextiaGraphy visualLib = new NextiaGraphy();
-        String visualSchema = visualLib.generateVisualGraphNew(hardcodedModel("Demo"));
+        String visualSchema = visualLib.generateVisualGraphNew(graph.getModel());
         System.out.println(visualSchema);
         return visualSchema;
     }
@@ -278,6 +299,51 @@ public class SourceService {
         model.add(stmt3);
         model.add(stmt4);
 
+        return model;
+    }
+
+    private Graph adapt(Model model, URI name) {
+        Set<Triple> triples = new HashSet<>();
+
+        StmtIterator iter = model.listStatements();
+        while (iter.hasNext()) {
+            Statement stmt = iter.next();
+            triples.add(new Triple(
+                    new URI(stmt.getSubject().getURI()),
+                    new URI(stmt.getPredicate().getURI()),
+                    new URI(stmt.getObject().isLiteral() ? stmt.getObject().asLiteral().toString():stmt.getObject().asResource().getURI())
+            ));
+        }
+
+        Graph graph = new LocalGraph(null, name, triples, "");
+        for(Triple t : triples){
+            System.out.println();
+            System.out.println(t.getSubject().getURI());
+            System.out.println(t.getPredicate().getURI());
+            System.out.println(t.getObject().toString());
+            System.out.println();
+        }
+        return graph;
+    }
+
+    private Model adapt(Graph graph) {
+        Model model = ModelFactory.createDefaultModel();
+        for (Triple triple : graph.getTriples()) {
+            Resource subject = ResourceFactory.createResource(triple.getSubject().getURI());
+            Property predicate = ResourceFactory.createProperty(triple.getPredicate().getURI());
+            Statement statement = null;
+            if (true /*triple.getObject().isURI()*/) {
+                Resource object = ResourceFactory.createResource(triple.getObject().toString());
+                statement = new StatementImpl(subject, predicate, object);
+            } else {
+                org.apache.jena.datatypes.RDFDatatype datatype = null;
+                if (true /*triple.getObject().getLiteralDatatypeURI() != null*/) {
+                    datatype = org.apache.jena.datatypes.TypeMapper.getInstance().getSafeTypeByName(triple.getObject().toString());
+                }
+                statement = new StatementImpl(subject, predicate, (RDFNode) triple.getObject(), (ModelCom) datatype);
+            }
+            model.add(statement);
+        }
         return model;
     }
 }

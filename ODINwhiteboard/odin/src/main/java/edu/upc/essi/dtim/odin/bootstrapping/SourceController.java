@@ -52,15 +52,15 @@ public class SourceController {
         Dataset datasource = sourceService.extractData(filePath, datasetName, datasetDescription);
 
         // Transform datasource into graph
-        Graph graph = sourceService.transformToGraph(datasource);
+        GraphModelPair graph = sourceService.transformToGraph(datasource);
 
         String visualSchema = sourceService.generateVisualSchema(graph);
         System.out.println(visualSchema);
         System.out.println("-----------------------------------> VISUAL SCHEMA INSERTED");
         // Save graph into database
-        boolean isSaved = sourceService.saveGraphToDatabase(graph);
+        boolean isSaved = sourceService.saveGraphToDatabase(graph.getGraph());
 
-        String graphId = graph.getName().getURI();
+        String graphId = graph.getGraph().getName().getURI();
         Dataset savedDataset = null;
         if (isSaved) {
             // Add the local graph to the project's list of local graph IDs if it was saved
