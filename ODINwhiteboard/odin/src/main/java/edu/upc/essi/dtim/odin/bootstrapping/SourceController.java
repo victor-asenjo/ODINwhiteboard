@@ -17,22 +17,30 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
+/**
+ * The controller class for managing datasources in a project.
+ */
 @RestController
 public class SourceController {
     private final SourceService sourceService;
 
+    /**
+     * Constructs a new instance of SourceController.
+     *
+     * @param sourceService the SourceService dependency for performing datasource operations
+     */
     private SourceController( @Autowired SourceService sourceService) {
         this.sourceService = sourceService;
     }
 
     /**
-     * Bootstrap a new datasource into the project.
+     * Performs a bootstrap operation by creating a datasource, transforming it into a graph, and saving it to the database.
      *
-     * @param projectId The ID of the project.
-     * @param attach_file The Multipart file containing the datasource.
-     * @param datasetName The name of the dataset.
+     * @param projectId          The ID of the project.
+     * @param datasetName        The name of the dataset.
      * @param datasetDescription The description of the dataset.
-     * @return A ResponseEntity with a success message if the bootstrap was successful, or an error message if it failed.
+     * @param attach_file        The attached file representing the datasource.
+     * @return A ResponseEntity object containing the saved dataset or an error message.
      */
     @PostMapping(value="/project/{id}")//, consumes = {"multipart/form-data"})
     public ResponseEntity<?> bootstrap(@PathVariable("id") String projectId,
@@ -48,18 +56,20 @@ public class SourceController {
 
             // Reconstruct file from Multipart file
             String filePath = sourceService.reconstructFile(attach_file);
-            System.out.println("-------------------------file path: " + filePath);
+
             // Extract data from datasource file
             Dataset datasource = sourceService.extractData(filePath, datasetName, datasetDescription);
-            System.out.println("-------------------------dataset: " + datasource);
+
+            //Saving dataset to assign an id
             Dataset savedDataset = sourceService.saveDataset(datasource);
+
             // Transform datasource into graph
             GraphModelPair graph = sourceService.transformToGraph(savedDataset);
             System.out.println("-------------------------toGraph: " + filePath);
 
+            //Generating visual schema for frontend
             String visualSchema = sourceService.generateVisualSchema(graph);
-            System.out.println(visualSchema);
-            System.out.println("-----------------------------------> VISUAL SCHEMA INSERTED");
+
             // Save graph into database
             boolean isSaved = true;
                     //sourceService.saveGraphToDatabase(graph.getGraph());
@@ -87,6 +97,15 @@ public class SourceController {
         }
     }
 
+    /**
+     * Saves a dataset object and associates it with a specific project. NOT USED JUST FOR TESTING
+     *
+     * @param datasetName        The name of the dataset.
+     * @param datasetDescription The description of the dataset.
+     * @param path               The path of the dataset.
+     * @param projectId          The ID of the project to associate the dataset with.
+     * @return A ResponseEntity object containing the saved dataset or an error message.
+     */
     @PostMapping("/project/{projectId}/datasources")
     public ResponseEntity<Dataset> savingDatasetObject(
             @RequestParam("datasetName") String datasetName,
@@ -127,6 +146,13 @@ public class SourceController {
         }
     }
 
+    /**
+     * Deletes a datasource from a specific project.
+     *
+     * @param projectId The ID of the project from which to delete the datasource.
+     * @param id        The ID of the datasource to delete.
+     * @return A ResponseEntity object containing a boolean indicating if the deletion was successful or not.
+     */
     @DeleteMapping("/project/{projectId}/datasource/{id}")
     public ResponseEntity<Boolean> deleteDatasource(@PathVariable("projectId") String projectId,
                                                  @PathVariable("id") String id) {
@@ -157,6 +183,12 @@ public class SourceController {
         }
     }
 
+    /**
+     * Retrieves all datasources from a specific project.
+     *
+     * @param id The ID of the project to retrieve datasources from.
+     * @return A ResponseEntity object containing the list of datasets or an error message.
+     */
     @GetMapping("/project/{id}/datasources")
     public ResponseEntity<?> getDatasourcesFromProject(@PathVariable String id) {
         try {
@@ -173,6 +205,11 @@ public class SourceController {
         }
     }
 
+    /**
+     * Retrieves all datasources.
+     *
+     * @return A ResponseEntity object containing the list of datasets or an error message.
+     */
     @GetMapping("/datasources")
     public ResponseEntity<?> getAllDatasource() {
         try {
@@ -189,6 +226,12 @@ public class SourceController {
         }
     }
 
+    /**
+     * Retrieves a graph based on the given graph ID.
+     *
+     * @param graphId The ID of the graph to retrieve.
+     * @return The graph corresponding to the provided ID.
+     */
     @GetMapping("/getGraph")
     public Graph getGraph(@RequestParam("graphId") String graphId) {
         GraphStoreInterface graphStore;

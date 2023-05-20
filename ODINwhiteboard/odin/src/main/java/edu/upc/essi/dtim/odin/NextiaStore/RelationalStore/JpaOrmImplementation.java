@@ -30,6 +30,7 @@ public class JpaOrmImplementation<T> implements ORMStoreInterface<T> {
         }
         return savedObject;
     }
+
     @Override
     public T findById(Class<T> entityClass, String id) {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("ORMPersistenceUnit");

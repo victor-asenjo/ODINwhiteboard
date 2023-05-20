@@ -10,10 +10,22 @@ import java.util.List;
 @RestController
 public class ProjectController {
     private final ProjectService projectService;
+
+    /**
+     * Constructs a new ProjectController with the specified ProjectService.
+     *
+     * @param projectService The ProjectService to be used.
+     */
     ProjectController(@Autowired ProjectService projectService){
         this.projectService = projectService;
     }
 
+    /**
+     * Saves a project.
+     *
+     * @param project The project to save.
+     * @return A ResponseEntity containing the saved project and HTTP status 201 (Created).
+     */
     @PostMapping("/projects")
     public ResponseEntity<Project> saveProject(@RequestBody Project project) {
         System.out.println("################### POST PROJECT RECEIVED ################### ");
@@ -21,6 +33,13 @@ public class ProjectController {
         return new ResponseEntity<>(savedProject, HttpStatus.CREATED);
     }
 
+    /**
+     * Retrieves a project by its ID.
+     *
+     * @param id The ID of the project to retrieve.
+     * @return A ResponseEntity containing the retrieved project and HTTP status 200 (OK) if found,
+     *         or HTTP status 404 (Not Found) if not found.
+     */
     @GetMapping("/projects/{id}")
     public ResponseEntity<Project> getProject(@PathVariable("id") String id) {
         System.out.println("################### GET PROJECT RECEIVED ################### " + id);
@@ -32,6 +51,11 @@ public class ProjectController {
         }
     }
 
+    /**
+     * Retrieves all projects.
+     *
+     * @return A ResponseEntity containing a list of all projects and HTTP status 200 (OK).
+     */
     @GetMapping("/projects")
     public ResponseEntity<List<Project>> getAllProjects() {
         System.out.println("################### GET ALL PROJECTS RECEIVED ################### ");
@@ -39,6 +63,13 @@ public class ProjectController {
         return ResponseEntity.ok(projects);
     }
 
+    /**
+     * Deletes a project by its ID.
+     *
+     * @param id The ID of the project to delete.
+     * @return A ResponseEntity with HTTP status 200 (OK) and the boolean value true if the project was deleted,
+     *         or HTTP status 404 (Not Found) if the project was not found.
+     */
     @DeleteMapping("/deleteProject/{id}")
     public ResponseEntity<Boolean> deleteProject(@PathVariable("id") String id) {
         // Print a message to indicate that the delete request was received
@@ -57,6 +88,12 @@ public class ProjectController {
         }
     }
 
+    /**
+     * Deletes all projects.
+     *
+     * @return A ResponseEntity with HTTP status 200 (OK) and the boolean value true if all projects were deleted,
+     *         or HTTP status 404 (Not Found) if no projects were found.
+     */
     @DeleteMapping("/projects/delete")
     public ResponseEntity<Boolean> deleteAllProjects() {
         boolean deleted = projectService.deleteAllProjects();

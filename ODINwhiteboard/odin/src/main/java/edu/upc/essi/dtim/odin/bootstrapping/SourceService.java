@@ -36,14 +36,29 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * The service class for managing datasources in a project.
+ */
 @Service
 public class SourceService {
-
+    /**
+     * The dependency on the ProjectService class.
+     */
     private final ProjectService projectService;
-
+    /**
+     * The AppConfig dependency for accessing application configuration.
+     */
     private final AppConfig appConfig;
+    /**
+     * The ORMStoreInterface dependency for storing datasets.
+     */
     private final ORMStoreInterface<Dataset> ormDataset;
-
+    /**
+     * Constructs a new instance of SourceService.
+     *
+     * @param appConfig      The AppConfig dependency for accessing application configuration.
+     * @param projectService The ProjectService dependency.
+     */
     public SourceService(@Autowired AppConfig appConfig,
                          @Autowired ProjectService projectService){
         this.appConfig = appConfig;
@@ -96,12 +111,12 @@ public class SourceService {
     }
 
     /**
-     * Recibe una ruta de archivo, lee los metadatos y retorna un objeto Dataset con los datos extraídos del archivo.
+     * Extracts data from a file and returns a Dataset object with the extracted data.
      *
-     * @param filePath    La ruta del archivo del que se extraerán los datos
-     * @param datasetName The name of the dataset
-     * @param datasetDescription The description of the dataset
-     * @return Un objeto Dataset con los datos extraídos del archivo
+     * @param filePath           The path of the file to extract data from.
+     * @param datasetName        The name of the dataset.
+     * @param datasetDescription The description of the dataset.
+     * @return A Dataset object with the extracted data.
      */
     public Dataset extractData(String filePath, String datasetName, String datasetDescription) {
         // Extract the extension of the file from the file path
@@ -125,9 +140,10 @@ public class SourceService {
     }
 
     /**
-     * Recibe un objeto Dataset y retorna un objeto Graph que representa los datos del Dataset transformados a RDF.
-     * @param dataset Un objeto Dataset con los datos a transformar
-     * @return Un objeto Graph con los datos transformados a RDF
+     * Transforms a Dataset object into a Graph object representing the data in RDF format.
+     *
+     * @param dataset The Dataset object to transform.
+     * @return A GraphModelPair object containing the transformed Graph and the corresponding Model.
      */
     public GraphModelPair transformToGraph(Dataset dataset) {
         String datasetName = dataset.getDatasetName();
@@ -174,13 +190,24 @@ public class SourceService {
         }
     }
 
+    /**
+     * Generates a visual representation of a Graph using NextiaGraphy library.
+     *
+     * @param graph The GraphModelPair object containing the Graph.
+     * @return A String representing the visual schema of the Graph.
+     */
     public String generateVisualSchema(GraphModelPair graph) {
         NextiaGraphy visualLib = new NextiaGraphy();
         String visualSchema = visualLib.generateVisualGraphNew(graph.getModel());
-        System.out.println(visualSchema);
         return visualSchema;
     }
 
+    /**
+     * Saves a Graph object to the database using a GraphStoreInterface.
+     *
+     * @param graph The Graph object to save.
+     * @return A boolean indicating whether the saving operation was successful.
+     */
     public boolean saveGraphToDatabase(Graph graph) {
         GraphStoreInterface graphStore;
         try {
@@ -192,40 +219,95 @@ public class SourceService {
         return true;
     }
 
+    /**
+     * Adds a local graph to a project using the ProjectService class.
+     *
+     * @param projectId The ID of the project to add the graph to.
+     * @param name      The name of the local graph.
+     */
     public void addLocalGraphToProject(String projectId, String name) {
         projectService.addLocalGraphToProject(projectId, name);
     }
+
+    /**
+     * Adds a dataset ID to a project using the ProjectService class.
+     *
+     * @param projectId The ID of the project to add the dataset ID to.
+     * @param dataset   The Dataset object to add the ID of.
+     */
     public void addDatasetIdToProject(String projectId, Dataset dataset) {
         projectService.addDatasetIdToProject(projectId, dataset);
     }
 
+    /**
+     * Deletes a dataset from a project using the ProjectService class.
+     *
+     * @param projectId The ID of the project to delete the dataset from.
+     * @param datasetId The ID of the dataset to delete.
+     */
     public void deleteDatasetFromProject(String projectId, String datasetId) {
         projectService.deleteDatasetFromProject(projectId, datasetId);
     }
 
+    /**
+     * Saves a Dataset object using the ORMStoreInterface.
+     *
+     * @param dataset The Dataset object to save.
+     * @return The saved Dataset object.
+     */
     public Dataset saveDataset(Dataset dataset) {
         return ormDataset.save(dataset);
     }
 
+    /**
+     * Retrieves all datasets from the ORMStoreInterface.
+     *
+     * @return A list of Dataset objects.
+     */
     public List<Dataset> getDatasets() {
         return ormDataset.getAll(Dataset.class);
     }
 
+    /**
+     * Deletes a datasource from the ORMStoreInterface. NOT USED. When deleteDatasetFromProject(...) cascade all does this implicit.
+     *
+     * @param id The ID of the datasource to delete.
+     * @return A boolean indicating whether the deletion was successful.
+     */
     public boolean deleteDatasource(String id) {
         return ormDataset.deleteOne(id);
     }
 
+    /**
+     * Checks if a project contains a specific dataset using the ProjectService class.
+     *
+     * @param projectId The ID of the project to check.
+     * @param id        The ID of the dataset to check.
+     * @return A boolean indicating whether the project contains the dataset.
+     */
     public boolean projectContains(String projectId, String id) {
         return projectService.projectContains(projectId, id);
     }
 
+    /**
+     * Retrieves all datasets of a project using the ProjectService class.
+     *
+     * @param id The ID of the project to retrieve datasets from.
+     * @return A list of Dataset objects associated with the project.
+     */
     public List<Dataset> getDatasetsOfProject(String id) {
         // Returning the list of datasets associated with the project
         return projectService.getDatasetsOfProject(id);
     }
 
 
-
+    /**
+     * Adapts a Model object into a Graph object with Triples.
+     *
+     * @param model The Model object to adapt.
+     * @param name  The name of the Graph.
+     * @return The adapted Graph object.
+     */
     private Graph adapt(Model model, URI name) {
         Set<Triple> triples = new HashSet<>();
 
