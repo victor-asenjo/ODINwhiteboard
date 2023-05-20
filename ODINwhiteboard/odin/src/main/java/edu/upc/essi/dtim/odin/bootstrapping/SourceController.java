@@ -79,9 +79,10 @@ public class SourceController {
                 // Add the local graph to the project's list of local graph IDs if it was saved
                 sourceService.addLocalGraphToProject(projectId, graphId);
 
+                //TODO: REPLACE WITH THE CORRESPONENT GRAPH
                 Tuple t = new Tuple();
                 t.setTupleName(visualSchema);
-                t.setTupleDescription("ESTO NO DEBERÍA SALIR");
+                t.setTupleDescription("ESTO NO DEBE SALIR");
                 savedDataset.setLocalGraph(t);
                 //savedDataset = sourceService.saveDataset(datasource);
                 //Create the relation with project adding the datasetId
