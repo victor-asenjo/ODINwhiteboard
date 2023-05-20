@@ -7,6 +7,8 @@ import edu.upc.essi.dtim.NextiaCore.graph.Graph;
 import edu.upc.essi.dtim.NextiaCore.graph.LocalGraph;
 import edu.upc.essi.dtim.NextiaCore.graph.Triple;
 import edu.upc.essi.dtim.NextiaCore.graph.URI;
+import edu.upc.essi.dtim.nextiadi.bootstraping.CSVBootstrap;
+import edu.upc.essi.dtim.nextiadi.bootstraping.JSONBootstrapSWJ;
 import edu.upc.essi.dtim.odin.NextiaGraphy.NextiaGraphy;
 import edu.upc.essi.dtim.odin.NextiaStore.GraphStore.GraphStoreFactory;
 import edu.upc.essi.dtim.odin.NextiaStore.GraphStore.GraphStoreInterface;
@@ -15,13 +17,15 @@ import edu.upc.essi.dtim.odin.NextiaStore.RelationalStore.ORMStoreInterface;
 import edu.upc.essi.dtim.odin.config.AppConfig;
 import edu.upc.essi.dtim.odin.project.ProjectService;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.jena.rdf.model.*;
-import org.apache.jena.vocabulary.RDF;
-import org.apache.jena.vocabulary.RDFS;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.rdf.model.StmtIterator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -38,12 +42,17 @@ public class SourceService {
     private final ProjectService projectService;
 
     private final AppConfig appConfig;
+    private final ORMStoreInterface<Dataset> ormDataset;
 
     public SourceService(@Autowired AppConfig appConfig,
-                         @Autowired ProjectService projectService
-    ) {
+                         @Autowired ProjectService projectService){
         this.appConfig = appConfig;
         this.projectService = projectService;
+        try {
+            this.ormDataset = ORMStoreFactory.getInstance();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -64,9 +73,7 @@ public class SourceService {
 
             // Resolve the destination file path using the disk path and the generated filename
             Path destinationFile = diskPath.resolve(Paths.get(filename));
-            System.out.println(destinationFile);
-            System.out.println(destinationFile.getParent());
-            System.out.println(destinationFile.getParent().equals(diskPath.toAbsolutePath()));
+
             // Perform a security check to ensure that the destination file is within the disk path
             if (!destinationFile.getParent().equals(diskPath)) {
                 throw new RuntimeException("Cannot store file outside current directory.");
@@ -88,8 +95,6 @@ public class SourceService {
         }
     }
 
-
-
     /**
      * Recibe una ruta de archivo, lee los metadatos y retorna un objeto Dataset con los datos extraídos del archivo.
      *
@@ -107,10 +112,10 @@ public class SourceService {
         // Create a new dataset object with the extracted data
         switch (extension.toLowerCase()){
             case "csv":
-                dataset = new CsvDataset(filePath, datasetName, datasetDescription, filePath);
+                dataset = new CsvDataset(null, datasetName, datasetDescription, filePath);
                 break;
             case "json":
-                dataset = new JsonDataset(filePath, datasetName, datasetDescription, filePath);
+                dataset = new JsonDataset(null, datasetName, datasetDescription, filePath);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported file format: " + extension);
@@ -124,16 +129,38 @@ public class SourceService {
      * @param dataset Un objeto Dataset con los datos a transformar
      * @return Un objeto Graph con los datos transformados a RDF
      */
-    public Graph transformToGraph(Dataset dataset) {
-        //todo: call NextiaBS
+    public GraphModelPair transformToGraph(Dataset dataset) {
         String datasetName = dataset.getDatasetName();
         if (datasetName == null) datasetName = "DatasetNameIsEmpty";
         try {
-            // Try to convert the dataset to a graph
-            //return dataset.convertToGraph(dataset.getDatasetId(), datasetName, dataset.getPath());
-            //todo: here goes the transformation call to our localGraph
-            Graph graph = hardcodedGraph(datasetName);
-            return graph;
+            // Try to convert the dataset to a graph BY BOOTSTRAP CALL
+            Model bootstrapM = ModelFactory.createDefaultModel();
+            System.out.println("------------------------PRE CONVERTIR GRAFO");
+
+            if (dataset.getClass().equals(CsvDataset.class)) {
+                System.out.println("------------------------PRE CONVERTIR GRAFO A CSV");
+                CSVBootstrap bootstrap = new CSVBootstrap();
+                try {
+                    bootstrapM = bootstrap.bootstrapSchema(dataset.getDatasetId(), dataset.getDatasetName(), ((CsvDataset) dataset).getPath());
+                } catch (IOException e) {
+                    System.out.println("------------------------ERROR");
+                    throw new RuntimeException(e);
+                }
+            } else if (dataset.getClass().equals(JsonDataset.class)) {
+                System.out.println("------------------------PRE CONVERTIR GRAFO A JSON");
+                JSONBootstrapSWJ j = new JSONBootstrapSWJ();
+                try {
+                    System.out.println("------------------------CONVERTIendo GRAFO A JSON");
+                    bootstrapM = j.bootstrapSchema(dataset.getDatasetName(), dataset.getDatasetId(), ((JsonDataset) dataset).getPath());
+                    System.out.println("------------------------CONVERTIDO GRAFO A JSON");
+                } catch (FileNotFoundException e) {
+                    System.out.println("------------------------error CONVERTIR GRAFO A JSON");
+                    throw new RuntimeException(e);
+                }
+            }
+            Graph bootstrappedGraph = adapt(bootstrapM, new URI(dataset.getDatasetName()));
+            System.out.println("------------------------CONVERTIDO");
+            return new GraphModelPair(bootstrappedGraph, bootstrapM);
         } catch (UnsupportedOperationException e) {
             // If the dataset format is not supported, return an error graph
             Graph errorGraph = new LocalGraph(null, new URI(datasetName), new HashSet<>(), "ERROR");
@@ -142,17 +169,14 @@ public class SourceService {
                     new URI("https://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
                     new URI("https://example.org/error#UnsupportedDatasetFormat")
             ));
-            return errorGraph;
+
+            return new GraphModelPair(errorGraph, null);
         }
     }
 
-    public String generateVisualSchema(Graph graph) {
-        //TODO: generate the visual schema from graph
-
-//        return "{'nodes': [{'iri': 'http://www.example.com/resource1','id': 'Class1','label': 'resource1','iriType': 'http://www.w3.org/2002/07/owl#Class','shortType': 'owl:Class','type': 'class'},{'iri': 'http://www.example.com/property1','id': 'Property1','label': 'property1','type': 'property','domain': 'http://www.example.com/resource1','range': 'http://www.example.com/resource2'}],'links': [{'id': 'Link1','nodeId': 'Property1','source': 'Class1','target': 'Class2','label': 'property1'}]}";
-
+    public String generateVisualSchema(GraphModelPair graph) {
         NextiaGraphy visualLib = new NextiaGraphy();
-        String visualSchema = visualLib.generateVisualGraphNew(hardcodedModel("Demo"));
+        String visualSchema = visualLib.generateVisualGraphNew(graph.getModel());
         System.out.println(visualSchema);
         return visualSchema;
     }
@@ -180,32 +204,14 @@ public class SourceService {
     }
 
     public Dataset saveDataset(Dataset dataset) {
-        ORMStoreInterface<Dataset> ormDataset;
-        try {
-            ormDataset = ORMStoreFactory.getInstance(Dataset.class);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
         return ormDataset.save(dataset);
     }
 
     public List<Dataset> getDatasets() {
-        ORMStoreInterface<Dataset> ormDataset;
-        try {
-            ormDataset = ORMStoreFactory.getInstance(Dataset.class);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        return ormDataset.getAll();
+        return ormDataset.getAll(Dataset.class);
     }
 
     public boolean deleteDatasource(String id) {
-        ORMStoreInterface<Dataset> ormDataset;
-        try {
-            ormDataset = ORMStoreFactory.getInstance(Dataset.class);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
         return ormDataset.deleteOne(id);
     }
 
@@ -220,62 +226,28 @@ public class SourceService {
 
 
 
-
-
-
-
-
-    private Graph hardcodedGraph(String graphName) {
+    private Graph adapt(Model model, URI name) {
         Set<Triple> triples = new HashSet<>();
 
-        triples.add(new Triple(
-                new URI("http://somewhere/cat"),
-                new URI("http://www.w3.org/2001/vcard-rdf/3.0#TYPE"),
-                new URI("http://www.w3.org/2001/vcard-rdf/3.0#Animal")
-        ));
-        triples.add(new Triple(
-                new URI("http://somewhere/cat"),
-                new URI("http://www.w3.org/2001/vcard-rdf/3.0#FN"),
-                new URI("tail")
-        ));
-        triples.add(new Triple(
-                new URI("http://somewhere/dog"),
-                new URI("http://somewhere/has"),
-                new URI("paws")
-        ));
-        triples.add(new Triple(
-                new URI("http://somewhere/bird"),
-                new URI("http://somewhere/can"),
-                new URI("fly")
-        ));
-        triples.add(new Triple(
-                new URI("http://somewhere/fish"),
-                new URI("http://somewhere/lives"),
-                new URI("in water")
-        ));
+        StmtIterator iter = model.listStatements();
+        while (iter.hasNext()) {
+            Statement stmt = iter.next();
+            triples.add(new Triple(
+                    new URI(stmt.getSubject().getURI()),
+                    new URI(stmt.getPredicate().getURI()),
+                    new URI(stmt.getObject().isLiteral() ? stmt.getObject().asLiteral().toString():stmt.getObject().asResource().getURI())
+            ));
+        }
 
-        Graph graph = new LocalGraph(null, new URI(graphName), triples, "");
+        Graph graph = new LocalGraph(null, name, triples, "");
+        for(Triple t : triples){
+            System.out.println();
+            System.out.println(t.getSubject().getURI());
+            System.out.println(t.getPredicate().getURI());
+            System.out.println(t.getObject().toString());
+            System.out.println();
+        }
         return graph;
-    }
-
-    Model hardcodedModel(String name){
-        Model model = ModelFactory.createDefaultModel();
-
-        // Crear propiedades y recursos
-        Property hasTitle = model.createProperty("https://example.com/hasTitle");
-        Resource book = model.createResource("https://example.com/"+name);
-        Resource title = model.createResource("https://example.com/Title");
-
-        // Crear declaraciones y agregar al modelo
-        Statement stmt1 = model.createStatement(book, RDF.type, RDFS.Class);
-        Statement stmt2 = model.createStatement(hasTitle, RDF.type, RDF.Property);
-        Statement stmt3 = model.createStatement(book, hasTitle, title);
-
-        model.add(stmt1);
-        model.add(stmt2);
-        model.add(stmt3);
-
-        return model;
     }
 }
 

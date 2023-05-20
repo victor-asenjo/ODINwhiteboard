@@ -82,8 +82,8 @@ class SourceServiceTest {
         Assertions.assertNotNull(dataset);
         Assertions.assertTrue(dataset instanceof CsvDataset);
         Assertions.assertEquals(filePath, ((CsvDataset) dataset).getPath());
-        Assertions.assertEquals(datasetName, dataset.getName());
-        Assertions.assertEquals(datasetDescription, dataset.getDescription());
+        Assertions.assertEquals(datasetName, dataset.getDatasetName());
+        Assertions.assertEquals(datasetDescription, dataset.getDatasetDescription());
     }
 
     @Test
@@ -100,10 +100,10 @@ class SourceServiceTest {
         Assertions.assertNotNull(dataset);
         Assertions.assertTrue(dataset instanceof JsonDataset);
         Assertions.assertEquals(filePath, ((JsonDataset) dataset).getPath());
-        Assertions.assertEquals(datasetName, dataset.getName());
+        Assertions.assertEquals(datasetName, dataset.getDatasetName());
         System.out.println(datasetDescription);
-        System.out.println(dataset.getDescription());
-        Assertions.assertEquals(datasetDescription, dataset.getDescription());
+        System.out.println(dataset.getDatasetDescription());
+        Assertions.assertEquals(datasetDescription, dataset.getDatasetDescription());
     }
 
     @Test
@@ -123,7 +123,7 @@ class SourceServiceTest {
     @Test
     public void testTransformToGraphJson() throws IOException {
         Dataset jsonDataset = new JsonDataset("id", "name", "description", jsonTestPath);
-        Graph graph = sourceService.transformToGraph(jsonDataset);
+        Graph graph = sourceService.transformToGraph(jsonDataset).getGraph();
         //Assertions.assertNotNull(graph);
         Assertions.assertTrue(graph instanceof LocalGraph);
         Assertions.assertEquals("name", graph.getName().getURI());

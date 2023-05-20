@@ -48,7 +48,7 @@ export const useProjectsStore = defineStore('projects',{
         projectAPI.createProject(project, authStore.user.accessToken).then((response) => {
           if (response.status === 201) {
             console.log(response)
-            notify.positive(`Project ${project.name} successfully created`)
+            notify.positive(`Project ${project.projectName} successfully created`)
             this.projects.push(response.data)
             successCallback()
           } else {

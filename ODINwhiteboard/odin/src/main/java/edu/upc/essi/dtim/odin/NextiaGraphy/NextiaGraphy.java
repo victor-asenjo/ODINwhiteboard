@@ -194,6 +194,7 @@ public class NextiaGraphy {
             if( (l.getSource() == null || l.getTarget() == null  ) && !n.getRange().equals("http://schema.org/identifier") ){
 
                 System.out.println("ERROR......");
+                System.out.println(l.getLabel()+"-------------------------------------");
             }
             // TODO: support to see subproperty of....it implies to connect to properties visually
             if(!n.getRange().equals("http://schema.org/identifier"))

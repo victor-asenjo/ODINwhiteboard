@@ -111,8 +111,8 @@ onMounted( () => {
 // select, name, tag, size, type -> owner, members -> delete, view local schema
 const columns = [
     { name: "id", label: "Id", align: "center", field: "datasetId", sortable: true, },
-    { name: "Name", label: "Name", align: "center", field: "name", sortable: true, },
-    { name: "Type", label: "Type", align: "center", field: "type", sortable: true, },
+    { name: "Name", label: "Name", align: "center", field: "datasetName", sortable: true, },
+    { name: "Type", label: "Type", align: "center", field: "datasetType", sortable: true, },
     // {name: "#Wrappers", label: "#Wrappers", align: "center", field: "wrappers", sortable: true,},
     // { name: "View Metadata", label: "View Metadata", align: "center", field: "View Metadata", sortable: false, },
     {
