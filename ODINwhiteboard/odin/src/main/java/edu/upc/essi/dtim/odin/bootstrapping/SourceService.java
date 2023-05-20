@@ -52,7 +52,7 @@ public class SourceService {
     /**
      * The ORMStoreInterface dependency for storing datasets.
      */
-    private final ORMStoreInterface<Dataset> ormDataset;
+    private final ORMStoreInterface ormDataset;
     /**
      * Constructs a new instance of SourceService.
      *
@@ -151,31 +151,23 @@ public class SourceService {
         try {
             // Try to convert the dataset to a graph BY BOOTSTRAP CALL
             Model bootstrapM = ModelFactory.createDefaultModel();
-            System.out.println("------------------------PRE CONVERTIR GRAFO");
 
             if (dataset.getClass().equals(CsvDataset.class)) {
-                System.out.println("------------------------PRE CONVERTIR GRAFO A CSV");
                 CSVBootstrap bootstrap = new CSVBootstrap();
                 try {
                     bootstrapM = bootstrap.bootstrapSchema(dataset.getDatasetId(), dataset.getDatasetName(), ((CsvDataset) dataset).getPath());
                 } catch (IOException e) {
-                    System.out.println("------------------------ERROR");
                     throw new RuntimeException(e);
                 }
             } else if (dataset.getClass().equals(JsonDataset.class)) {
-                System.out.println("------------------------PRE CONVERTIR GRAFO A JSON");
                 JSONBootstrapSWJ j = new JSONBootstrapSWJ();
                 try {
-                    System.out.println("------------------------CONVERTIendo GRAFO A JSON");
                     bootstrapM = j.bootstrapSchema(dataset.getDatasetName(), dataset.getDatasetId(), ((JsonDataset) dataset).getPath());
-                    System.out.println("------------------------CONVERTIDO GRAFO A JSON");
                 } catch (FileNotFoundException e) {
-                    System.out.println("------------------------error CONVERTIR GRAFO A JSON");
                     throw new RuntimeException(e);
                 }
             }
             Graph bootstrappedGraph = adapt(bootstrapM, new URI(dataset.getDatasetName()));
-            System.out.println("------------------------CONVERTIDO");
             return new GraphModelPair(bootstrappedGraph, bootstrapM);
         } catch (UnsupportedOperationException e) {
             // If the dataset format is not supported, return an error graph

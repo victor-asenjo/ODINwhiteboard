@@ -10,7 +10,7 @@ public class ORMStoreFactory {
         // Being private prevents the factory from being instantiated from outside the class
     }
 
-    public static ORMStoreInterface getInstance() throws Exception {
+    public static ORMStoreInterface getInstance() {
         if (ormStoreInterfaceInstance == null) {
             System.out.println("Creating new instance of JpaOrmImplementation");
             ormStoreInterfaceInstance = new JpaOrmImplementation();

@@ -9,7 +9,7 @@ import java.util.List;
 
 @Service
 public class ProjectService {
-    ORMStoreInterface<Project> ormProject;
+    ORMStoreInterface ormProject;
 
     /**
      * Constructs a new ProjectService.

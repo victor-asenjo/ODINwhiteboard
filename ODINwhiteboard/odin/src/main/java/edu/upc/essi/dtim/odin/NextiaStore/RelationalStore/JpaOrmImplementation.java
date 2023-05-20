@@ -8,9 +8,9 @@ import javax.persistence.Persistence;
 import javax.persistence.Query;
 import java.util.List;
 
-public class JpaOrmImplementation<T> implements ORMStoreInterface<T> {
+public class JpaOrmImplementation implements ORMStoreInterface {
     @Override
-    public T save(T object) {
+    public <T> T save(T object) {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("ORMPersistenceUnit");
         EntityManager em = emf.createEntityManager();
         T savedObject = null;
@@ -32,13 +32,13 @@ public class JpaOrmImplementation<T> implements ORMStoreInterface<T> {
     }
 
     @Override
-    public T findById(Class<T> entityClass, String id) {
+    public <T> T findById(Class<T> entityClass, String id) {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("ORMPersistenceUnit");
         EntityManager em = emf.createEntityManager();
         T object = null;
         try {
             // Find the object with the given id in the entity
-            object = (T) em.find(entityClass, id);
+            object = em.find(entityClass, id);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -48,7 +48,7 @@ public class JpaOrmImplementation<T> implements ORMStoreInterface<T> {
     }
 
     @Override
-    public List<T> getAll(Class<T> entityClass) {
+    public <T> List<T> getAll(Class<T> entityClass) {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("ORMPersistenceUnit");
         EntityManager em = emf.createEntityManager();
         List<T> objects = null;
@@ -91,7 +91,7 @@ public class JpaOrmImplementation<T> implements ORMStoreInterface<T> {
     }
 
     @Override
-    public boolean deleteAll(Class<T> entityClass) {
+    public boolean deleteAll(Class<?> entityClass) {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("ORMPersistenceUnit");
         EntityManager em = emf.createEntityManager();
         boolean success = false;

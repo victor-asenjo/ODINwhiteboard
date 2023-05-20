@@ -2,14 +2,14 @@ package edu.upc.essi.dtim.odin.NextiaStore.RelationalStore;
 
 import java.util.List;
 
-public interface ORMStoreInterface<T> {
+public interface ORMStoreInterface {
     /**
      * Saves the object in the relational store.
      *
      * @param object The object to save.
      * @return The saved object.
      */
-    T save(T object);
+    <T> T save(T object);
 
     /**
      * Finds an object by its ID in the relational store.
@@ -18,7 +18,7 @@ public interface ORMStoreInterface<T> {
      * @param id          The ID of the object to find.
      * @return The found object, or null if not found.
      */
-    T findById(Class<T> entityClass, String id);
+    <T> T findById(Class<T> entityClass, String id);
 
     /**
      * Retrieves all objects of the specified class from the relational store.
@@ -26,7 +26,7 @@ public interface ORMStoreInterface<T> {
      * @param entityClass The class of the objects to retrieve.
      * @return A list of all objects of the specified class.
      */
-    List<T> getAll(Class<T> entityClass);
+    <T> List<T> getAll(Class<T> entityClass);
 
     /**
      * Deletes an object with the specified ID from the relational store.
@@ -42,5 +42,5 @@ public interface ORMStoreInterface<T> {
      * @param entityClass The class of the objects to delete.
      * @return true if all objects were successfully deleted, false otherwise.
      */
-    boolean deleteAll(Class<T> entityClass);
+    boolean deleteAll(Class<?> entityClass);
 }
