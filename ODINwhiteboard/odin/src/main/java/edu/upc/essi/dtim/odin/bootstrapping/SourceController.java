@@ -39,45 +39,52 @@ public class SourceController {
                                             @RequestPart String datasetName,
                                             @RequestPart String datasetDescription,
                                             @RequestPart MultipartFile attach_file) {
-        System.out.println("################### POST DATASOURCE RECEIVED FOR BOOTSTRAP###################");
-        // Validate and authenticate access here
-        if (!validateAccess(projectId)) {
-            //return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied");
+        try{
+            System.out.println("################### POST DATASOURCE RECEIVED FOR BOOTSTRAP###################");
+            // Validate and authenticate access here
+            if (!validateAccess(projectId)) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied");
+            }
+
+            // Reconstruct file from Multipart file
+            String filePath = sourceService.reconstructFile(attach_file);
+            System.out.println("-------------------------file path: " + filePath);
+            // Extract data from datasource file
+            Dataset datasource = sourceService.extractData(filePath, datasetName, datasetDescription);
+            System.out.println("-------------------------dataset: " + datasource);
+            Dataset savedDataset = sourceService.saveDataset(datasource);
+            // Transform datasource into graph
+            GraphModelPair graph = sourceService.transformToGraph(savedDataset);
+            System.out.println("-------------------------toGraph: " + filePath);
+
+            String visualSchema = sourceService.generateVisualSchema(graph);
+            System.out.println(visualSchema);
+            System.out.println("-----------------------------------> VISUAL SCHEMA INSERTED");
+            // Save graph into database
+            boolean isSaved = true;
+                    //sourceService.saveGraphToDatabase(graph.getGraph());
+
+            String graphId = graph.getGraph().getName().getURI();
+            if (isSaved) {
+                // Add the local graph to the project's list of local graph IDs if it was saved
+                sourceService.addLocalGraphToProject(projectId, graphId);
+
+                Tuple t = new Tuple();
+                t.setTupleName(visualSchema);
+                t.setTupleDescription("ESTO NO DEBERÍA SALIR");
+                savedDataset.setLocalGraph(t);
+                //savedDataset = sourceService.saveDataset(datasource);
+                //Create the relation with project adding the datasetId
+                sourceService.addDatasetIdToProject(projectId, savedDataset);
+            }
+
+            // Return success message
+            return new ResponseEntity<>(savedDataset, HttpStatus.OK);
+        } catch (UnsupportedOperationException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Data source not created sucessfully");
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Data source not created sucessfully");
         }
-
-        // Reconstruct file from Multipart file
-        String filePath = sourceService.reconstructFile(attach_file);
-
-        // Extract data from datasource file
-        Dataset datasource = sourceService.extractData(filePath, datasetName, datasetDescription);
-
-        // Transform datasource into graph
-        GraphModelPair graph = sourceService.transformToGraph(datasource);
-
-        String visualSchema = sourceService.generateVisualSchema(graph);
-        System.out.println(visualSchema);
-        System.out.println("-----------------------------------> VISUAL SCHEMA INSERTED");
-        // Save graph into database
-        boolean isSaved = true;
-                //sourceService.saveGraphToDatabase(graph.getGraph());
-
-        String graphId = graph.getGraph().getName().getURI();
-        Dataset savedDataset = null;
-        if (isSaved) {
-            // Add the local graph to the project's list of local graph IDs if it was saved
-            sourceService.addLocalGraphToProject(projectId, graphId);
-
-            Tuple t = new Tuple();
-            t.setTupleName(visualSchema);
-            t.setTupleDescription("ESTO NO DEBERÍA SALIR");
-            datasource.setLocalGraph(t);
-
-            if(datasource.getClass() == CsvDataset.class) savedDataset = sourceService.saveDataset(datasource);
-            else if (datasource.getClass() == JsonDataset.class) savedDataset= sourceService.saveDataset(datasource);;
-        }
-
-        // Return success message
-        return new ResponseEntity<>(savedDataset, HttpStatus.OK);
     }
 
     @PostMapping("/project/{projectId}/datasources")
@@ -112,7 +119,7 @@ public class SourceController {
             //Create the relation with project adding the datasetId
             sourceService.addDatasetIdToProject(projectId, savedDataset);
 
-            return new ResponseEntity<>(savedDataset, HttpStatus.CREATED);
+            return new ResponseEntity<>(savedDataset, HttpStatus.OK);
         } catch (UnsupportedOperationException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Data source not created sucessfully");
         } catch (Exception e) {

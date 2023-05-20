@@ -17,12 +17,10 @@ import edu.upc.essi.dtim.odin.NextiaStore.RelationalStore.ORMStoreInterface;
 import edu.upc.essi.dtim.odin.config.AppConfig;
 import edu.upc.essi.dtim.odin.project.ProjectService;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.jena.rdf.model.*;
-import org.apache.jena.rdf.model.impl.ModelCom;
-import org.apache.jena.rdf.model.impl.StatementImpl;
-import org.apache.jena.vocabulary.RDF;
-import org.apache.jena.vocabulary.RDFS;
-import org.apache.jena.vocabulary.XSD;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.rdf.model.StmtIterator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -44,12 +42,17 @@ public class SourceService {
     private final ProjectService projectService;
 
     private final AppConfig appConfig;
+    private final ORMStoreInterface<Dataset> ormDataset;
 
     public SourceService(@Autowired AppConfig appConfig,
-                         @Autowired ProjectService projectService
-    ) {
+                         @Autowired ProjectService projectService){
         this.appConfig = appConfig;
         this.projectService = projectService;
+        try {
+            this.ormDataset = ORMStoreFactory.getInstance();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -70,9 +73,7 @@ public class SourceService {
 
             // Resolve the destination file path using the disk path and the generated filename
             Path destinationFile = diskPath.resolve(Paths.get(filename));
-            System.out.println(destinationFile);
-            System.out.println(destinationFile.getParent());
-            System.out.println(destinationFile.getParent().equals(diskPath.toAbsolutePath()));
+
             // Perform a security check to ensure that the destination file is within the disk path
             if (!destinationFile.getParent().equals(diskPath)) {
                 throw new RuntimeException("Cannot store file outside current directory.");
@@ -94,8 +95,6 @@ public class SourceService {
         }
     }
 
-
-
     /**
      * Recibe una ruta de archivo, lee los metadatos y retorna un objeto Dataset con los datos extraídos del archivo.
      *
@@ -113,10 +112,10 @@ public class SourceService {
         // Create a new dataset object with the extracted data
         switch (extension.toLowerCase()){
             case "csv":
-                dataset = new CsvDataset(filePath, datasetName, datasetDescription, filePath);
+                dataset = new CsvDataset(null, datasetName, datasetDescription, filePath);
                 break;
             case "json":
-                dataset = new JsonDataset(filePath, datasetName, datasetDescription, filePath);
+                dataset = new JsonDataset(null, datasetName, datasetDescription, filePath);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported file format: " + extension);
@@ -136,23 +135,31 @@ public class SourceService {
         try {
             // Try to convert the dataset to a graph BY BOOTSTRAP CALL
             Model bootstrapM = ModelFactory.createDefaultModel();
+            System.out.println("------------------------PRE CONVERTIR GRAFO");
+
             if (dataset.getClass().equals(CsvDataset.class)) {
+                System.out.println("------------------------PRE CONVERTIR GRAFO A CSV");
                 CSVBootstrap bootstrap = new CSVBootstrap();
                 try {
                     bootstrapM = bootstrap.bootstrapSchema(dataset.getDatasetId(), dataset.getDatasetName(), ((CsvDataset) dataset).getPath());
                 } catch (IOException e) {
+                    System.out.println("------------------------ERROR");
                     throw new RuntimeException(e);
                 }
             } else if (dataset.getClass().equals(JsonDataset.class)) {
+                System.out.println("------------------------PRE CONVERTIR GRAFO A JSON");
                 JSONBootstrapSWJ j = new JSONBootstrapSWJ();
                 try {
+                    System.out.println("------------------------CONVERTIendo GRAFO A JSON");
                     bootstrapM = j.bootstrapSchema(dataset.getDatasetName(), dataset.getDatasetId(), ((JsonDataset) dataset).getPath());
+                    System.out.println("------------------------CONVERTIDO GRAFO A JSON");
                 } catch (FileNotFoundException e) {
+                    System.out.println("------------------------error CONVERTIR GRAFO A JSON");
                     throw new RuntimeException(e);
                 }
             }
             Graph bootstrappedGraph = adapt(bootstrapM, new URI(dataset.getDatasetName()));
-
+            System.out.println("------------------------CONVERTIDO");
             return new GraphModelPair(bootstrappedGraph, bootstrapM);
         } catch (UnsupportedOperationException e) {
             // If the dataset format is not supported, return an error graph
@@ -167,12 +174,7 @@ public class SourceService {
         }
     }
 
-
     public String generateVisualSchema(GraphModelPair graph) {
-        //TODO: generate the visual schema from graph
-
-//        return "{'nodes': [{'iri': 'http://www.example.com/resource1','id': 'Class1','label': 'resource1','iriType': 'http://www.w3.org/2002/07/owl#Class','shortType': 'owl:Class','type': 'class'},{'iri': 'http://www.example.com/property1','id': 'Property1','label': 'property1','type': 'property','domain': 'http://www.example.com/resource1','range': 'http://www.example.com/resource2'}],'links': [{'id': 'Link1','nodeId': 'Property1','source': 'Class1','target': 'Class2','label': 'property1'}]}";
-
         NextiaGraphy visualLib = new NextiaGraphy();
         String visualSchema = visualLib.generateVisualGraphNew(graph.getModel());
         System.out.println(visualSchema);
@@ -202,32 +204,14 @@ public class SourceService {
     }
 
     public Dataset saveDataset(Dataset dataset) {
-        ORMStoreInterface<Dataset> ormDataset;
-        try {
-            ormDataset = ORMStoreFactory.getInstance();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
         return ormDataset.save(dataset);
     }
 
     public List<Dataset> getDatasets() {
-        ORMStoreInterface<Dataset> ormDataset;
-        try {
-            ormDataset = ORMStoreFactory.getInstance();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
         return ormDataset.getAll(Dataset.class);
     }
 
     public boolean deleteDatasource(String id) {
-        ORMStoreInterface<Dataset> ormDataset;
-        try {
-            ormDataset = ORMStoreFactory.getInstance();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
         return ormDataset.deleteOne(id);
     }
 
@@ -241,66 +225,6 @@ public class SourceService {
     }
 
 
-
-
-
-
-
-
-    private Graph hardcodedGraph(String graphName) {
-        Set<Triple> triples = new HashSet<>();
-
-        triples.add(new Triple(
-                new URI("http://somewhere/cat"),
-                new URI("http://www.w3.org/2001/vcard-rdf/3.0#TYPE"),
-                new URI("http://www.w3.org/2001/vcard-rdf/3.0#Animal")
-        ));
-        triples.add(new Triple(
-                new URI("http://somewhere/cat"),
-                new URI("http://www.w3.org/2001/vcard-rdf/3.0#FN"),
-                new URI("tail")
-        ));
-        triples.add(new Triple(
-                new URI("http://somewhere/dog"),
-                new URI("http://somewhere/has"),
-                new URI("paws")
-        ));
-        triples.add(new Triple(
-                new URI("http://somewhere/bird"),
-                new URI("http://somewhere/can"),
-                new URI("fly")
-        ));
-        triples.add(new Triple(
-                new URI("http://somewhere/fish"),
-                new URI("http://somewhere/lives"),
-                new URI("in water")
-        ));
-
-        Graph graph = new LocalGraph(null, new URI(graphName), triples, "");
-        return graph;
-    }
-
-    Model hardcodedModel(String name){
-        Model model = ModelFactory.createDefaultModel();
-
-        // Crear propiedades y recursos
-        Property hasTitle = model.createProperty("https://example.com/hasTitle");
-        Resource book = model.createResource("https://example.com/"+name);
-        Resource title = model.createResource("https://example.com/Title");
-
-        // Crear declaraciones y agregar al modelo
-        Statement stmt1 = model.createStatement(book, RDF.type, RDFS.Class);
-        Statement stmt2 = model.createStatement(hasTitle, RDF.type, RDF.Property);
-        Statement stmt3 = model.createStatement(hasTitle, RDFS.domain, book);
-        Statement stmt4 = model.createStatement(hasTitle, RDFS.range, XSD.xstring);
-
-        model.add(stmt1);
-        model.add(stmt2);
-        model.add(stmt3);
-        model.add(stmt4);
-
-        return model;
-    }
 
     private Graph adapt(Model model, URI name) {
         Set<Triple> triples = new HashSet<>();
@@ -324,27 +248,6 @@ public class SourceService {
             System.out.println();
         }
         return graph;
-    }
-
-    private Model adapt(Graph graph) {
-        Model model = ModelFactory.createDefaultModel();
-        for (Triple triple : graph.getTriples()) {
-            Resource subject = ResourceFactory.createResource(triple.getSubject().getURI());
-            Property predicate = ResourceFactory.createProperty(triple.getPredicate().getURI());
-            Statement statement = null;
-            if (true /*triple.getObject().isURI()*/) {
-                Resource object = ResourceFactory.createResource(triple.getObject().toString());
-                statement = new StatementImpl(subject, predicate, object);
-            } else {
-                org.apache.jena.datatypes.RDFDatatype datatype = null;
-                if (true /*triple.getObject().getLiteralDatatypeURI() != null*/) {
-                    datatype = org.apache.jena.datatypes.TypeMapper.getInstance().getSafeTypeByName(triple.getObject().toString());
-                }
-                statement = new StatementImpl(subject, predicate, (RDFNode) triple.getObject(), (ModelCom) datatype);
-            }
-            model.add(statement);
-        }
-        return model;
     }
 }
 

@@ -126,7 +126,7 @@ public class GraphStoreJenaImpl implements GraphStoreInterface {
         for (Triple triple : graph.getTriples()) {
             Resource subject = ResourceFactory.createResource(triple.getSubject().getURI());
             Property predicate = ResourceFactory.createProperty(triple.getPredicate().getURI());
-            Statement statement = null;
+            Statement statement;
             if (true /*triple.getObject().isURI()*/) {
                 Resource object = ResourceFactory.createResource(triple.getObject().toString());
                 statement = new StatementImpl(subject, predicate, object);
