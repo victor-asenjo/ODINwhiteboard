@@ -190,15 +190,25 @@ export const useIntegrationStore = defineStore('integration',{
 
               if(response.data === "") { // when no datasources, api answer ""
                 this.datasources = []
+                notify.positive("There are no data sources yet. Add sources to see them.")
               } else {
                 this.datasources = response.data
               }
             }).catch(err => {
               console.log("error retrieving data sources")
-              // check how to get err status e.g., 401
               console.log(err)
-              notify.negative("Cannot conect to the server.")
-            })
+              if (err.response && err.response.status === 401) {
+                // Handle unauthorized error
+                // Notify the user or perform any other necessary actions
+                notify.negative("Unauthorized access.")
+              } else if(err.response && err.response.status === 404){
+                this.datasources = []
+                notify.positive("There are no data sources yet. Add sources to see them.")
+              }
+              else {
+                notify.negative("Cannot connect to the server.")
+              }
+            });
 
         },
 
