@@ -137,7 +137,7 @@ public class ProjectService {
      * @return true if the project was deleted successfully, false otherwise.
      */
     public boolean deleteProject(String id) {
-        return ormProject.deleteOne(id);
+        return ormProject.deleteOne(Project.class, id);
     }
 
     /**

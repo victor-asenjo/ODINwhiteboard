@@ -267,7 +267,7 @@ public class SourceService {
      * @return A boolean indicating whether the deletion was successful.
      */
     public boolean deleteDatasource(String id) {
-        return ormDataset.deleteOne(id);
+        return ormDataset.deleteOne(Dataset.class, id);
     }
 
     /**

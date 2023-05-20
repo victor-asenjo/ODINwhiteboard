@@ -1,7 +1,5 @@
 package edu.upc.essi.dtim.odin.NextiaStore.RelationalStore;
 
-import edu.upc.essi.dtim.NextiaCore.datasources.dataset.Dataset;
-
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -64,21 +62,21 @@ public class JpaOrmImplementation implements ORMStoreInterface {
     }
 
     @Override
-    public boolean deleteOne(String id) {
+    public <T> boolean deleteOne(Class<T> entityClass, String id) {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("ORMPersistenceUnit");
         EntityManager em = emf.createEntityManager();
         boolean success = false;
         try {
-            System.out.println("PPPPPPPPPPPPPPPPPPPPPPPPPPPPAL LOBYYYY ALGUIEN");
+            System.out.println("-------------> STARTING DELETE PROCESS");
             em.getTransaction().begin();
 
-            Dataset datasetToRemove = em.find(Dataset.class, id);
-            if (datasetToRemove != null) {
-                System.out.println("PPPPPPPPPPPPPPPPPPPPPPPPPPPPAL LOBYYYY DATASET");
-                em.remove(datasetToRemove);
+            T objectToRemove = em.find(entityClass, id);
+            if (objectToRemove != null) {
+                System.out.println(entityClass.getSimpleName()+" DELETED");
+                em.remove(objectToRemove);
                 success = true;
             } else {
-                System.out.println("NNNNNNNNNNNNNOOO SE HA ELIMINADOO LOBYYYY FAIL DATASET");
+                System.out.println("!!!!!!!!!!!!!!!!!!!!! ERROR DELETING " + entityClass.getSimpleName());
             }
 
             em.getTransaction().commit();
