@@ -190,8 +190,7 @@ public class SourceService {
      */
     public String generateVisualSchema(GraphModelPair graph) {
         NextiaGraphy visualLib = new NextiaGraphy();
-        String visualSchema = visualLib.generateVisualGraphNew(graph.getModel());
-        return visualSchema;
+        return visualLib.generateVisualGraphNew(graph.getModel());
     }
 
     /**

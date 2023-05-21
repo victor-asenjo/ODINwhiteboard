@@ -13,7 +13,7 @@ public class GraphStoreFactory {
 
     // Private constructor prevents instantiation from outside the class
     private GraphStoreFactory( @Autowired AppConfig appConfig) {
-        this.appConfig = appConfig;
+        GraphStoreFactory.appConfig = appConfig;
         // Being private prevents the factory from being instantiated from outside the class
     }
 

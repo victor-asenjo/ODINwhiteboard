@@ -7,8 +7,8 @@ import org.apache.jena.rdf.model.Model;
  * Just auxiliar structure
  */
 public class GraphModelPair {
-    private Graph graph;
-    private Model model;
+    private final Graph graph;
+    private final Model model;
 
     /**
      * Constructs a new GraphModelPair.
