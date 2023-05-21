@@ -109,7 +109,7 @@ const selectedSchema = ref('')
 
 const setSchema = datasource => {
   selectedSchema.value = datasource.datasetId
-  graphical.value = datasource.localGraph.tupleName
+  graphical.value = datasource.localGraph.graphicalSchema
 }
 
 const setGlobalSchema = () => {

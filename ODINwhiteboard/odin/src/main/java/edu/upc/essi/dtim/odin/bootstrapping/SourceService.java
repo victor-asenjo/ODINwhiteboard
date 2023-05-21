@@ -171,7 +171,7 @@ public class SourceService {
             return new GraphModelPair(bootstrappedGraph, bootstrapM);
         } catch (UnsupportedOperationException e) {
             // If the dataset format is not supported, return an error graph
-            Graph errorGraph = new LocalGraph(null, new URI(datasetName), new HashSet<>(), "ERROR");
+            Graph errorGraph = new LocalGraph(null, new URI(datasetName), new HashSet<>());
             errorGraph.addTriple(new Triple(
                     new URI(dataset.getDatasetId()),
                     new URI("https://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
@@ -312,7 +312,7 @@ public class SourceService {
             ));
         }
 
-        Graph graph = new LocalGraph(null, name, triples, "");
+        Graph graph = new LocalGraph(null, name, triples);
         for(Triple t : triples){
             System.out.println();
             System.out.println(t.getSubject().getURI());

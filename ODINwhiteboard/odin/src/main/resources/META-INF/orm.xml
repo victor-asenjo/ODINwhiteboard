@@ -55,7 +55,7 @@
     </entity>
 
     <!--> MAPPING CLASS GRAPH <-->
-    <entity class="edu.upc.essi.dtim.NextiaCore.graph.Graph" access="FIELD">
+    <entity class="edu.upc.essi.dtim.NextiaCore.graph.Graph">
         <table name="Graph">
             <unique-constraint>
                 <column-name>id</column-name>
@@ -64,15 +64,16 @@
         <inheritance strategy="JOINED"/>
         <attributes>
             <id name="id"><generated-value strategy="AUTO" /></id>
+            <basic name="graphicalSchema"/>
             <transient name="name"/>
             <transient name="triples"/>
-            <transient name="queryResult"/>
         </attributes>
     </entity>
-    <entity name="LocalGraph" class="edu.upc.essi.dtim.NextiaCore.graph.LocalGraph" access="FIELD">
+    <entity name="LocalGraph" class="edu.upc.essi.dtim.NextiaCore.graph.LocalGraph">
         <table name="LocalGraph"/>
         <attributes>
-            <basic name="graphicalSchema"/>
+            <transient name="name"/>
+            <transient name="triples"/>
         </attributes>
     </entity>
 
@@ -91,7 +92,7 @@
     </entity>
 
     <!--> MAPPING DATASET CLASS<-->
-    <entity class="edu.upc.essi.dtim.NextiaCore.datasources.dataset.Dataset" access="FIELD">
+    <entity class="edu.upc.essi.dtim.NextiaCore.datasources.dataset.Dataset">
         <table name="Dataset">
             <unique-constraint>
                 <column-name>datasetId</column-name>

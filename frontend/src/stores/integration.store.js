@@ -54,7 +54,7 @@ export const useIntegrationStore = defineStore('integration',{
         getGraphicalB(state){
           if(state.selectedDS.length == 1){
             console.log("******************"+state.selectedDS[0])
-              return state.selectedDS[0].localGraph.tupleName
+              return state.selectedDS[0].localGraph.graphicalSchema
           }
           else
               return ""

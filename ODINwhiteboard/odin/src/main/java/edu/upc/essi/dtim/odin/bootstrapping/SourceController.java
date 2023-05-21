@@ -1,6 +1,5 @@
 package edu.upc.essi.dtim.odin.bootstrapping;
 
-import edu.upc.essi.dtim.NextiaCore.datasources.Tuple;
 import edu.upc.essi.dtim.NextiaCore.datasources.dataset.CsvDataset;
 import edu.upc.essi.dtim.NextiaCore.datasources.dataset.Dataset;
 import edu.upc.essi.dtim.NextiaCore.datasources.dataset.JsonDataset;
@@ -77,13 +76,17 @@ public class SourceController {
             String graphId = graph.getGraph().getName().getURI();
             if (isSaved) {
                 // Add the local graph to the project's list of local graph IDs if it was saved
-                sourceService.addLocalGraphToProject(projectId, graphId);
+                //sourceService.addLocalGraphToProject(projectId, graphId);
 
                 //TODO: REPLACE WITH THE CORRESPONENT GRAPH
-                Tuple t = new Tuple();
-                t.setTupleName(visualSchema);
-                t.setTupleDescription("ESTO NO DEBE SALIR");
+                Graph t = graph.getGraph();
+                System.out.println("T CREADO PARA COPIAR");
+                t.setGraphicalSchema(visualSchema);
+                System.out.println("ASIGNADO EL ESQUEMA");
+                //t.setTupleDescription("ESTO NO DEBE SALIR");
                 savedDataset.setLocalGraph(t);
+                System.out.println("ASIGNADO EL GRAFO");
+
                 //savedDataset = sourceService.saveDataset(datasource);
                 //Create the relation with project adding the datasetId
                 sourceService.addDatasetIdToProject(projectId, savedDataset);
