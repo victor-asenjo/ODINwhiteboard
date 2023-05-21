@@ -45,11 +45,7 @@
                     <cascade-all/>
                 </cascade>
             </one-to-many>
-            <element-collection name="localGraphIDs">
-                <collection-table name="PROJECT_LOCAL_GRAPHS_IDS">
-                    <join-column name="PROJECT_ID"/>
-                </collection-table>
-            </element-collection>
+            <!--> element-collections, transient and other properties here <-->
         </attributes>
 
     </entity>

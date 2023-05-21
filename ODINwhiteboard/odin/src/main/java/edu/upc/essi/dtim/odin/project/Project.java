@@ -24,9 +24,6 @@ public class Project {
     // Username of the user who created the project
     private String createdBy;
 
-    // List of local graph IDs associated with the project
-    private List<String> localGraphIDs;
-
     // List of dataset associated with the project
     private List<Dataset> datasets;
 
@@ -84,13 +81,5 @@ public class Project {
 
     public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
-    }
-
-    public List<String> getLocalGraphIDs() {
-        return localGraphIDs;
-    }
-
-    public void setLocalGraphIDs(List<String> localGraphIDs) {
-        this.localGraphIDs = localGraphIDs;
     }
 }

@@ -22,31 +22,6 @@ public class ProjectService {
         }
     }
 
-
-    /**
-     * Adds a local graph to the specified project.
-     *
-     * @param projectId The ID of the project to add the local graph to.
-     * @param name The URI of the local graph to add.
-     * @throws IllegalArgumentException If the project with the given ID is not found.
-     */
-    public void addLocalGraphToProject(String projectId, String name) {
-
-        // Retrieve the project with the given ID
-        Project project = findById(projectId);
-
-        // If the project is not found, throw an exception
-        if (project == null) {
-            throw new IllegalArgumentException("Project not found");
-        }
-
-        // Add the URI of the local graph to the project's list of local graph IDs
-        project.getLocalGraphIDs().add(name);
-
-        //saving the updated project
-        saveProject(project);
-    }
-
     /**
      * Adds a dataset ID to the specified project.
      *

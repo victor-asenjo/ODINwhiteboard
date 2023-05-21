@@ -211,16 +211,6 @@ public class SourceService {
     }
 
     /**
-     * Adds a local graph to a project using the ProjectService class.
-     *
-     * @param projectId The ID of the project to add the graph to.
-     * @param name      The name of the local graph.
-     */
-    public void addLocalGraphToProject(String projectId, String name) {
-        projectService.addLocalGraphToProject(projectId, name);
-    }
-
-    /**
      * Adds a dataset ID to a project using the ProjectService class.
      *
      * @param projectId The ID of the project to add the dataset ID to.
