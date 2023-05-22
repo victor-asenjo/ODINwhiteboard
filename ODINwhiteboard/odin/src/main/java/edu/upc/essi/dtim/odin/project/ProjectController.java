@@ -1,5 +1,7 @@
 package edu.upc.essi.dtim.odin.project;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +11,8 @@ import java.util.List;
 
 @RestController
 public class ProjectController {
+    private static final Logger logger = LoggerFactory.getLogger(ProjectController.class);
+
     private final ProjectService projectService;
 
     /**
@@ -28,7 +32,7 @@ public class ProjectController {
      */
     @PostMapping("/projects")
     public ResponseEntity<Project> saveProject(@RequestBody Project project) {
-        System.out.println("################### POST PROJECT RECEIVED ################### ");
+        logger.info("POST request received for saving project");
         Project savedProject = projectService.saveProject(project);
         return new ResponseEntity<>(savedProject, HttpStatus.CREATED);
     }
@@ -42,7 +46,7 @@ public class ProjectController {
      */
     @GetMapping("/projects/{id}")
     public ResponseEntity<Project> getProject(@PathVariable("id") String id) {
-        System.out.println("################### GET PROJECT RECEIVED ################### " + id);
+        logger.info("GET request received for retrieving project with ID: {}", id);
         Project project = projectService.findById(id);
         if (project != null) {
             return ResponseEntity.ok(project);
@@ -58,7 +62,7 @@ public class ProjectController {
      */
     @GetMapping("/projects")
     public ResponseEntity<List<Project>> getAllProjects() {
-        System.out.println("################### GET ALL PROJECTS RECEIVED ################### ");
+        logger.info("GET request received for retrieving all projects");
         List<Project> projects = projectService.getAllProjects();
         return ResponseEntity.ok(projects);
     }
@@ -72,8 +76,7 @@ public class ProjectController {
      */
     @DeleteMapping("/deleteProject/{id}")
     public ResponseEntity<Boolean> deleteProject(@PathVariable("id") String id) {
-        // Print a message to indicate that the delete request was received
-        System.out.println("################### DELETE A PROJECT RECEIVED ################### " + id);
+        logger.info("DELETE request received for deleting project with ID: {}", id);
 
         // Call the projectService to delete the project and get the result
         boolean deleted = projectService.deleteProject(id);
@@ -96,6 +99,7 @@ public class ProjectController {
      */
     @DeleteMapping("/projects/delete")
     public ResponseEntity<Boolean> deleteAllProjects() {
+        logger.info("DELETE request received for deleting all projects");
         boolean deleted = projectService.deleteAllProjects();
         if (deleted) {
             return ResponseEntity.ok(true);
