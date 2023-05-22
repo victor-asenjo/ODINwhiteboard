@@ -1,5 +1,8 @@
 package edu.upc.essi.dtim.odin.NextiaStore.RelationalStore;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -8,6 +11,7 @@ import java.util.List;
 
 public class JpaOrmImplementation implements ORMStoreInterface {
 
+    private static final Logger logger = LoggerFactory.getLogger(JpaOrmImplementation.class);
     private final EntityManagerFactory emf;
 
     public JpaOrmImplementation() {
@@ -22,12 +26,13 @@ public class JpaOrmImplementation implements ORMStoreInterface {
             em.getTransaction().begin();
             savedObject = em.merge(object);
             em.getTransaction().commit();
-            System.out.println("Object " + object.getClass() + " saved successfully");
+            logger.info("Object {} saved successfully", object.getClass());
         } catch (Exception e) {
-            System.err.println("Error saving object " + object.getClass() + ": " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error saving object {}: {}", object.getClass(), e.getMessage(), e);
         } finally {
-            em.close();
+            if (em != null) {
+                em.close();
+            }
         }
         return savedObject;
     }
@@ -39,9 +44,11 @@ public class JpaOrmImplementation implements ORMStoreInterface {
         try {
             object = em.find(entityClass, id);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Error finding object {}: {}", entityClass.getSimpleName(), e.getMessage(), e);
         } finally {
-            em.close();
+            if (em != null) {
+                em.close();
+            }
         }
         return object;
     }
@@ -54,9 +61,11 @@ public class JpaOrmImplementation implements ORMStoreInterface {
             Query query = em.createQuery("SELECT d FROM " + entityClass.getSimpleName() + " d");
             objects = query.getResultList();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Error retrieving all objects {}: {}", entityClass.getSimpleName(), e.getMessage(), e);
         } finally {
-            em.close();
+            if (em != null) {
+                em.close();
+            }
         }
         return objects;
     }
@@ -66,23 +75,25 @@ public class JpaOrmImplementation implements ORMStoreInterface {
         EntityManager em = emf.createEntityManager();
         boolean success = false;
         try {
-            System.out.println("-------------> STARTING DELETE PROCESS");
+            logger.info("-------------> STARTING DELETE PROCESS");
             em.getTransaction().begin();
 
             T objectToRemove = em.find(entityClass, id);
             if (objectToRemove != null) {
-                System.out.println(entityClass.getSimpleName() + " DELETED");
+                logger.info("{} DELETED", entityClass.getSimpleName());
                 em.remove(objectToRemove);
+                em.getTransaction().commit();
                 success = true;
             } else {
-                System.out.println("!!!!!!!!!!!!!!!!!!!!! ERROR DELETING " + entityClass.getSimpleName());
+                logger.warn("Error deleting {}: Object not found", entityClass.getSimpleName());
+                em.getTransaction().rollback();
             }
-
-            em.getTransaction().commit();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Error deleting {}: {}", entityClass.getSimpleName(), e.getMessage(), e);
         } finally {
-            em.close();
+            if (em != null) {
+                em.close();
+            }
         }
         return success;
     }
@@ -98,9 +109,11 @@ public class JpaOrmImplementation implements ORMStoreInterface {
             em.getTransaction().commit();
             success = deletedCount > 0;
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Error deleting all {}: {}", entityClass.getSimpleName(), e.getMessage(), e);
         } finally {
-            em.close();
+            if (em != null) {
+                em.close();
+            }
         }
         return success;
     }
