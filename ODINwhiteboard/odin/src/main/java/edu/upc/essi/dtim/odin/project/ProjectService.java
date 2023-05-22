@@ -3,12 +3,15 @@ package edu.upc.essi.dtim.odin.project;
 import edu.upc.essi.dtim.NextiaCore.datasources.dataset.Dataset;
 import edu.upc.essi.dtim.odin.NextiaStore.RelationalStore.ORMStoreFactory;
 import edu.upc.essi.dtim.odin.NextiaStore.RelationalStore.ORMStoreInterface;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class ProjectService {
+    private static final Logger logger = LoggerFactory.getLogger(ProjectService.class);
     ORMStoreInterface ormProject;
 
     /**
@@ -53,26 +56,13 @@ public class ProjectService {
      * @throws IllegalArgumentException If the project with the given ID is not found.
      */
     public void deleteDatasetFromProject(String projectId, String datasetId) {
-        // Retrieve the project with the given ID
         Project project = findById(projectId);
 
-        // If the project is not found, throw an exception
         if (project == null) {
             throw new IllegalArgumentException("Project not found");
         }
-        System.out.println("--------------------------->"+project.getDatasets());
 
-        List<Dataset> datasetsOfProjectToUpload = project.getDatasets();
-        for (Dataset datasetInProject : datasetsOfProjectToUpload) {
-            if (datasetId.equals(datasetInProject.getDatasetId())) {
-                datasetsOfProjectToUpload.remove(datasetInProject);
-                project.setDatasets(datasetsOfProjectToUpload);
-                break; // Rompemos el bucle después de eliminar el objeto
-            }
-        }
-        System.out.println("--------------------------->"+project.getDatasets().toString());
-
-        //saving the updated project
+        project.getDatasets().removeIf(dataset -> datasetId.equals(dataset.getDatasetId()));
         saveProject(project);
     }
 
@@ -134,10 +124,9 @@ public class ProjectService {
     public boolean projectContains(String projectId, String datasetId) {
         Project project = ormProject.findById(Project.class, projectId);
         for (Dataset datasetInProject : project.getDatasets()) {
-            String comp = datasetInProject.getDatasetId();
-            System.out.println("------------------>" + comp);
-            System.out.println("------------------>" + datasetId);
-            if(datasetId.equals(comp)) return true;
+            if (datasetId.equals(datasetInProject.getDatasetId())) {
+                return true;
+            }
         }
         return false;
     }

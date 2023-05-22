@@ -52,7 +52,6 @@ class SourceServiceTest {
 
         // Call the method being tested
         String storedFilePath = sourceService.reconstructFile(file);
-        System.out.println(storedFilePath);
 
         // Verify that the file was stored in the expected location
         Path storedFilePathAsPathType = Path.of(storedFilePath);
@@ -101,8 +100,6 @@ class SourceServiceTest {
         Assertions.assertTrue(dataset instanceof JsonDataset);
         Assertions.assertEquals(filePath, ((JsonDataset) dataset).getPath());
         Assertions.assertEquals(datasetName, dataset.getDatasetName());
-        System.out.println(datasetDescription);
-        System.out.println(dataset.getDatasetDescription());
         Assertions.assertEquals(datasetDescription, dataset.getDatasetDescription());
     }
 

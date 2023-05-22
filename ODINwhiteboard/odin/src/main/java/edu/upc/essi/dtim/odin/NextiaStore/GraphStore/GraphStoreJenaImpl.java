@@ -43,7 +43,6 @@ public class GraphStoreJenaImpl implements GraphStoreInterface {
             String modelName = graph.getName().getURI();
             dataset.addNamedModel(modelName, modelToSave);
             dataset.commit();
-            System.out.println("Graph "+ modelName +" saved successfully");
         } catch (final Exception ex) {
             dataset.abort();
             throw ex;
@@ -89,7 +88,6 @@ public class GraphStoreJenaImpl implements GraphStoreInterface {
             if (model.isEmpty()) {
                 throw new IllegalArgumentException("Graph " + name + " is empty");
             } else {
-                System.out.println(model);
                 return adapt(model, name);
             }
         } finally {
