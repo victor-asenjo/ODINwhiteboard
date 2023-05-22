@@ -43,7 +43,7 @@ class GraphStoreInterfaceTest {
 
     private static Graph createTestGraph() {
         Set<Triple> triples = new HashSet<>();
-        Graph testGraph = new LocalGraph(new URI("testGraph"), triples);
+        Graph testGraph = new LocalGraph(null, new URI("testGraph"), triples);
 
         Triple testTriple1 = new Triple(new URI("http://example.com/subject1"),
                 new URI("http://example.com/predicate1"),
