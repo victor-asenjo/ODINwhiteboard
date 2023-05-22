@@ -6,34 +6,13 @@ import java.util.List;
 
 public class Project {
 
-    // Unique identifier for the project
     private String projectId;
-
-    // Name of the project
     private String projectName;
-
-    // Description of the project
     private String projectDescription;
-
-    // Privacy level of the project (e.g. private, public)
     private String projectPrivacy;
-
-    // Color associated with the project
     private String projectColor;
-
-    // Username of the user who created the project
     private String createdBy;
-
-    // List of dataset associated with the project
     private List<Dataset> datasets;
-
-    public List<Dataset> getDatasets() {
-        return datasets;
-    }
-
-    public void setDatasets(List<Dataset> datasets) {
-        this.datasets = datasets;
-    }
 
     public String getProjectId() {
         return projectId;
@@ -81,5 +60,13 @@ public class Project {
 
     public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
+    }
+
+    public List<Dataset> getDatasets() {
+        return datasets;
+    }
+
+    public void setDatasets(List<Dataset> datasets) {
+        this.datasets = datasets;
     }
 }
