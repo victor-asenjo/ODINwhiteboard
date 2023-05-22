@@ -202,7 +202,7 @@ public class SourceService {
     public boolean saveGraphToDatabase(Graph graph) {
         GraphStoreInterface graphStore;
         try {
-            graphStore = GraphStoreFactory.getInstance();
+            graphStore = GraphStoreFactory.getInstance(appConfig);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

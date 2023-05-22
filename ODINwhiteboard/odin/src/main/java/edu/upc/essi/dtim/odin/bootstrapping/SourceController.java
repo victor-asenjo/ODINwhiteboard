@@ -7,6 +7,7 @@ import edu.upc.essi.dtim.NextiaCore.graph.Graph;
 import edu.upc.essi.dtim.NextiaCore.graph.URI;
 import edu.upc.essi.dtim.odin.NextiaStore.GraphStore.GraphStoreFactory;
 import edu.upc.essi.dtim.odin.NextiaStore.GraphStore.GraphStoreInterface;
+import edu.upc.essi.dtim.odin.config.AppConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -228,7 +229,7 @@ public class SourceController {
     public Graph getGraph(@RequestParam("graphId") String graphId) {
         GraphStoreInterface graphStore;
         try {
-            graphStore = GraphStoreFactory.getInstance();
+            graphStore = GraphStoreFactory.getInstance(new AppConfig());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
