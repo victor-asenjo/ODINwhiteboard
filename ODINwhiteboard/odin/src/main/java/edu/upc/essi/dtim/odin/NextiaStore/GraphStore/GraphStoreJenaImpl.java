@@ -109,6 +109,7 @@ public class GraphStoreJenaImpl implements GraphStoreInterface {
         }
 
         Graph graph = new LocalGraph(null, name, triples);
+        /* JUST FOR DEBUG
         for(Triple t : triples){
             System.out.println();
             System.out.println(t.getSubject().getURI());
@@ -116,6 +117,8 @@ public class GraphStoreJenaImpl implements GraphStoreInterface {
             System.out.println(t.getObject());
             System.out.println();
         }
+        */
+        
         return graph;
     }
 
