@@ -8,6 +8,8 @@ import edu.upc.essi.dtim.NextiaCore.graph.URI;
 import edu.upc.essi.dtim.odin.NextiaStore.GraphStore.GraphStoreFactory;
 import edu.upc.essi.dtim.odin.NextiaStore.GraphStore.GraphStoreInterface;
 import edu.upc.essi.dtim.odin.config.AppConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +24,8 @@ import java.util.List;
  */
 @RestController
 public class SourceController {
+    private static final Logger logger = LoggerFactory.getLogger(SourceController.class);
+
     private final SourceService sourceService;
 
     /**
@@ -48,7 +52,7 @@ public class SourceController {
                                             @RequestPart String datasetDescription,
                                             @RequestPart MultipartFile attach_file) {
         try{
-            System.out.println("################### POST DATASOURCE RECEIVED FOR BOOTSTRAP###################");
+            logger.info("POST DATASOURCE RECEIVED FOR BOOTSTRAP");
             // Validate and authenticate access here
             if (!validateAccess(projectId)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied");
@@ -106,7 +110,7 @@ public class SourceController {
             @RequestParam("datasetPath") String path,
             @PathVariable String projectId) {
         try {
-            System.out.println("################### POST A DATASOURCE RECEIVED ################### " + projectId);
+            logger.info("POST A DATASOURCE RECEIVED: "+projectId);
             Dataset dataset;
 
             String extension = "";
@@ -150,8 +154,8 @@ public class SourceController {
     public ResponseEntity<Boolean> deleteDatasource(@PathVariable("projectId") String projectId,
                                                  @PathVariable("id") String id) {
         // Print a message to indicate that the delete request was received
-        System.out.println("################### DELETE A DATASOURCE from project ################### " + projectId);
-        System.out.println("################### DELETE A DATASOURCE RECEIVED ################### " + id);
+        logger.info("DELETE A DATASOURCE from project: " +projectId);
+        logger.info("DELETE A DATASOURCE RECEIVED: " +id);
 
         boolean deleted = false;
 
@@ -185,7 +189,7 @@ public class SourceController {
     @GetMapping("/project/{id}/datasources")
     public ResponseEntity<?> getDatasourcesFromProject(@PathVariable String id) {
         try {
-            System.out.println("################### GET ALL DATASOURCE FROM PROJECT ################### " + id);
+            logger.info("GET ALL DATASOURCE FROM PROJECT " +id);
             List<Dataset> datasets = sourceService.getDatasetsOfProject(id);
 
             if (datasets.isEmpty()) {
@@ -206,7 +210,7 @@ public class SourceController {
     @GetMapping("/datasources")
     public ResponseEntity<?> getAllDatasource() {
         try {
-            System.out.println("################### GET ALL DATASOURCE RECEIVED ################### ");
+            logger.info("GET ALL DATASOURCE RECEIVED");
             List<Dataset> datasets = sourceService.getDatasets();
 
             if (datasets.isEmpty()) {
@@ -247,7 +251,7 @@ public class SourceController {
      * @throws ResponseStatusException if the user does not have permission to perform the bootstrapping process
      */
     private boolean validateAccess(String authentication) {
-        System.out.println(authentication);
+        logger.info(authentication);
         //TODO: IMPLEMENTATION
         return true;
 
