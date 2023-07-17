@@ -1,0 +1,8 @@
+dataStorage:
+  landingZone:
+    dir: /Users/victo/Documents/GitHub/newODIN/api/landing_zone
+
+logging:
+  level:
+    org.springframework.web: INFO
+    edu.upc.essi.dtim: DEBUG
